@@ -91,9 +91,11 @@ export default function AboutPage() {
             {/* Video Feature Card */}
             <div className="bg-[#0F1218] text-white rounded-2xl p-8 shadow-2xl border border-slate-800 space-y-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-bold">
-                  CC
-                </div>
+                <img
+                  src="/community-commerce-logo-transparent.png"
+                  alt="Community Commerce Melissa Logo"
+                  className="w-10 h-10 object-contain"
+                />
                 <div>
                   <h3 className="font-extrabold text-lg text-white font-outfit uppercase">WELCOME VIDEO FROM THE FOUNDERS</h3>
                   <p className="text-xs text-amber-400">Hear directly from Melissa leaders</p>

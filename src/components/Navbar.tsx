@@ -29,17 +29,11 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
         
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-red-600 to-[#A81C24] p-0.5 shadow-lg group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-[#0B0E14] rounded-full flex items-center justify-center relative overflow-hidden">
-              {/* Monogram CC with Red Bird Graphic */}
-              <svg viewBox="0 0 100 100" className="w-8 h-8 text-red-600 fill-current">
-                <path d="M 30,25 C 15,25 15,75 30,75 C 40,75 45,65 45,65 L 55,65 C 55,65 48,85 30,85 C 5,85 0,60 0,50 C 0,30 10,15 30,15 C 48,15 55,35 55,35 L 45,35 C 45,35 40,25 30,25 Z" />
-                <path d="M 65,25 C 50,25 50,75 65,75 C 75,75 80,65 80,65 L 90,65 C 90,65 83,85 65,85 C 40,85 35,60 35,50 C 35,30 45,15 65,15 C 83,15 90,35 90,35 L 80,35 C 80,35 75,25 65,25 Z" fill="#D4AF37" />
-                {/* Cardinal Crest Accent */}
-                <polygon points="75,20 95,10 82,30" fill="#A81C24" />
-              </svg>
-            </div>
-          </div>
+          <img
+            src="/community-commerce-logo-transparent.png"
+            alt="Community Commerce Melissa Logo"
+            className="w-12 h-12 object-contain group-hover:scale-105 transition-transform"
+          />
           
           <div className="flex flex-col">
             <span className="font-outfit font-extrabold text-lg tracking-wider text-white leading-tight uppercase">

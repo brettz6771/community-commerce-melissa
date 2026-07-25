@@ -74,9 +74,11 @@ export default function Footer() {
           {/* Col 1: Brand & Monogram */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white font-extrabold text-lg shadow-md">
-                CC
-              </div>
+              <img
+                src="/community-commerce-logo-transparent.png"
+                alt="Community Commerce Melissa Logo"
+                className="w-10 h-10 object-contain"
+              />
               <div className="flex flex-col">
                 <span className="font-outfit font-extrabold text-sm tracking-wider text-white uppercase">
                   COMMUNITY COMMERCE
@@ -156,9 +158,11 @@ export default function Footer() {
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs">
-              CC
-            </div>
+            <img
+              src="/community-commerce-logo-transparent.png"
+              alt="Community Commerce Melissa Logo"
+              className="w-8 h-8 object-contain"
+            />
             <span className="font-outfit font-bold text-base tracking-wide text-white">
               CommunityCommerceMelissa.com
             </span>
