@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary-red: #A81C24;
+  --primary-red-hover: #8B1219;
+  --dark-slate: #0B0E14;
+  --dark-card: #151922;
+  --accent-gold: #D4AF37;
+  --accent-gold-light: #F3E5AB;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F8FAFC;
+  color: #1E293B;
+  overflow-x: hidden;
+}
+
+/* Custom script font utility */
+.font-script {
+  font-family: 'Great Vibes', 'Caveat', cursive;
+}
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+
+.font-serif-heading {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Metallic Gold text effect */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism effects */
+.glass-panel-dark {
+  background: rgba(21, 25, 34, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1218;
+}
+::-webkit-scrollbar-thumb {
+  background: #A81C24;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8B1219;
+}
+
+/* Red button hover effects */
+.btn-red {
+  background-color: #A81C24;
+  color: #ffffff;
+  transition: all 0.25s ease-in-out;
+}
+.btn-red:hover {
+  background-color: #8B1219;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(168, 28, 36, 0.35);
+}
+
+.btn-gold-outline {
+  border: 1px solid #D4AF37;
+  color: #F3E5AB;
+  transition: all 0.25s ease-in-out;
+}
+.btn-gold-outline:hover {
+  background-color: rgba(212, 175, 55, 0.15);
+  border-color: #F3E5AB;
+  color: #ffffff;
+}
