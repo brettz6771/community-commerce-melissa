@@ -13,18 +13,18 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
   return (
     <section className="relative bg-[#0B0E14] text-white pt-12 pb-24 md:pb-32 overflow-hidden border-b border-white/10">
       
-      {/* Background Image / Video Layer */}
+      {/* Background Image Layer matching input_file_1.png */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 mix-blend-luminosity scale-105 transform duration-700"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-45 scale-105 transform duration-700"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1920')`
+          backgroundImage: `url('/hero-networking.jpg')`
         }}
       />
       
       {/* Radial Gradient Overlays for Cinematic Feel */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0B0E14] via-[#0B0E14]/90 to-[#0B0E14]/70" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0B0E14] via-[#0B0E14]/85 to-[#0B0E14]/60" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-amber-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Hero Content Container */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
