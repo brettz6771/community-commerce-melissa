@@ -163,8 +163,8 @@ export default function Footer() {
               alt="Community Commerce Melissa Logo"
               className="w-8 h-8 object-contain"
             />
-            <span className="font-outfit font-bold text-base tracking-wide text-white">
-              CommunityCommerceMelissa.com
+            <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
+              We are in the process of becoming a 501(c)
             </span>
           </div>
 

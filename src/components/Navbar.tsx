@@ -25,7 +25,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-40 bg-[#0B0E14]/95 backdrop-blur-md border-b border-white/10 text-white shadow-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
