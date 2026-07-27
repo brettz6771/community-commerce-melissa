@@ -30,7 +30,7 @@ export default function AboutPage() {
   ];
 
   const milestones = [
-    { year: "Q1 2026", title: "Community Vision Founded", desc: "Brett Zenker and local business leaders unite to form Community Commerce Melissa." },
+    { year: "Q1 2026", title: "Community Vision Founded", desc: "Local Melissa business leaders unite to form Community Commerce Melissa." },
     { year: "Q2 2026", title: "Launch of Founding Member Special", desc: "Released the $200 Launch Special for Founding Partners with permanent logo recognition." },
     { year: "Q3 2026", title: "First Annual Melissa Expo", desc: "Bringing 60+ local vendors and 1,000+ residents together at the Z-Plex." },
     { year: "Q4 2026+", title: "Digital Hub & Member Portal", desc: "Expanding interactive tools, job boards, and business referral automation." }
@@ -84,7 +84,7 @@ export default function AboutPage() {
                 <p className="text-slate-800 text-sm font-semibold italic">
                   &ldquo;Our focus is on delivering immediate value to local owners — putting your brand in front of residents and connecting you directly with decision makers.&rdquo;
                 </p>
-                <div className="text-xs font-bold text-red-700 mt-2">— Brett Zenker, Founder</div>
+                <div className="text-xs font-bold text-red-700 mt-2">— Melissa Commerce Founders</div>
               </div>
             </div>
 
@@ -221,7 +221,7 @@ export default function AboutPage() {
           <div className="relative w-full max-w-3xl bg-black rounded-xl p-8 text-center text-white space-y-4">
             <button onClick={() => setIsVideoModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
             <h3 className="text-xl font-bold font-outfit">Community Commerce Founder Welcome Video</h3>
-            <p className="text-xs text-slate-400">Video Player Simulation — Featuring Brett Zenker</p>
+            <p className="text-xs text-slate-400">Video Player Simulation — Featuring Melissa Business Leaders</p>
           </div>
         </div>
       )}

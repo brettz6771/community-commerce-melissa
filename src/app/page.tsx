@@ -69,7 +69,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-slate-300 text-sm leading-relaxed">
-                Watch our founder welcome message from Brett Zenker & local business leaders explaining why Community Commerce Melissa was built: &ldquo;Not a Chamber. A Community.&rdquo;
+                Watch our welcome message from local Melissa business leaders explaining why Community Commerce Melissa was built: &ldquo;Not a Chamber. A Community.&rdquo;
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -154,7 +154,7 @@ export default function HomePage() {
                   &ldquo;Building a stronger Melissa through collaboration, high-impact networking, and local business support.&rdquo;
                 </p>
                 <div className="text-xs text-slate-300 font-semibold">
-                  Featuring Brett Zenker & Melissa Board Directors
+                  Featuring Melissa Board Directors & Local Founders
                 </div>
               </div>
             </div>

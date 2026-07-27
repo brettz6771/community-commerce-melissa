@@ -240,13 +240,13 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
 export const MOCK_BOARD_MEMBERS: BoardMember[] = [
   {
     id: "board-1",
-    name: "Brett Zenker",
-    role: "Founder & President",
+    name: "David Sterling",
+    role: "President & Co-Founder",
     business: "Community Commerce Melissa",
     bio: "Passionate community leader and Melissa entrepreneur dedicated to empowering local businesses through meaningful relationships, high-impact events, and collaborative growth.",
     headshot: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",
-    funFact: "Enjoys coaching youth baseball and attending local Melissa High Cardinal Friday night football games!",
-    email: "brett@communitycommercemelissa.com",
+    funFact: "Enjoys coaching youth sports and attending local Melissa High Cardinal Friday night football games!",
+    email: "david@communitycommercemelissa.com",
     phone: "(972) 837-1001"
   },
   {
@@ -351,7 +351,7 @@ export const MOCK_NEWS: NewsArticle[] = [
     title: "Community Commerce Melissa Officially Launches Founding Member Campaign",
     date: "May 10, 2026",
     category: "Community Announcement",
-    author: "Brett Zenker",
+    author: "Melissa Commerce Team",
     summary: "Local business owners gather to announce a fresh, modern approach to business growth and networking in Melissa, Texas.",
     image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
     content: "Melissa, TX — Community Commerce Melissa is excited to introduce a new business organization built specifically for local entrepreneurs..."
