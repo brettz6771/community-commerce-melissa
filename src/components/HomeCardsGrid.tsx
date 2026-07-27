@@ -40,7 +40,7 @@ export default function HomeCardsGrid({
   }).slice(0, 4);
 
   return (
-    <section className="py-14 bg-[#F8FAFC]">
+    <section className="py-14 bg-[#E5E9EE]">
       {/* Expanded Container Width to eliminate squished cards */}
       <div className="max-w-[1536px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         

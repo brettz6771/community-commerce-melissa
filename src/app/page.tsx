@@ -25,7 +25,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       
       {/* Launch Promotion Banner */}
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />

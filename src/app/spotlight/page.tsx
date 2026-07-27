@@ -13,7 +13,7 @@ export default function SpotlightPage() {
   const spotlightBiz = MOCK_BUSINESSES[0];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 

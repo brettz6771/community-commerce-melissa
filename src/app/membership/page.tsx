@@ -87,7 +87,7 @@ export default function MembershipPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <LaunchBanner onOpenJoinModal={() => handleJoinClick("Founding Partner")} />
       <Navbar onOpenJoinModal={() => handleJoinClick("Founding Partner")} />
 
@@ -138,7 +138,7 @@ export default function MembershipPage() {
       </section>
 
       {/* Pricing Tiers Comparison Cards */}
-      <section className="py-16 bg-[#F8FAFC]">
+      <section className="py-16 bg-[#E5E9EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">

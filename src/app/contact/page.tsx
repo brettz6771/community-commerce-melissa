@@ -27,7 +27,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
@@ -48,7 +48,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="py-16 bg-[#F8FAFC]">
+      <section className="py-16 bg-[#E5E9EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             

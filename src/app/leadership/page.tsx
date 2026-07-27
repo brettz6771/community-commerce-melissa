@@ -13,7 +13,7 @@ export default function LeadershipPage() {
   const [activeVideoMember, setActiveVideoMember] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
