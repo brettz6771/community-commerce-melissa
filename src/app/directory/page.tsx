@@ -53,12 +53,12 @@ export default function DirectoryPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Building2 className="w-4 h-4" />
               MELISSA BUSINESS DIRECTORY
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              SEARCHABLE <span className="text-amber-400">DIRECTORY</span>
+              SEARCHABLE <span className="text-slate-200">DIRECTORY</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Find local, support local, and grow local. Discover trusted products and professional services right here in Melissa, Texas.
@@ -155,8 +155,8 @@ export default function DirectoryPage() {
                   loading="lazy"
                 ></iframe>
 
-                <div className="absolute top-4 left-4 bg-[#0B0E14] text-white p-3 rounded-lg border border-amber-400/40 shadow-xl max-w-xs text-xs space-y-1">
-                  <div className="font-bold text-amber-400">Melissa Commerce Pinpoint</div>
+                <div className="absolute top-4 left-4 bg-[#0B0E14] text-white p-3 rounded-lg border border-slate-300/40 shadow-xl max-w-xs text-xs space-y-1">
+                  <div className="font-bold text-slate-200">Melissa Commerce Pinpoint</div>
                   <div className="text-slate-300">Click any marker on the map to open member profile.</div>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function DirectoryPage() {
 
                       {/* Badge */}
                       <div className="absolute top-3 left-3">
-                        <span className="bg-amber-400 text-red-950 font-black text-[9px] uppercase px-2.5 py-1 rounded shadow-md tracking-wider flex items-center gap-1">
+                        <span className="bg-slate-200 text-red-950 font-black text-[9px] uppercase px-2.5 py-1 rounded shadow-md tracking-wider flex items-center gap-1">
                           <ShieldCheck className="w-3 h-3 text-red-950 fill-current" />
                           {biz.badge}
                         </span>

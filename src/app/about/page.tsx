@@ -45,12 +45,12 @@ export default function AboutPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Users className="w-4 h-4" />
               ABOUT COMMUNITY COMMERCE MELISSA
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              &ldquo;Not a Chamber. <span className="text-amber-400">A Community.&rdquo;</span>
+              &ldquo;Not a Chamber. <span className="text-slate-200">A Community.&rdquo;</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
               We are a modern, relationship-driven commerce network championing Melissa businesses through visibility, mentorship, and high-impact events.
@@ -80,7 +80,7 @@ export default function AboutPage() {
                 <strong>Community Commerce Melissa</strong> was founded to provide a nimble, technology-forward platform built on meaningful relationships, accessible membership, and active local promotion.
               </p>
 
-              <div className="bg-slate-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+              <div className="bg-slate-50 border-l-4 border-slate-400 p-4 rounded-r-lg">
                 <p className="text-slate-800 text-sm font-semibold italic">
                   &ldquo;Our focus is on delivering immediate value to local owners — putting your brand in front of residents and connecting you directly with decision makers.&rdquo;
                 </p>
@@ -98,7 +98,7 @@ export default function AboutPage() {
                 />
                 <div>
                   <h3 className="font-extrabold text-lg text-white font-outfit uppercase">WELCOME VIDEO FROM THE FOUNDERS</h3>
-                  <p className="text-xs text-amber-400">Hear directly from Melissa leaders</p>
+                  <p className="text-xs text-slate-300">Hear directly from Melissa leaders</p>
                 </div>
               </div>
 
@@ -108,19 +108,26 @@ export default function AboutPage() {
               >
                 <img
                   src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"
-                  alt="Founder Video"
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-80"
+                  alt="Video Thumbnail"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70"
                 />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-red-700 text-amber-300 flex items-center justify-center shadow-xl group-hover:scale-110 transition">
-                    <Play className="w-6 h-6 fill-current ml-0.5" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full bg-red-700 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                    <Play className="w-6 h-6 fill-current ml-1" />
                   </div>
+                </div>
+                <div className="absolute bottom-3 left-3 text-xs text-white font-semibold">
+                  Watch Founder Welcome (2:30)
                 </div>
               </div>
 
-              <div className="text-xs text-slate-400">
-                Click play to watch our 3-minute story on building a stronger Melissa economy.
-              </div>
+              <button
+                onClick={() => setIsJoinModalOpen(true)}
+                className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
+              >
+                JOIN THE MOVEMENT TODAY
+              </button>
             </div>
 
           </div>
@@ -132,25 +139,23 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* Mission */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md space-y-4">
+            <div className="bg-white p-8 rounded-2xl shadow-md border border-slate-200 space-y-4">
               <div className="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
                 <Target className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR MISSION</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                To connect, promote, educate, and strengthen Melissa businesses through authentic relationships, accessible resources, and high-visibility community events.
+                To foster sustainable economic growth in Melissa by connecting local entrepreneurs, amplifying local visibility, and creating powerful networking channels for business leaders.
               </p>
             </div>
 
-            {/* Vision */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-                <Compass className="w-6 h-6" />
+            <div className="bg-white p-8 rounded-2xl shadow-md border border-slate-200 space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
+                <Award className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR VISION</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                To become Melissa&apos;s primary online and offline business destination—a thriving ecosystem where local enterprises of all sizes flourish together.
+                To build North Texas&apos;s most active, tech-enabled business community — where every local business owner has the tools, connections, and support needed to thrive.
               </p>
             </div>
 
@@ -158,20 +163,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-16 bg-[#0B0E14] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
-            <h2 className="text-3xl font-extrabold font-outfit uppercase">
-              OUR CORE <span className="text-amber-400">VALUES</span>
+      {/* Core Pillars */}
+      <section className="py-16 bg-[#0B0E14] text-white border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
+              <Heart className="w-4 h-4" />
+              GUIDING PRINCIPLES
+            </div>
+            <h2 className="text-3xl font-extrabold font-outfit text-white uppercase">
+              OUR CORE PILLARS
             </h2>
-            <p className="text-slate-400 text-sm">The principles that guide every decision and event we host.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {coreValues.map((val, idx) => (
               <div key={idx} className="bg-[#151922] p-6 rounded-xl border border-white/10 space-y-3">
-                <div className="w-8 h-8 rounded-full bg-red-700 text-amber-300 font-bold flex items-center justify-center text-xs">
+                <div className="w-8 h-8 rounded-full bg-red-700 text-slate-200 font-bold flex items-center justify-center text-xs">
                   0{idx + 1}
                 </div>
                 <h4 className="font-extrabold text-white text-base font-outfit">{val.title}</h4>

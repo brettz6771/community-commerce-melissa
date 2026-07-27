@@ -57,12 +57,12 @@ export default function EventsPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Calendar className="w-4 h-4" />
               INTERACTIVE EVENT CALENDAR
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              UPCOMING <span className="text-amber-400">EVENTS</span>
+              UPCOMING <span className="text-slate-200">EVENTS</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Connect with fellow business owners, gain valuable knowledge, and elevate your presence in Melissa, Texas.
@@ -135,8 +135,8 @@ export default function EventsPage() {
                     <div className="absolute inset-0 bg-black/30" />
                     
                     {/* Date Badge */}
-                    <div className="absolute top-3 left-3 bg-[#0B0E14] text-white rounded-lg p-2 text-center border border-amber-400/40 shadow-lg min-w-[56px]">
-                      <div className="text-[10px] font-black text-amber-400 uppercase tracking-wider">{evt.month}</div>
+                    <div className="absolute top-3 left-3 bg-[#0B0E14] text-white rounded-lg p-2 text-center border border-slate-300/40 shadow-lg min-w-[56px]">
+                      <div className="text-[10px] font-black text-slate-300 uppercase tracking-wider">{evt.month}</div>
                       <div className="text-xl font-extrabold text-white leading-none pt-0.5">{evt.day}</div>
                     </div>
 

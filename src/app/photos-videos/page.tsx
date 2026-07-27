@@ -26,14 +26,14 @@ export default function PhotosVideosPage() {
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Camera className="w-4 h-4" />
               MEDIA GALLERY
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              PHOTO & VIDEO <span className="text-amber-400">LIBRARY</span>
+              PHOTO & VIDEO <span className="text-slate-200">LIBRARY</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Explore high-resolution photography, event recap videos, ribbon cutting celebrations, and drone footage of Melissa, Texas.
@@ -49,18 +49,18 @@ export default function PhotosVideosPage() {
               <div
                 key={idx}
                 onClick={() => setActiveMedia(item.title)}
-                className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 shadow-lg relative aspect-video group cursor-pointer"
+                className="relative rounded-2xl overflow-hidden aspect-video bg-slate-900 border border-slate-300 shadow-md group cursor-pointer"
               >
                 <img
                   src={item.url}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {item.type === "video" && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-red-700 text-amber-300 flex items-center justify-center shadow-xl group-hover:scale-110 transition">
+                    <div className="w-12 h-12 rounded-full bg-red-700 text-slate-200 flex items-center justify-center shadow-xl group-hover:scale-110 transition">
                       <Play className="w-6 h-6 fill-current ml-0.5" />
                     </div>
                   </div>
@@ -68,7 +68,7 @@ export default function PhotosVideosPage() {
 
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white">
                   <span className="font-bold truncate">{item.title}</span>
-                  <span className="bg-black/60 px-2 py-0.5 rounded text-[10px] uppercase text-amber-400">
+                  <span className="bg-black/60 px-2 py-0.5 rounded text-[10px] uppercase text-slate-200">
                     {item.type}
                   </span>
                 </div>

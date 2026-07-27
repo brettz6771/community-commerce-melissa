@@ -21,12 +21,12 @@ export default function LeadershipPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Award className="w-4 h-4" />
               COMMUNITY LEADERSHIP
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              MEET OUR <span className="text-amber-400">LEADERSHIP</span>
+              MEET OUR <span className="text-slate-200">LEADERSHIP</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Dedicated business leaders, founders, and advocates championing economic momentum in Melissa, Texas.
@@ -82,8 +82,8 @@ export default function LeadershipPage() {
                     </p>
 
                     {/* Fun Fact Box */}
-                    <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg flex items-start gap-2 text-[11px] text-amber-900">
-                      <Smile className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="bg-slate-100 border border-slate-200 p-3 rounded-lg flex items-start gap-2 text-[11px] text-slate-800">
+                      <Smile className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
                       <div>
                         <strong>Fun Fact:</strong> {member.funFact}
                       </div>
@@ -102,7 +102,7 @@ export default function LeadershipPage() {
                     onClick={() => setActiveVideoMember(member.name)}
                     className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition"
                   >
-                    <Play className="w-3 h-3 text-amber-400 fill-current" />
+                    <Play className="w-3 h-3 text-slate-200 fill-current" />
                     Watch Intro Video
                   </button>
                 </div>
@@ -117,7 +117,7 @@ export default function LeadershipPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="max-w-2xl mx-auto space-y-3">
             <h2 className="text-3xl font-extrabold font-outfit uppercase">
-              MEET THE <span className="text-amber-400">FOUNDING MEMBERS</span>
+              MEET THE <span className="text-slate-200">FOUNDING MEMBERS</span>
             </h2>
             <p className="text-slate-400 text-sm">
               In addition to our board, these pioneer business leaders are helping lay the groundwork for Community Commerce Melissa.
@@ -127,11 +127,11 @@ export default function LeadershipPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {MOCK_FOUNDING_MEMBERS.map((fm, i) => (
               <div key={i} className="bg-[#151922] border border-white/10 p-4 rounded-xl text-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-red-800 text-amber-300 font-bold mx-auto flex items-center justify-center text-xs">
+                <div className="w-10 h-10 rounded-full bg-red-800 text-slate-200 font-bold mx-auto flex items-center justify-center text-xs">
                   {fm.logoText}
                 </div>
                 <div className="font-bold text-xs text-white truncate">{fm.name}</div>
-                <div className="text-[10px] text-amber-400 font-semibold uppercase">{fm.highlight}</div>
+                <div className="text-[10px] text-slate-300 font-semibold uppercase">{fm.highlight}</div>
               </div>
             ))}
           </div>

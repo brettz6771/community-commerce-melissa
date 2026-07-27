@@ -20,12 +20,12 @@ export default function SpotlightPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Award className="w-4 h-4" />
               BUSINESS SPOTLIGHT
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              BUSINESS OF THE <span className="text-amber-400">MONTH</span>
+              BUSINESS OF THE <span className="text-slate-200">MONTH</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Celebrating outstanding Melissa entrepreneurs making a lasting impact in our community.
@@ -39,7 +39,7 @@ export default function SpotlightPage() {
           <div className="bg-[#0F1218] text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-8 p-8 md:p-12 items-center">
             
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 bg-amber-400 text-red-950 font-black text-xs uppercase px-3 py-1 rounded-full">
+              <div className="inline-flex items-center gap-2 bg-slate-200 text-red-950 font-black text-xs uppercase px-3 py-1 rounded-full">
                 <Sparkles className="w-4 h-4 fill-current" />
                 Featured Business Spotlight
               </div>
@@ -53,7 +53,7 @@ export default function SpotlightPage() {
               </p>
 
               <div className="bg-white/5 border border-white/10 p-4 rounded-xl space-y-2 text-xs">
-                <div className="font-bold text-amber-400">Owner Q&A Highlights:</div>
+                <div className="font-bold text-slate-200">Owner Q&A Highlights:</div>
                 <p className="text-slate-300 italic">
                   &ldquo;We chose Melissa because of the tight-knit community feel. Being a Founding Member of Community Commerce Melissa helps us connect directly with our neighbors.&rdquo;
                 </p>
@@ -86,7 +86,7 @@ export default function SpotlightPage() {
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <div className="w-14 h-14 rounded-full bg-red-700 text-amber-300 flex items-center justify-center shadow-xl group-hover:scale-110 transition">
+                <div className="w-14 h-14 rounded-full bg-red-700 text-slate-200 flex items-center justify-center shadow-xl group-hover:scale-110 transition">
                   <Play className="w-6 h-6 fill-current ml-0.5" />
                 </div>
               </div>

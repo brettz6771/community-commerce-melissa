@@ -49,7 +49,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
 
             <p className="text-slate-300 text-xs sm:text-sm">
               We look forward to seeing you at <br />
-              <strong className="text-amber-400">{eventTitle}</strong>
+              <strong className="text-slate-200">{eventTitle}</strong>
             </p>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-xs space-y-2 text-left">
@@ -97,7 +97,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
         ) : (
           <div className="space-y-5">
             <div>
-              <div className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+              <div className="text-slate-300 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
                 EVENT REGISTRATION
               </div>
@@ -118,7 +118,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   placeholder="John Doe"
-                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                 />
               </div>
 
@@ -130,7 +130,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="john@example.com"
-                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                 />
               </div>
 
@@ -142,7 +142,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     placeholder="Melissa Business"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
 
@@ -151,7 +151,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
                   <select
                     value={formData.guests}
                     onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-400"
                   >
                     <option value="1">1 Person</option>
                     <option value="2">2 People</option>

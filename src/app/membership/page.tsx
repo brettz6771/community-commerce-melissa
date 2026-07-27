@@ -64,7 +64,7 @@ export default function MembershipPage() {
       strikePrice: "$350",
       billing: "Launch Special / first year",
       badge: "🎉 LAUNCH SPECIAL (SAVE $150)",
-      badgeColor: "bg-amber-400 text-red-950 font-extrabold",
+      badgeColor: "bg-slate-200 text-red-950 font-extrabold",
       popular: true,
       description: "Limited-time launch pricing for businesses joining during our founding year.",
       benefits: [
@@ -73,9 +73,8 @@ export default function MembershipPage() {
         "Premium placement in Business Directory",
         "Featured homepage business rotation",
         "Dedicated Business Spotlight article & video interview",
-        "Priority social media & newsletter promotion",
-        "Exclusive Founding Member digital badge",
-        "VIP recognition at all annual events"
+        "Founding Partner recognition at annual events",
+        "Locked-in renewal rate protection"
       ]
     }
   ];
@@ -95,12 +94,12 @@ export default function MembershipPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Users className="w-4 h-4" />
               MEMBERSHIP PORTAL & OVERVIEW
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              JOIN THE <span className="text-amber-400">MELISSA COMMUNITY</span>
+              JOIN THE <span className="text-slate-200">MELISSA COMMUNITY</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               We keep membership accessible and focused on real tangible value rather than dues. Belong, connect, and grow together.
@@ -114,21 +113,21 @@ export default function MembershipPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-black/30 border border-white/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-1 text-center md:text-left">
-              <div className="inline-flex items-center gap-1.5 bg-amber-400 text-red-950 font-black px-2.5 py-0.5 rounded text-xs uppercase">
+              <div className="inline-flex items-center gap-1.5 bg-slate-200 text-red-950 font-black px-2.5 py-0.5 rounded text-xs uppercase">
                 <Sparkles className="w-3.5 h-3.5 fill-current" />
                 🚀 FOUNDING MEMBER LAUNCH SPECIAL
               </div>
               <h2 className="text-2xl font-extrabold font-outfit text-white">
                 Become a Founding Partner Today for Only $200/Year
               </h2>
-              <p className="text-xs text-amber-200">
+              <p className="text-xs text-slate-200">
                 Regular Price: <span className="line-through text-red-300">$350/year</span> — Save $150! Limited-time offer available during our founding launch.
               </p>
             </div>
 
             <button
               onClick={() => handleJoinClick("Founding Partner")}
-              className="bg-amber-400 hover:bg-amber-300 text-red-950 font-extrabold px-6 py-3 rounded-lg text-xs uppercase tracking-wider shrink-0 shadow-lg flex items-center gap-2"
+              className="bg-slate-200 hover:bg-white text-red-950 font-extrabold px-6 py-3 rounded-lg text-xs uppercase tracking-wider shrink-0 shadow-lg flex items-center gap-2"
             >
               CLAIM $200 LAUNCH RATE
               <ArrowRight className="w-4 h-4" />
@@ -155,11 +154,11 @@ export default function MembershipPage() {
               <div
                 key={idx}
                 className={`bg-white rounded-2xl border ${
-                  t.popular ? "border-amber-400 ring-2 ring-amber-400/50 shadow-2xl scale-105" : "border-slate-200 shadow-lg"
+                  t.popular ? "border-slate-300 ring-2 ring-slate-300/50 shadow-2xl scale-105" : "border-slate-200 shadow-lg"
                 } p-6 md:p-8 flex flex-col justify-between relative`}
               >
                 {t.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-amber-500 text-red-950 font-black text-[10px] uppercase px-3 py-1 rounded-full shadow tracking-wider">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-slate-200 text-red-950 font-black text-[10px] uppercase px-3 py-1 rounded-full shadow tracking-wider">
                     FOUNDING PARTNER SPECIAL
                   </div>
                 )}

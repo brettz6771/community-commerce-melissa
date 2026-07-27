@@ -321,7 +321,7 @@ export const MOCK_SPONSORSHIPS: SponsorshipTier[] = [
     name: "Commerce Partner (Gold)",
     price: "$2,500",
     billing: "per year",
-    color: "#D4AF37",
+    color: "#CBD5E1",
     benefits: [
       "Featured logo placement on Event Banners & Directory header",
       "Opportunity to host 1 Coffee & Connections morning mixer",

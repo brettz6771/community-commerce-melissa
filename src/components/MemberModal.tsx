@@ -52,11 +52,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
             </h3>
 
             <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-              Thank you for registering <strong className="text-amber-400">{formData.businessName || "your business"}</strong> as a <span className="text-white font-bold">{selectedTier}</span>.
+              Thank you for registering <strong className="text-slate-200">{formData.businessName || "your business"}</strong> as a <span className="text-white font-bold">{selectedTier}</span>.
             </p>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-xs text-left max-w-md mx-auto space-y-2">
-              <div className="font-bold text-amber-400">Next Steps:</div>
+              <div className="font-bold text-slate-200">Next Steps:</div>
               <ul className="list-disc list-inside space-y-1 text-slate-300">
                 <li>Check your email inbox for your Welcome Packet & Member Toolkit.</li>
                 <li>Your business profile is now active on the Melissa Business Directory.</li>
@@ -79,7 +79,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
             
             {/* Header */}
             <div>
-              <div className="inline-flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-widest mb-1">
+              <div className="inline-flex items-center gap-2 text-slate-300 text-xs font-bold uppercase tracking-widest mb-1">
                 <Sparkles className="w-4 h-4" />
                 JOIN THE MELISSA MOVEMENT
               </div>
@@ -93,11 +93,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
 
             {/* Launch Banner inside modal */}
             <div className="bg-gradient-to-r from-red-950 to-red-900 border border-red-700/60 rounded-xl p-3 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2 text-amber-300 font-medium">
-                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex items-center gap-2 text-slate-200 font-medium">
+                <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
                 <span>Launch Special Active: Save $150 on Founding Partner Rate!</span>
               </div>
-              <span className="bg-amber-400 text-red-950 font-bold px-2 py-0.5 rounded text-[10px] uppercase">
+              <span className="bg-slate-200 text-red-950 font-bold px-2 py-0.5 rounded text-[10px] uppercase">
                 Limited Time
               </span>
             </div>
@@ -135,14 +135,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                 onClick={() => setSelectedTier("Founding Partner")}
                 className={`p-3 rounded-lg border text-center transition relative ${
                   selectedTier === "Founding Partner"
-                    ? "bg-gradient-to-br from-red-900 to-amber-950 border-amber-400 text-white font-bold shadow-lg"
+                    ? "bg-gradient-to-br from-red-950 to-red-900 border-slate-300 text-white font-bold shadow-lg"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-amber-400 text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-slate-200 text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
                   BEST VALUE
                 </span>
-                <div className="text-xs font-bold text-amber-300">Founding Partner</div>
+                <div className="text-xs font-bold text-slate-200">Founding Partner</div>
                 <div className="text-sm font-extrabold text-white">$200 <span className="line-through text-slate-400 text-[10px]">$350</span></div>
               </button>
             </div>
@@ -158,7 +158,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                     placeholder="e.g. Melissa Family Dental"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
 
@@ -170,7 +170,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.ownerName}
                     onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
                     placeholder="First & Last Name"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="contact@business.com"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
 
@@ -196,7 +196,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="(972) 837-0000"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
               </div>
@@ -207,7 +207,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-400"
                   >
                     <option value="Health & Wellness">Health & Wellness</option>
                     <option value="Home Services">Home Services</option>
@@ -225,7 +225,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.website}
                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     placeholder="https://yourwebsite.com"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                   />
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
               {/* Payment simulation info */}
               <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
                 <div className="flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-amber-400" />
+                  <CreditCard className="w-4 h-4 text-slate-300" />
                   <span>Selected: <strong className="text-white">{selectedTier}</strong></span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px]">

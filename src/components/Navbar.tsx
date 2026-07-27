@@ -126,7 +126,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
               }}
               className="w-full btn-red py-3 rounded-md font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
             >
-              <UserPlus className="w-4 h-4 text-amber-300" />
+              <UserPlus className="w-4 h-4 text-slate-200" />
               JOIN TODAY
             </button>
           </div>

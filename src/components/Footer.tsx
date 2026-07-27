@@ -22,7 +22,7 @@ export default function Footer() {
           
           {/* Highlight 1 */}
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <Smartphone className="w-5 h-5" />
             </div>
             <div>
@@ -33,7 +33,7 @@ export default function Footer() {
 
           {/* Highlight 2 */}
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -44,7 +44,7 @@ export default function Footer() {
 
           {/* Highlight 3 */}
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <Settings className="w-5 h-5" />
             </div>
             <div>
@@ -55,7 +55,7 @@ export default function Footer() {
 
           {/* Highlight 4 */}
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-amber-400 shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
             <div>
@@ -83,7 +83,7 @@ export default function Footer() {
                 <span className="font-outfit font-extrabold text-sm tracking-wider text-white uppercase">
                   COMMUNITY COMMERCE
                 </span>
-                <span className="font-outfit font-bold text-[10px] tracking-widest text-amber-400 uppercase">
+                <span className="font-outfit font-bold text-[10px] tracking-widest text-slate-300 uppercase">
                   MELISSA, TEXAS
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function Footer() {
 
           {/* Col 2: Navigation Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
               QUICK LINKS
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
@@ -116,7 +116,7 @@ export default function Footer() {
 
           {/* Col 3: Community & Resources */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
               COMMUNITY RESOURCES
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
@@ -130,7 +130,7 @@ export default function Footer() {
 
           {/* Col 4: Contact & Newsletter */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
               STAY CONNECTED
             </h4>
             <p className="text-xs text-slate-400">

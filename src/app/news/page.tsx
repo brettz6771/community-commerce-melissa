@@ -20,12 +20,12 @@ export default function NewsPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Newspaper className="w-4 h-4" />
               NEWS & BLOG HUB
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              MELISSA BUSINESS <span className="text-amber-400">NEWS</span>
+              MELISSA BUSINESS <span className="text-slate-200">NEWS</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Stay informed with local commercial updates, economic development insights, and marketing tips for Melissa entrepreneurs.

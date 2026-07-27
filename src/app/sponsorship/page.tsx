@@ -36,12 +36,12 @@ export default function SponsorshipPage() {
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Star className="w-4 h-4" />
               SPONSORSHIP CENTER
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              PARTNER WITH <span className="text-amber-400">PURPOSE</span>
+              PARTNER WITH <span className="text-slate-200">PURPOSE</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Elevate your corporate brand, champion local business growth, and reach thousands of Melissa residents through targeted sponsorship packages.
@@ -121,7 +121,7 @@ export default function SponsorshipPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
               <div>
                 <h3 className="text-2xl font-extrabold font-outfit text-white uppercase">BECOME A SPONSOR INQUIRY</h3>
-                <p className="text-xs text-amber-400">Lock in your corporate sponsorship tier for 2026</p>
+                <p className="text-xs text-slate-300">Lock in your corporate sponsorship tier for 2026</p>
               </div>
 
               <button
@@ -138,7 +138,7 @@ export default function SponsorshipPage() {
                 <ShieldCheck className="w-10 h-10 text-emerald-400 mx-auto" />
                 <h4 className="text-lg font-bold text-white">Sponsorship Inquiry Received!</h4>
                 <p className="text-xs text-slate-300">
-                  Thank you <strong className="text-amber-400">{formData.name}</strong> ({formData.company}). Our executive board will contact you within 24 hours.
+                  Thank you <strong className="text-slate-200">{formData.name}</strong> ({formData.company}). Our executive board will contact you within 24 hours.
                 </p>
               </div>
             ) : (
@@ -152,7 +152,7 @@ export default function SponsorshipPage() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Jane Smith"
-                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                     />
                   </div>
 
@@ -164,7 +164,7 @@ export default function SponsorshipPage() {
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                       placeholder="Red Feather Golf Club"
-                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                     />
                   </div>
                 </div>
@@ -178,7 +178,7 @@ export default function SponsorshipPage() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="jane@company.com"
-                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                     />
                   </div>
 
@@ -187,7 +187,7 @@ export default function SponsorshipPage() {
                     <select
                       value={formData.tier}
                       onChange={(e) => setFormData({ ...formData, tier: e.target.value })}
-                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400"
+                      className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-400"
                     >
                       <option value="Community Champion (Platinum)">Community Champion (Platinum) - $5,000</option>
                       <option value="Commerce Partner (Gold)">Commerce Partner (Gold) - $2,500</option>
