@@ -30,16 +30,16 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
         <div className="max-w-3xl space-y-6">
           
-          {/* Gold Accent Subtitle */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-400 font-bold text-xs uppercase tracking-widest">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+          {/* Light Gray Accent Subtitle */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-slate-200 animate-ping"></span>
             STRONGER TOGETHER
           </div>
 
           {/* Main Hero Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-outfit tracking-tight text-white leading-tight">
             One Community. <br />
-            <span className="text-amber-400 font-extrabold">Endless Connections.</span>
+            <span className="text-slate-200 font-extrabold">Endless Connections.</span>
           </h1>
 
           {/* Subtext */}
@@ -62,7 +62,7 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
               className="btn-gold-outline px-6 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider flex items-center gap-2"
             >
               EXPLORE EVENTS
-              <ChevronRight className="w-4 h-4 text-amber-400" />
+              <ChevronRight className="w-4 h-4 text-slate-300" />
             </Link>
 
             {/* Video Play Button */}
@@ -74,7 +74,7 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
                 <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-red-600 flex items-center justify-center border border-white/20 transition">
                   <Play className="w-4 h-4 text-white fill-current ml-0.5" />
                 </span>
-                <span className="font-semibold underline underline-offset-4 decoration-amber-400">Watch Welcome Video</span>
+                <span className="font-semibold underline underline-offset-4 decoration-slate-300">Watch Welcome Video</span>
               </button>
             )}
           </div>

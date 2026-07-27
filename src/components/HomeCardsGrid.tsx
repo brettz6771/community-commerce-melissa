@@ -80,8 +80,8 @@ export default function HomeCardsGrid({
                     >
                       {/* Top Bar: Date Badge & Register Button */}
                       <div className="flex items-center justify-between gap-2">
-                        <div className="bg-[#0B0E14] text-white rounded-md px-2.5 py-1 flex items-center gap-1.5 shrink-0 border border-amber-400/30">
-                          <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">{evt.month}</span>
+                        <div className="bg-[#0B0E14] text-white rounded-md px-2.5 py-1 flex items-center gap-1.5 shrink-0 border border-slate-300/30">
+                          <span className="text-[10px] font-black text-slate-300 uppercase tracking-wider">{evt.month}</span>
                           <span className="text-xs font-black text-white">{evt.day}</span>
                         </div>
 
@@ -226,10 +226,10 @@ export default function HomeCardsGrid({
                 {/* Subitems */}
                 <div className="space-y-3">
                   <div 
-                    className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-amber-200 bg-slate-50 hover:bg-amber-50/50 transition cursor-pointer" 
+                    className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer" 
                     onClick={onOpenJoinModal}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-amber-400 text-red-950 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
+                    <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       1
                     </div>
                     <div>
@@ -239,10 +239,10 @@ export default function HomeCardsGrid({
                   </div>
 
                   <div 
-                    className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-amber-200 bg-slate-50 hover:bg-amber-50/50 transition cursor-pointer" 
+                    className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer" 
                     onClick={onOpenSponsorModal}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-amber-400 text-red-950 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
+                    <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       2
                     </div>
                     <div>
@@ -251,8 +251,8 @@ export default function HomeCardsGrid({
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-amber-200 bg-slate-50 hover:bg-amber-50/50 transition">
-                    <div className="w-7 h-7 rounded-lg bg-amber-400 text-red-950 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
+                  <div className="flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition">
+                    <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       3
                     </div>
                     <div>

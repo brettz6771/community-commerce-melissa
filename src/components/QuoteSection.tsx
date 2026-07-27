@@ -19,20 +19,20 @@ export default function QuoteSection() {
           {/* Left Dark Quote Card */}
           <div className="lg:col-span-7 bg-[#0F1218] text-white rounded-2xl p-8 md:p-10 shadow-xl border border-slate-800 relative overflow-hidden flex flex-col justify-between">
             {/* Background watermark quote */}
-            <div className="absolute top-2 right-4 text-amber-500/10 font-serif text-9xl font-black pointer-events-none select-none">
+            <div className="absolute top-2 right-4 text-white/10 font-serif text-9xl font-black pointer-events-none select-none">
               “
             </div>
 
             <div className="space-y-4 relative z-10">
-              <div className="inline-flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-widest">
-                <Quote className="w-4 h-4 text-amber-400" />
+              <div className="inline-flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
+                <Quote className="w-4 h-4 text-slate-300" />
                 OUR COMMITMENT
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit uppercase tracking-tight text-white leading-tight">
                 ONE COMMUNITY. <br className="hidden sm:inline" />
                 ENDLESS CONNECTIONS. <br className="hidden sm:inline" />
-                <span className="text-amber-400">REAL GROWTH.</span>
+                <span className="text-slate-200">REAL GROWTH.</span>
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal pt-2">
@@ -40,9 +40,9 @@ export default function QuoteSection() {
               </p>
             </div>
 
-            {/* Gold Script Accent Signature */}
+            {/* Script Accent Signature */}
             <div className="pt-6 relative z-10">
-              <div className="font-script text-3xl sm:text-4xl text-amber-400 transform -rotate-2 select-none">
+              <div className="font-script text-3xl sm:text-4xl text-slate-200 transform -rotate-2 select-none">
                 Let&apos;s grow Melissa together.
               </div>
             </div>

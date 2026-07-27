@@ -29,18 +29,18 @@ export default function LaunchBanner({ onOpenJoinModal }: { onOpenJoinModal?: ()
         
         {/* Left message */}
         <div className="flex items-center gap-2 text-center md:text-left">
-          <span className="bg-amber-400 text-red-950 font-bold px-2 py-0.5 rounded-full text-xs uppercase tracking-wide flex items-center gap-1 shadow-sm">
+          <span className="bg-slate-200 text-red-950 font-bold px-2 py-0.5 rounded-full text-xs uppercase tracking-wide flex items-center gap-1 shadow-sm">
             <Sparkles className="w-3 h-3 fill-current" />
             Launch Special
           </span>
           <span className="font-medium">
-            <strong className="text-amber-300">Founding Partner Membership:</strong> Only <span className="text-white font-bold text-base">$200/yr</span> <span className="line-through text-red-200 text-xs">($350/yr)</span> — Save $150!
+            <strong className="text-slate-200">Founding Partner Membership:</strong> Only <span className="text-white font-bold text-base">$200/yr</span> <span className="line-through text-red-200 text-xs">($350/yr)</span> — Save $150!
           </span>
         </div>
 
         {/* Center Countdown */}
-        <div className="hidden lg:flex items-center gap-2 bg-black/30 px-3 py-1 rounded-md border border-white/10 text-xs font-mono text-amber-200">
-          <Clock className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+        <div className="hidden lg:flex items-center gap-2 bg-black/30 px-3 py-1 rounded-md border border-white/10 text-xs font-mono text-slate-200">
+          <Clock className="w-3.5 h-3.5 text-slate-300 animate-pulse" />
           <span>Launch Offer Ends In:</span>
           <span className="font-bold text-white">
             {String(timeLeft.days).padStart(2, "0")}d : {String(timeLeft.hours).padStart(2, "0")}h : {String(timeLeft.minutes).padStart(2, "0")}m : {String(timeLeft.seconds).padStart(2, "0")}s
@@ -51,7 +51,7 @@ export default function LaunchBanner({ onOpenJoinModal }: { onOpenJoinModal?: ()
         <div className="flex items-center gap-3">
           <button
             onClick={onOpenJoinModal}
-            className="bg-amber-400 hover:bg-amber-300 text-red-950 font-bold px-3 py-1 rounded-md text-xs transition flex items-center gap-1 shadow-sm"
+            className="bg-slate-200 hover:bg-white text-red-950 font-bold px-3 py-1 rounded-md text-xs transition flex items-center gap-1 shadow-sm"
           >
             Claim $200 Rate
             <ArrowRight className="w-3.5 h-3.5" />

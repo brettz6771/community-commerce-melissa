@@ -39,7 +39,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
             <span className="font-outfit font-extrabold text-lg tracking-wider text-white leading-tight uppercase">
               COMMUNITY
             </span>
-            <span className="font-outfit font-bold text-xs tracking-widest text-amber-400 uppercase flex items-center gap-1.5">
+            <span className="font-outfit font-bold text-xs tracking-widest text-slate-300 uppercase flex items-center gap-1.5">
               COMMERCE
               <span className="h-0.5 w-3 bg-red-600 inline-block"></span>
               <span className="text-red-500 font-extrabold tracking-widest">MELISSA</span>
@@ -57,7 +57,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
                 href={link.href}
                 className={`text-xs font-semibold tracking-wider uppercase transition-colors py-2 border-b-2 ${
                   isActive
-                    ? "text-amber-400 border-amber-400"
+                    ? "text-slate-100 border-slate-200 font-bold"
                     : "text-slate-300 border-transparent hover:text-white hover:border-red-500"
                 }`}
               >
@@ -73,7 +73,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
             onClick={onOpenJoinModal}
             className="btn-red px-5 py-2.5 rounded-md font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-red-900/30"
           >
-            <UserPlus className="w-4 h-4 text-amber-300" />
+            <UserPlus className="w-4 h-4 text-slate-200" />
             JOIN TODAY
           </button>
         </div>
@@ -108,7 +108,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold tracking-wider uppercase ${
                   isActive
-                    ? "bg-red-950/60 text-amber-400 border-l-4 border-amber-400"
+                    ? "bg-red-950/60 text-slate-100 border-l-4 border-slate-200"
                     : "text-slate-300 hover:bg-white/5 hover:text-white"
                 }`}
               >

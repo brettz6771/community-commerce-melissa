@@ -6,8 +6,8 @@
   --primary-red-hover: #8B1219;
   --dark-slate: #0B0E14;
   --dark-card: #151922;
-  --accent-gold: #D4AF37;
-  --accent-gold-light: #F3E5AB;
+  --accent-gold: #CBD5E1;
+  --accent-gold-light: #F1F5F9;
 }
 
 body {
@@ -30,9 +30,9 @@ body {
   font-family: 'Playfair Display', serif;
 }
 
-/* Metallic Gold text effect */
+/* Metallic Light Gray text effect */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 50%, #94A3B8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -79,12 +79,12 @@ body {
 }
 
 .btn-gold-outline {
-  border: 1px solid #D4AF37;
-  color: #F3E5AB;
+  border: 1px solid #94A3B8;
+  color: #E2E8F0;
   transition: all 0.25s ease-in-out;
 }
 .btn-gold-outline:hover {
-  background-color: rgba(212, 175, 55, 0.15);
-  border-color: #F3E5AB;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #CBD5E1;
   color: #ffffff;
 }

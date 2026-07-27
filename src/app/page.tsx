@@ -58,14 +58,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-widest">
-                <Video className="w-4 h-4 text-amber-400" />
+              <div className="inline-flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
+                <Video className="w-4 h-4 text-slate-300" />
                 FOUNDER WELCOME & SPOTLIGHT
               </div>
 
               <h2 className="text-3xl font-extrabold font-outfit uppercase tracking-tight text-white leading-tight">
                 WELCOME TO MELISSA&apos;S <br />
-                <span className="text-amber-400">BUSINESS HUB</span>
+                <span className="text-slate-200">BUSINESS HUB</span>
               </h2>
 
               <p className="text-slate-300 text-sm leading-relaxed">
@@ -83,7 +83,7 @@ export default function HomePage() {
 
                 <Link
                   href="/about"
-                  className="text-xs text-amber-400 font-bold hover:underline flex items-center gap-1 uppercase tracking-wider"
+                  className="text-xs text-slate-300 font-bold hover:underline flex items-center gap-1 uppercase tracking-wider"
                 >
                   Read Our Mission & Story
                   <ArrowRight className="w-4 h-4" />
@@ -103,13 +103,13 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               
-              <div className="w-16 h-16 rounded-full bg-red-700/90 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform border border-amber-400/50">
-                <Play className="w-8 h-8 fill-current text-amber-300 ml-1" />
+              <div className="w-16 h-16 rounded-full bg-red-700/90 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform border border-white/20">
+                <Play className="w-8 h-8 fill-current text-slate-200 ml-1" />
               </div>
 
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white font-medium">
                 <span className="bg-black/60 px-3 py-1 rounded-full border border-white/10">Welcome to Melissa Commerce (3:45)</span>
-                <span className="text-amber-400 font-bold">Watch Now</span>
+                <span className="text-slate-200 font-bold">Watch Now</span>
               </div>
             </div>
 
@@ -144,7 +144,7 @@ export default function HomePage() {
             </button>
             <div className="aspect-video w-full flex items-center justify-center bg-slate-950">
               <div className="text-center p-8 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-red-700 text-amber-300 flex items-center justify-center mx-auto shadow-xl">
+                <div className="w-16 h-16 rounded-full bg-red-700 text-slate-200 flex items-center justify-center mx-auto shadow-xl">
                   <Play className="w-8 h-8 fill-current ml-1" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-outfit uppercase">
@@ -153,7 +153,7 @@ export default function HomePage() {
                 <p className="text-xs text-slate-400 max-w-md mx-auto">
                   &ldquo;Building a stronger Melissa through collaboration, high-impact networking, and local business support.&rdquo;
                 </p>
-                <div className="text-xs text-amber-400 font-semibold">
+                <div className="text-xs text-slate-300 font-semibold">
                   Featuring Brett Zenker & Melissa Board Directors
                 </div>
               </div>
