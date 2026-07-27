@@ -126,7 +126,7 @@ export default function LeadershipPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {MOCK_FOUNDING_MEMBERS.map((fm, i) => (
-              <div key={i} className="bg-[#151922] border border-white/10 p-4 rounded-xl text-center space-y-2">
+              <div key={i} className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition">
                 <div className="w-10 h-10 rounded-full bg-red-800 text-slate-200 font-bold mx-auto flex items-center justify-center text-xs">
                   {fm.logoText}
                 </div>

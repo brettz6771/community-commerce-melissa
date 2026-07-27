@@ -39,25 +39,25 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
           {MOCK_FOUNDING_MEMBERS.map((member, index) => (
             <div
               key={index}
-              className="bg-[#151922] hover:bg-[#1C2230] border border-white/10 hover:border-slate-300/50 rounded-xl p-5 text-center flex flex-col items-center justify-between transition-all transform hover:-translate-y-1 shadow-lg group"
+              className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 hover:border-slate-300 rounded-xl p-5 text-center flex flex-col items-center justify-between transition-all transform hover:-translate-y-1 shadow-xl group"
             >
               {/* Badge Icon */}
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-900 to-[#0B0E14] border border-slate-300/30 flex items-center justify-center text-slate-200 font-outfit font-extrabold text-sm shadow-inner group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-900 to-[#151922] border border-red-500/40 flex items-center justify-center text-white font-outfit font-extrabold text-sm shadow-md group-hover:scale-110 transition-transform">
                 {member.logoText}
               </div>
 
               {/* Title & Category */}
               <div className="mt-3">
-                <h4 className="text-xs font-bold text-white group-hover:text-slate-200 transition-colors line-clamp-1">
+                <h4 className="text-xs font-bold text-white group-hover:text-slate-100 transition-colors line-clamp-1">
                   {member.name}
                 </h4>
-                <p className="text-[10px] text-slate-400 uppercase font-semibold mt-0.5">
+                <p className="text-[10px] text-slate-300 uppercase font-semibold mt-0.5">
                   {member.category}
                 </p>
               </div>
 
               {/* Founding Partner Badge */}
-              <div className="mt-3 inline-flex items-center gap-1 text-[9px] bg-slate-200/10 text-slate-200 border border-slate-300/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+              <div className="mt-3 inline-flex items-center gap-1 text-[9px] bg-slate-100/15 text-slate-200 border border-slate-400/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                 <ShieldCheck className="w-3 h-3 text-slate-300" />
                 FOUNDING PARTNER
               </div>
@@ -67,7 +67,7 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
           {/* Become a Founding Partner Card Slot */}
           <div
             onClick={onOpenJoinModal}
-            className="bg-gradient-to-br from-red-950/60 to-red-900/40 border-2 border-dashed border-red-500/50 hover:border-slate-300 rounded-xl p-5 text-center flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-105 shadow-xl group min-h-[170px]"
+            className="bg-gradient-to-br from-red-900/60 to-red-950/80 border-2 border-dashed border-red-500 hover:border-white rounded-xl p-5 text-center flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-105 shadow-xl group min-h-[170px]"
           >
             <div className="w-12 h-12 rounded-full bg-slate-200 text-red-950 flex items-center justify-center shadow-lg group-hover:rotate-90 transition-transform">
               <PlusCircle className="w-7 h-7" />
