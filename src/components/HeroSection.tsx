@@ -13,13 +13,19 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
   return (
     <section className="relative bg-[#0B0E14] text-white pt-12 pb-24 md:pb-32 overflow-hidden border-b border-white/10">
       
-      {/* Background Image Layer matching input_file_1.png */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-45 scale-105 transform duration-700"
-        style={{
-          backgroundImage: `url('/hero-networking.jpg')`
-        }}
-      />
+      {/* Background Video Layer from makoragency.com */}
+      <div className="absolute inset-0 overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/hero-networking.jpg"
+          className="w-full h-full object-cover opacity-50 scale-105"
+        >
+          <source src="https://makoragency.com/makor-agency-vid2.mp4" type="video/mp4" />
+        </video>
+      </div>
       
       {/* Radial Gradient Overlays for Cinematic Feel */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#0B0E14] via-[#0B0E14]/85 to-[#0B0E14]/60" />
