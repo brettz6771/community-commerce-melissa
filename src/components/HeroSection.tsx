@@ -38,9 +38,8 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
 
           {/* Main Hero Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-outfit tracking-tight text-white leading-tight">
-            Local Business. <br />
-            Lasting Impact. <br />
-            <span className="text-amber-400 font-extrabold">Stronger Together.</span>
+            One Community. <br />
+            <span className="text-amber-400 font-extrabold">Endless Connections.</span>
           </h1>
 
           {/* Subtext */}
