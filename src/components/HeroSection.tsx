@@ -21,14 +21,14 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
           loop
           playsInline
           poster="/hero-networking.jpg"
-          className="w-full h-full object-cover opacity-85 scale-105"
+          className="w-full h-full object-cover opacity-75 scale-105"
         >
           <source src="https://makoragency.com/makor-agency-vid2.mp4" type="video/mp4" />
         </video>
       </div>
       
       {/* Bottom to Top Gradient Overlay (Darker at bottom, clear at top) */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/65 to-[#0B0E14]/20" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-amber-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -37,19 +37,19 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
         <div className="max-w-3xl space-y-6">
           
           {/* Light Gray Accent Subtitle */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-slate-200 animate-ping"></span>
             STRONGER TOGETHER
           </div>
 
-          {/* Main Hero Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-outfit tracking-tight leading-tight">
-            <span className="text-slate-400 font-extrabold">One Community.</span> <br />
-            <span className="text-white font-extrabold">Endless Connections.</span>
+          {/* Main Hero Headline with Text Glow & Shadow */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-outfit tracking-tight leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
+            <span className="text-slate-300 font-extrabold drop-shadow-[0_0_20px_rgba(203,213,225,0.3)]">One Community.</span> <br />
+            <span className="text-white font-extrabold drop-shadow-[0_0_30px_rgba(255,255,255,0.45)]">Endless Connections.</span>
           </h1>
 
           {/* Subtext */}
-          <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-xl">
+          <p className="text-base sm:text-lg text-slate-200 font-normal leading-relaxed max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
             Creating connections. Driving growth. <br />
             Building a stronger Melissa.
           </p>
@@ -65,7 +65,7 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
 
             <Link
               href="/events"
-              className="btn-gold-outline px-6 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider flex items-center gap-2"
+              className="btn-gold-outline px-6 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-sm"
             >
               EXPLORE EVENTS
               <ChevronRight className="w-4 h-4 text-slate-300" />
@@ -77,7 +77,7 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
                 onClick={onOpenVideoModal}
                 className="hidden sm:flex items-center gap-2 text-xs text-slate-300 hover:text-white transition group ml-2"
               >
-                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-red-600 flex items-center justify-center border border-white/20 transition">
+                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-red-600 flex items-center justify-center border border-white/20 transition backdrop-blur-sm">
                   <Play className="w-4 h-4 text-white fill-current ml-0.5" />
                 </span>
                 <span className="font-semibold underline underline-offset-4 decoration-slate-300">Watch Welcome Video</span>
@@ -88,8 +88,8 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
         </div>
       </div>
 
-      {/* Floating Stats Bar (Overlapping Hero Bottom directly matching mockup) */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-32 z-20">
+      {/* Floating Stats Bar (Hidden for now as requested) */}
+      <div className="hidden relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mb-32 z-20">
         <div className="bg-white rounded-xl shadow-2xl border border-slate-200 p-6 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-6 text-slate-900">
           
           {/* Stat 1 */}

@@ -12,7 +12,7 @@ export default function QuoteSection() {
   ];
 
   return (
-    <section className="pt-36 pb-16 bg-[#E5E9EE]">
+    <section className="py-16 bg-[#E5E9EE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
