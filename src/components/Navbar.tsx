@@ -28,11 +28,11 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
       <div className="w-full px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3.5 group">
           <img
-            src="/community-commerce-logo-transparent.png"
+            src="/ccm-logo-transparent.png"
             alt="Community Commerce Melissa Logo"
-            className="w-12 h-12 object-contain group-hover:scale-105 transition-transform"
+            className="h-16 w-auto max-h-16 object-contain group-hover:scale-105 transition-transform drop-shadow-md"
           />
           
           <div className="flex flex-col">

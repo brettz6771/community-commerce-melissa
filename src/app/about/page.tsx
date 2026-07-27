@@ -92,9 +92,9 @@ export default function AboutPage() {
             <div className="bg-[#0F1218] text-white rounded-2xl p-8 shadow-2xl border border-slate-800 space-y-6">
               <div className="flex items-center gap-3">
                 <img
-                  src="/community-commerce-logo-transparent.png"
+                  src="/ccm-logo-transparent.png"
                   alt="Community Commerce Melissa Logo"
-                  className="w-10 h-10 object-contain"
+                  className="w-14 h-14 object-contain"
                 />
                 <div>
                   <h3 className="font-extrabold text-lg text-white font-outfit uppercase">WELCOME VIDEO FROM THE FOUNDERS</h3>

@@ -159,9 +159,9 @@ export default function Footer() {
           
           <div className="flex items-center gap-3">
             <img
-              src="/community-commerce-logo-transparent.png"
+              src="/ccm-logo-transparent.png"
               alt="Community Commerce Melissa Logo"
-              className="w-8 h-8 object-contain"
+              className="h-12 w-auto object-contain"
             />
             <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
               We are in the process of becoming a 501(c)
