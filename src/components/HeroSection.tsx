@@ -21,14 +21,14 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
           loop
           playsInline
           poster="/hero-networking.jpg"
-          className="w-full h-full object-cover opacity-50 scale-105"
+          className="w-full h-full object-cover opacity-85 scale-105"
         >
           <source src="https://makoragency.com/makor-agency-vid2.mp4" type="video/mp4" />
         </video>
       </div>
       
-      {/* Radial Gradient Overlays for Cinematic Feel */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0B0E14] via-[#0B0E14]/85 to-[#0B0E14]/60" />
+      {/* Bottom to Top Gradient Overlay (Darker at bottom, clear at top) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/50 to-transparent" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-amber-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
 
