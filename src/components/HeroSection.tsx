@@ -85,6 +85,16 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
             )}
           </div>
 
+          {/* Free Tier & Launch Deal Highlight */}
+          <div className="pt-1 flex flex-wrap items-center gap-3 text-xs text-slate-200">
+            <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full font-extrabold uppercase tracking-wide flex items-center gap-1.5 backdrop-blur-sm shadow-md">
+              ✨ 100% FREE Membership Available
+            </span>
+            <span className="text-slate-300 font-medium">
+              Or lock in Founding Partner for <strong className="text-white">$200/yr</strong> <span className="line-through text-red-300 font-bold">$350</span>
+            </span>
+          </div>
+
         </div>
       </div>
 

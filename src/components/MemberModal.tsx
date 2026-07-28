@@ -92,13 +92,13 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
             </div>
 
             {/* Launch Banner inside modal */}
-            <div className="bg-gradient-to-r from-red-950 to-red-900 border border-red-700/60 rounded-xl p-3 flex items-center justify-between text-xs">
+            <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-slate-200 font-medium">
                 <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                <span>Launch Special Active: Save $150 on Founding Partner Rate!</span>
+                <span>Founding Special: <strong>$200/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$350 Regular</span> — Save $150!</span>
               </div>
-              <span className="bg-slate-200 text-red-950 font-bold px-2 py-0.5 rounded text-[10px] uppercase">
-                Limited Time
+              <span className="bg-emerald-500 text-slate-950 font-extrabold px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
+                100% Free Tier Available
               </span>
             </div>
 
@@ -107,14 +107,17 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
               <button
                 type="button"
                 onClick={() => setSelectedTier("Community Member (FREE)")}
-                className={`p-3 rounded-lg border text-center transition ${
+                className={`p-3 rounded-lg border text-center transition relative ${
                   selectedTier.includes("FREE")
-                    ? "bg-red-900/40 border-red-500 text-white font-bold"
+                    ? "bg-emerald-950/60 border-emerald-500 text-white font-bold ring-2 ring-emerald-500/40"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <div className="text-xs font-bold">Community</div>
-                <div className="text-sm font-extrabold text-white">FREE</div>
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
+                  100% FREE
+                </span>
+                <div className="text-xs font-bold mt-1">Community</div>
+                <div className="text-sm font-extrabold text-emerald-400">$0 Dues</div>
               </button>
 
               <button
@@ -140,10 +143,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                 }`}
               >
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-slate-200 text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
-                  BEST VALUE
+                  SAVE $150
                 </span>
-                <div className="text-xs font-bold text-slate-200">Founding Partner</div>
-                <div className="text-sm font-extrabold text-white">$200 <span className="line-through text-slate-400 text-[10px]">$350</span></div>
+                <div className="text-xs font-bold text-slate-200 mt-1">Founding Partner</div>
+                <div className="text-sm font-extrabold text-white">$200 <span className="line-through text-red-200 bg-red-950/80 border border-red-500/40 px-1 py-0.2 rounded text-[10px] font-bold ml-0.5">$350</span></div>
               </button>
             </div>
 

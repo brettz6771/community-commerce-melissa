@@ -30,8 +30,8 @@ export default function MembershipPage() {
       name: "Community Member",
       price: "$0",
       billing: "FREE forever",
-      badge: "Free Tier",
-      badgeColor: "bg-slate-100 text-slate-800",
+      badge: "✨ 100% FREE FOREVER (NO DUES)",
+      badgeColor: "bg-emerald-600 text-white font-extrabold shadow-sm",
       description: "Perfect for local businesses wanting to stay connected with Melissa community updates.",
       benefits: [
         "Member listing in online Business Directory",
@@ -63,7 +63,7 @@ export default function MembershipPage() {
       price: "$200",
       strikePrice: "$350",
       billing: "Launch Special / first year",
-      badge: "🎉 LAUNCH SPECIAL (SAVE $150)",
+      badge: "🎉 LAUNCH SPECIAL — SAVE $150 INSTANTLY",
       badgeColor: "bg-slate-200 text-red-950 font-extrabold",
       popular: true,
       description: "Limited-time launch pricing for businesses joining during our founding year.",
@@ -80,7 +80,8 @@ export default function MembershipPage() {
   ];
 
   const faqs = [
-    { q: "What is the Launch Special for Founding Partners?", a: "Businesses that join during our founding year lock in the Founding Partner rate for only $200 for their first year (saving $150 off the standard $350/yr rate) and receive permanent logo placement on our Founding Members Wall." },
+    { q: "Is Community Membership really 100% free?", a: "Yes! Community Membership costs $0 and has no required dues or hidden fees. We want every local Melissa business to be connected." },
+    { q: "What is the Launch Special for Founding Partners?", a: "Businesses that join during our founding year lock in the Founding Partner rate for only $200 for their first year (saving $150 off the standard $350/yr regular rate) and receive permanent logo placement on our Founding Members Wall." },
     { q: "Is there any automatic annual renewal?", a: "Yes, you can choose optional annual auto-renewal with 30-day advance notification prior to renewal." },
     { q: "How quickly will my directory listing go live?", a: "Immediately upon completing the registration form, your profile is created and indexed in the Melissa directory." }
   ];
@@ -102,7 +103,7 @@ export default function MembershipPage() {
               JOIN THE <span className="text-slate-200">MELISSA COMMUNITY</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              We keep membership accessible and focused on real tangible value rather than dues. Belong, connect, and grow together.
+              We keep membership accessible to all with a <strong className="text-emerald-400 font-bold">100% Free Tier ($0 Dues)</strong> alongside our exclusive <strong className="text-white font-bold">Founding Partner Launch Rate ($200 vs $350 regular)</strong>.
             </p>
           </div>
         </div>
@@ -120,8 +121,8 @@ export default function MembershipPage() {
               <h2 className="text-2xl font-extrabold font-outfit text-white">
                 Become a Founding Partner Today for Only $200/Year
               </h2>
-              <p className="text-xs text-slate-200">
-                Regular Price: <span className="line-through text-red-300">$350/year</span> — Save $150! Limited-time offer available during our founding launch.
+              <p className="text-xs sm:text-sm text-slate-200">
+                Regular Price: <span className="line-through text-red-200 bg-red-950/80 px-2 py-0.5 rounded border border-red-500/40 font-bold">$350/year</span> — <span className="bg-emerald-500 text-slate-950 font-black text-xs px-2 py-0.5 rounded-full uppercase ml-1">SAVE $150 INSTANTLY!</span>
               </p>
             </div>
 
@@ -144,8 +145,8 @@ export default function MembershipPage() {
             <h2 className="text-3xl font-extrabold font-outfit text-slate-900 uppercase">
               SELECT YOUR MEMBERSHIP LEVEL
             </h2>
-            <p className="text-slate-500 text-sm">
-              Choose the level of visibility and networking that best fits your business goals.
+            <p className="text-slate-600 text-sm font-medium">
+              Start with our <strong>100% Free Community Tier</strong> or lock in a <strong>Founding Partner rate</strong> before launch pricing ends.
             </p>
           </div>
 
@@ -179,10 +180,22 @@ export default function MembershipPage() {
                   </div>
 
                   <div className="border-t border-b border-slate-100 py-4">
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex flex-wrap items-baseline gap-2">
                       <span className="text-4xl font-black font-outfit text-slate-900">{t.price}</span>
                       {t.strikePrice && (
-                        <span className="text-base line-through text-slate-400 font-semibold">{t.strikePrice}</span>
+                        <div className="inline-flex items-center gap-1.5 ml-1">
+                          <span className="bg-red-100 text-red-800 text-sm font-bold line-through px-2 py-0.5 rounded border border-red-200">
+                            {t.strikePrice} Regular
+                          </span>
+                          <span className="bg-emerald-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full shadow-sm">
+                            SAVE $150
+                          </span>
+                        </div>
+                      )}
+                      {t.price === "$0" && (
+                        <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2.5 py-1 rounded-full uppercase border border-emerald-300 ml-1">
+                          NO CREDIT CARD REQUIRED
+                        </span>
                       )}
                       <span className="text-xs text-slate-500 font-medium">/{t.billing}</span>
                     </div>
@@ -206,19 +219,20 @@ export default function MembershipPage() {
                   <button
                     onClick={() => handleJoinClick(t.name)}
                     className={`w-full py-3 rounded-lg font-extrabold text-xs uppercase tracking-wider transition ${
-                      t.popular
+                      t.price === "$0"
+                        ? "bg-emerald-700 hover:bg-emerald-800 text-white shadow-md"
+                        : t.popular
                         ? "btn-red shadow-xl"
                         : "bg-slate-900 hover:bg-slate-800 text-white"
                     }`}
                   >
-                    JOIN NOW — {t.price}
+                    {t.price === "$0" ? "JOIN FOR FREE — $0 DUES" : `JOIN NOW — ${t.price}`}
                   </button>
                 </div>
 
               </div>
             ))}
           </div>
-
         </div>
       </section>
 

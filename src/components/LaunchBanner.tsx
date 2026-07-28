@@ -28,13 +28,13 @@ export default function LaunchBanner({ onOpenJoinModal }: { onOpenJoinModal?: ()
       <div className="w-full px-4 sm:px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs md:text-sm">
         
         {/* Left message */}
-        <div className="flex items-center gap-2 text-center md:text-left">
-          <span className="bg-slate-200 text-red-950 font-bold px-2 py-0.5 rounded-full text-xs uppercase tracking-wide flex items-center gap-1 shadow-sm">
-            <Sparkles className="w-3 h-3 fill-current" />
-            Launch Special
+        <div className="flex flex-wrap items-center gap-2 text-center md:text-left">
+          <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 fill-current" />
+            100% FREE Tier Available
           </span>
-          <span className="font-medium">
-            <strong className="text-slate-200">Founding Partner Membership:</strong> Only <span className="text-white font-bold text-base">$200/yr</span> <span className="line-through text-red-200 text-xs">($350/yr)</span> — Save $150!
+          <span className="font-medium text-xs sm:text-sm">
+            <strong className="text-slate-200">Founding Partner Rate:</strong> Only <span className="text-white font-extrabold text-sm sm:text-base">$200/yr</span> <span className="inline-flex items-center gap-1 bg-black/40 border border-red-400/40 text-red-200 line-through font-bold text-xs px-2 py-0.5 rounded shadow-inner ml-1">$350 Regular</span> <span className="bg-emerald-500 text-slate-950 font-black text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full ml-1 uppercase shadow-md">SAVE $150</span>
           </span>
         </div>
 
