@@ -11,16 +11,23 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenJoinModal }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [contactDropdownOpen, setContactDropdownOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
     { name: "ABOUT", href: "/about" },
+    { name: "LEADERSHIP", href: "/leadership" },
     { name: "EVENTS", href: "/events" },
     { name: "DIRECTORY", href: "/directory" },
     { name: "MEMBERSHIP", href: "/membership" },
     { name: "SPONSOR", href: "/sponsorship" },
     { name: "NEWS", href: "/news" },
-    { name: "CONTACT", href: "/contact" },
+  ];
+
+  const contactSublinks = [
+    { name: "Contact Us", href: "/contact" },
+    { name: "Volunteer", href: "/volunteer" },
+    { name: "Give / Donate", href: "/give-donate" },
   ];
 
   return (
@@ -65,6 +72,42 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
               </Link>
             );
           })}
+
+          {/* CONTACT Dropdown */}
+          <div 
+            className="relative py-2"
+            onMouseEnter={() => setContactDropdownOpen(true)}
+            onMouseLeave={() => setContactDropdownOpen(false)}
+          >
+            <Link
+              href="/contact"
+              className={`text-xs font-semibold tracking-wider uppercase transition-colors py-2 border-b-2 flex items-center gap-1 ${
+                pathname.includes("contact") || pathname.includes("volunteer") || pathname.includes("give-donate")
+                  ? "text-slate-100 border-slate-200 font-bold"
+                  : "text-slate-300 border-transparent hover:text-white hover:border-red-500"
+              }`}
+            >
+              CONTACT ▾
+            </Link>
+
+            {contactDropdownOpen && (
+              <div className="absolute top-full right-0 w-48 bg-[#0F1218] border border-white/15 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in duration-150 space-y-1">
+                {contactSublinks.map((sub) => (
+                  <Link
+                    key={sub.name}
+                    href={sub.href}
+                    className={`block px-3 py-2 rounded-lg text-xs font-bold tracking-wide transition ${
+                      pathname === sub.href
+                        ? "bg-red-950/80 text-white border-l-2 border-red-500"
+                        : "text-slate-300 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    {sub.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Action CTA */}
@@ -117,6 +160,22 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
               </Link>
             );
           })}
+
+          {/* Contact Subpages in Mobile Drawer */}
+          <div className="pt-2 border-t border-white/10 space-y-1">
+            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1">CONTACT & ENGAGEMENT</div>
+            {contactSublinks.map((sub) => (
+              <Link
+                key={sub.name}
+                href={sub.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-md text-xs font-bold tracking-wider text-slate-300 hover:text-white hover:bg-white/5"
+              >
+                <span>{sub.name}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              </Link>
+            ))}
+          </div>
           
           <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
             <button

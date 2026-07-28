@@ -28,8 +28,11 @@ export default function LeadershipPage() {
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
               MEET OUR <span className="text-slate-200">LEADERSHIP</span>
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Dedicated business leaders, founders, and advocates championing economic momentum in Melissa, Texas.
+            <p className="text-xl sm:text-2xl font-extrabold font-outfit text-red-500 tracking-wide">
+              The Leadership Behind The Mission
+            </p>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed pt-1">
+              Dedicated business leaders, founders, and advocates championing economic momentum, local commerce, and business growth in Melissa, Texas.
             </p>
           </div>
         </div>
@@ -40,10 +43,10 @@ export default function LeadershipPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
             <h2 className="text-3xl font-extrabold font-outfit uppercase text-slate-900">
-              BOARD OF DIRECTORS
+              COMMUNITY COMMERCE LEADERSHIP TEAM
             </h2>
-            <p className="text-slate-500 text-sm">
-              Our executive board brings expertise across real estate, finance, legal title, and local entrepreneurship.
+            <p className="text-slate-600 text-sm font-medium">
+              Every leader brings proven industry experience, business ownership, and dedicated service to our community mission.
             </p>
           </div>
 

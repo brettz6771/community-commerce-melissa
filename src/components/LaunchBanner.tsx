@@ -38,24 +38,25 @@ export default function LaunchBanner({ onOpenJoinModal }: { onOpenJoinModal?: ()
           </span>
         </div>
 
-        {/* Center Countdown */}
-        <div className="hidden lg:flex items-center gap-2 bg-black/30 px-3 py-1 rounded-md border border-white/10 text-xs font-mono text-slate-200">
-          <Clock className="w-3.5 h-3.5 text-slate-300 animate-pulse" />
-          <span>Launch Offer Ends In:</span>
-          <span className="font-bold text-white">
-            {String(timeLeft.days).padStart(2, "0")}d : {String(timeLeft.hours).padStart(2, "0")}h : {String(timeLeft.minutes).padStart(2, "0")}m : {String(timeLeft.seconds).padStart(2, "0")}s
-          </span>
-        </div>
+        {/* Right Action & Countdown */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Countdown Timer next to Claim button */}
+          <div className="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-md border border-white/20 text-xs font-mono text-slate-200 shadow-inner">
+            <Clock className="w-3.5 h-3.5 text-slate-300 animate-pulse" />
+            <span className="hidden sm:inline">Offer Ends:</span>
+            <span className="font-bold text-white">
+              {String(timeLeft.days).padStart(2, "0")}d : {String(timeLeft.hours).padStart(2, "0")}h : {String(timeLeft.minutes).padStart(2, "0")}m : {String(timeLeft.seconds).padStart(2, "0")}s
+            </span>
+          </div>
 
-        {/* Right Action */}
-        <div className="flex items-center gap-3">
           <button
             onClick={onOpenJoinModal}
-            className="bg-slate-200 hover:bg-white text-red-950 font-bold px-3 py-1 rounded-md text-xs transition flex items-center gap-1 shadow-sm"
+            className="bg-slate-200 hover:bg-white text-red-950 font-bold px-3.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 shadow-md"
           >
             Claim $200 Rate
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
+
           <button
             onClick={() => setIsVisible(false)}
             className="text-red-200 hover:text-white p-1 rounded-full hover:bg-white/10 transition"

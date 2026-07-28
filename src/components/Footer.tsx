@@ -122,9 +122,9 @@ export default function Footer() {
             <ul className="space-y-2 text-xs text-slate-300">
               <li><Link href="/spotlight" className="hover:text-white transition">Business Spotlight</Link></li>
               <li><Link href="/community" className="hover:text-white transition">City & Economic Updates</Link></li>
-              <li><Link href="/photos-videos" className="hover:text-white transition">Photo & Video Library</Link></li>
-              <li><Link href="/news" className="hover:text-white transition">News & Blog Articles</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition">Volunteer & Contact Form</Link></li>
+              <li><Link href="/volunteer" className="hover:text-white transition">Volunteer Program</Link></li>
+              <li><Link href="/give-donate" className="hover:text-white transition font-semibold text-slate-200">Give / Donate</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
             </ul>
           </div>
 
