@@ -91,7 +91,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
             </Link>
 
             {contactDropdownOpen && (
-              <div className="absolute top-full right-0 w-48 bg-[#0F1218] border border-white/15 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in duration-150 space-y-1">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-48 bg-[#0F1218] border border-white/15 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in duration-150 space-y-1">
                 {contactSublinks.map((sub) => (
                   <Link
                     key={sub.name}
