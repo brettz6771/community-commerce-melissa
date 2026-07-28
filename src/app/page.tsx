@@ -39,6 +39,79 @@ export default function HomePage() {
         onOpenVideoModal={() => setIsVideoModalOpen(true)}
       />
 
+      {/* Welcome Video & First 100 Sign-Ups Launch Offer Section */}
+      <section className="py-16 bg-[#0B0E14] text-white border-t border-b border-white/10 shadow-2xl relative overflow-hidden">
+        {/* Ambient background glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 blur-3xl rounded-full pointer-events-none" />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10 text-center">
+          
+          {/* Section Title */}
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
+              <Video className="w-4 h-4 text-red-500" />
+              FOUNDER WELCOME VIDEO
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-outfit uppercase tracking-tight text-white">
+              WELCOME TO <span className="text-slate-200">COMMUNITY COMMERCE MELISSA</span>
+            </h2>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Watch our official welcome message from local Melissa business leaders explaining why Community Commerce Melissa was built: &ldquo;Not a Chamber. A Community.&rdquo;
+            </p>
+          </div>
+
+          {/* Centered Welcome Video Player */}
+          <div className="max-w-3xl mx-auto">
+            <div
+              onClick={() => setIsVideoModalOpen(true)}
+              className="relative rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl group cursor-pointer aspect-video bg-slate-950 flex items-center justify-center transform hover:scale-[1.01] transition-all duration-300"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1200"
+                alt="Community Commerce Founder Welcome Video"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+
+              {/* Big Center Play Icon */}
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-20 h-20 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-red-600 transition-all border-2 border-white/40 backdrop-blur-sm">
+                  <Play className="w-10 h-10 fill-current text-white ml-1.5" />
+                </div>
+                <span className="bg-black/70 text-white font-extrabold text-xs uppercase tracking-wider px-4 py-1.5 rounded-full border border-white/20 shadow-lg backdrop-blur-md">
+                  Click To Play Welcome Video (3:45)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* First 100 Sign-Ups Launch Offer Banner */}
+          <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 bg-slate-200 text-red-950 font-black px-3 py-1 rounded-full text-xs uppercase tracking-wider shadow">
+                <Sparkles className="w-4 h-4 fill-current" />
+                LIMITED LAUNCH OFFER
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-outfit text-white uppercase tracking-tight">
+                First 100 Sign-Ups Get The <span className="text-slate-200">$200/Yr</span> Deal!
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-200 max-w-xl">
+                Be one of our first 100 members to lock in the Founding Partner rate for only <strong className="text-white font-bold">$200/year</strong> (Saving $150 off standard $350/yr regular pricing).
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsJoinModalOpen(true)}
+              className="bg-slate-200 hover:bg-white text-red-950 font-black px-7 py-3.5 rounded-xl text-xs uppercase tracking-wider shrink-0 shadow-2xl flex items-center gap-2 transform hover:scale-105 transition"
+            >
+              CLAIM YOUR $200 RATE NOW
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* Quote & Value Proposition Section */}
       <QuoteSection />
 
