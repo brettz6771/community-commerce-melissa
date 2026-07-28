@@ -53,29 +53,29 @@ export default function HomePage() {
       <FoundingMembersWall onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
       {/* Video & Community Spotlight Banner */}
-      <section className="py-16 bg-[#12161F] text-white border-t border-white/10">
+      <section className="py-16 bg-white text-slate-900 border-t border-b border-slate-200/80 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
-                <Video className="w-4 h-4 text-slate-300" />
+              <div className="inline-flex items-center gap-2 text-red-700 font-bold text-xs uppercase tracking-widest">
+                <Video className="w-4 h-4 text-red-700" />
                 FOUNDER WELCOME & SPOTLIGHT
               </div>
 
-              <h2 className="text-3xl font-extrabold font-outfit uppercase tracking-tight text-white leading-tight">
+              <h2 className="text-3xl font-extrabold font-outfit uppercase tracking-tight text-slate-900 leading-tight">
                 WELCOME TO MELISSA&apos;S <br />
-                <span className="text-slate-200">BUSINESS HUB</span>
+                <span className="text-red-700">BUSINESS HUB</span>
               </h2>
 
-              <p className="text-slate-300 text-sm leading-relaxed">
+              <p className="text-slate-600 text-sm leading-relaxed">
                 Watch our welcome message from local Melissa business leaders explaining why Community Commerce Melissa was built: &ldquo;Not a Chamber. A Community.&rdquo;
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
                 <button
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="btn-red px-5 py-2.5 rounded text-xs font-bold uppercase tracking-wider flex items-center gap-2"
+                  className="btn-red px-5 py-2.5 rounded text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md"
                 >
                   <Play className="w-4 h-4 fill-current text-white" />
                   PLAY WELCOME VIDEO
@@ -83,7 +83,7 @@ export default function HomePage() {
 
                 <Link
                   href="/about"
-                  className="text-xs text-slate-300 font-bold hover:underline flex items-center gap-1 uppercase tracking-wider"
+                  className="text-xs text-red-700 font-bold hover:underline flex items-center gap-1 uppercase tracking-wider"
                 >
                   Read Our Mission & Story
                   <ArrowRight className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function HomePage() {
             {/* Video Thumbnail Placeholder */}
             <div
               onClick={() => setIsVideoModalOpen(true)}
-              className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl group cursor-pointer aspect-video bg-black flex items-center justify-center"
+              className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-xl group cursor-pointer aspect-video bg-slate-950 flex items-center justify-center"
             >
               <img
                 src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800"
@@ -108,7 +108,7 @@ export default function HomePage() {
               </div>
 
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white font-medium">
-                <span className="bg-black/60 px-3 py-1 rounded-full border border-white/10">Welcome to Melissa Commerce (3:45)</span>
+                <span className="bg-slate-900/80 px-3 py-1 rounded-full border border-white/20 shadow">Welcome to Melissa Commerce (3:45)</span>
                 <span className="text-slate-200 font-bold">Watch Now</span>
               </div>
             </div>
