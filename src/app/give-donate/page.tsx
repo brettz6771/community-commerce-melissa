@@ -77,12 +77,12 @@ export default function GiveDonatePage() {
               <div>
                 <div className="text-sm font-extrabold text-white uppercase tracking-wide">ORGANIZATION STATUS NOTICE</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">
-                  We are currently in the process of becoming a 501(c) non-profit organization.
+                  We are currently in the process of becoming a 501(c)(3) non-profit organization.
                 </div>
               </div>
             </div>
             <span className="bg-slate-200 text-red-950 font-bold px-3 py-1 rounded-full text-xs uppercase shrink-0 shadow-md">
-              501(c) Pending
+              501(c)(3) Pending
             </span>
           </div>
         </div>

@@ -164,7 +164,7 @@ export default function Footer() {
               className="h-12 w-auto object-contain"
             />
             <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
-              We are in the process of becoming a 501(c)
+              We are in the process of becoming a 501(c)(3)
             </span>
           </div>
 
