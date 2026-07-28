@@ -75,7 +75,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
 
           {/* CONTACT Dropdown */}
           <div 
-            className="relative py-2"
+            className="relative group py-2"
             onMouseEnter={() => setContactDropdownOpen(true)}
             onMouseLeave={() => setContactDropdownOpen(false)}
           >
@@ -90,12 +90,18 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
               CONTACT ▾
             </Link>
 
-            {contactDropdownOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-48 bg-[#0F1218] border border-white/15 rounded-xl shadow-2xl p-2 z-50 animate-in fade-in duration-150 space-y-1">
+            {/* Seamless Dropdown Container with invisible hover bridge */}
+            <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-1 w-48 z-50 transition-all duration-150 ${
+              contactDropdownOpen 
+                ? "opacity-100 visible pointer-events-auto" 
+                : "opacity-0 invisible pointer-events-none group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto"
+            }`}>
+              <div className="bg-[#0F1218] border border-white/15 rounded-xl shadow-2xl p-2 space-y-1">
                 {contactSublinks.map((sub) => (
                   <Link
                     key={sub.name}
                     href={sub.href}
+                    onClick={() => setContactDropdownOpen(false)}
                     className={`block px-3 py-2 rounded-lg text-xs font-bold tracking-wide transition ${
                       pathname === sub.href
                         ? "bg-red-950/80 text-white border-l-2 border-red-500"
@@ -106,7 +112,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
                   </Link>
                 ))}
               </div>
-            )}
+            </div>
           </div>
         </nav>
 
