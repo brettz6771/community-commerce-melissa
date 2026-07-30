@@ -39,6 +39,7 @@ export interface BoardMember {
   funFact: string;
   email: string;
   phone: string;
+  objectPosition?: string;
 }
 
 export interface SponsorshipTier {
@@ -247,7 +248,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/chauntel-busche.jpg",
     funFact: "Enjoys spearheading local community initiatives and supporting Melissa businesses!",
     email: "chauntel@communitycommercemelissa.com",
-    phone: "(972) 837-1001"
+    phone: "(972) 837-1001",
+    objectPosition: "top"
   },
   {
     id: "board-2",
@@ -258,7 +260,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/joey-mitnick.jpg",
     funFact: "Passionate about local business growth and community development.",
     email: "joey@communitycommercemelissa.com",
-    phone: "(972) 837-1002"
+    phone: "(972) 837-1002",
+    objectPosition: "top"
   },
   {
     id: "board-3",
@@ -269,7 +272,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/jana.jpg",
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
     email: "jana@communitycommercemelissa.com",
-    phone: "(972) 837-1003"
+    phone: "(972) 837-1003",
+    objectPosition: "center 5%"
   },
   {
     id: "board-4",
@@ -280,7 +284,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/alta-simmons.jpg",
     funFact: "Passionate about community involvement and local networking.",
     email: "alta@communitycommercemelissa.com",
-    phone: "(972) 837-1004"
+    phone: "(972) 837-1004",
+    objectPosition: "top"
   },
   {
     id: "board-5",
@@ -291,7 +296,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/brett-zenker.jpg",
     funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
     email: "brett@communitycommercemelissa.com",
-    phone: "(972) 837-1005"
+    phone: "(972) 837-1005",
+    objectPosition: "top"
   },
   {
     id: "board-6",
@@ -302,7 +308,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/cindy-karman.jpg",
     funFact: "Loves organizing community gatherings and supporting small business owners.",
     email: "cindy@communitycommercemelissa.com",
-    phone: "(972) 837-1006"
+    phone: "(972) 837-1006",
+    objectPosition: "center 5%"
   },
   {
     id: "board-7",
@@ -313,7 +320,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     headshot: "/ccm-leaders/joel-valdez.png",
     funFact: "Dedicated to fostering local economic growth and community unity.",
     email: "joel@communitycommercemelissa.com",
-    phone: "(972) 837-1007"
+    phone: "(972) 837-1007",
+    objectPosition: "top"
   }
 ];
 
