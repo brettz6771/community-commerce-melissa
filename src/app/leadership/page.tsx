@@ -10,7 +10,47 @@ import { Award, Mail, Phone, Play, ShieldCheck, Sparkles, Smile } from "lucide-r
 
 export default function LeadershipPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [activeVideoMember, setActiveVideoMember] = useState<string | null>(null);
+
+  const row1Members = MOCK_BOARD_MEMBERS.slice(0, 4);
+  const row2Members = MOCK_BOARD_MEMBERS.slice(4, 7);
+
+  const renderLeaderCard = (member: typeof MOCK_BOARD_MEMBERS[0]) => (
+    <div
+      key={member.id}
+      className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-lg flex flex-col justify-between group hover:shadow-xl transition"
+    >
+      <div>
+        {/* Headshot */}
+        <div className="relative h-72 overflow-hidden bg-slate-900">
+          <img
+            src={member.headshot}
+            alt={member.name}
+            style={{ objectPosition: member.objectPosition || "top" }}
+            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          
+          <div className="absolute bottom-3 left-3 right-3">
+            <span className="bg-red-700 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider shadow">
+              {member.role}
+            </span>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="p-5 space-y-3">
+          <div>
+            <h3 className="font-extrabold text-lg text-slate-900 font-outfit">{member.name}</h3>
+            <div className="text-xs text-red-700 font-semibold">{member.business}</div>
+          </div>
+
+          <p className="text-xs text-slate-600 leading-relaxed">
+            {member.bio}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
@@ -40,8 +80,8 @@ export default function LeadershipPage() {
 
       {/* Board of Directors Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-4">
             <h2 className="text-3xl font-extrabold font-outfit uppercase text-slate-900">
               COMMUNITY COMMERCE LEADERSHIP TEAM
             </h2>
@@ -50,68 +90,14 @@ export default function LeadershipPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
-            {MOCK_BOARD_MEMBERS.map((member) => (
-              <div
-                key={member.id}
-                className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-lg flex flex-col justify-between group hover:shadow-xl transition"
-              >
-                <div>
-                  {/* Headshot */}
-                  <div className="relative h-72 overflow-hidden bg-slate-900">
-                    <img
-                      src={member.headshot}
-                      alt={member.name}
-                      style={{ objectPosition: member.objectPosition || "top" }}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                    
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <span className="bg-red-700 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider shadow">
-                        {member.role}
-                      </span>
-                    </div>
-                  </div>
+          {/* Row 1: Top 4 Leaders */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
+            {row1Members.map(renderLeaderCard)}
+          </div>
 
-                  {/* Info */}
-                  <div className="p-5 space-y-3">
-                    <div>
-                      <h3 className="font-extrabold text-lg text-slate-900 font-outfit">{member.name}</h3>
-                      <div className="text-xs text-red-700 font-semibold">{member.business}</div>
-                    </div>
-
-                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-4">
-                      {member.bio}
-                    </p>
-
-                    {/* Fun Fact Box */}
-                    <div className="bg-slate-100 border border-slate-200 p-3 rounded-lg flex items-start gap-2 text-[11px] text-slate-800">
-                      <Smile className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
-                      <div>
-                        <strong>Fun Fact:</strong> {member.funFact}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer / Contact */}
-                <div className="p-5 pt-0 space-y-2 border-t border-slate-200/60 mt-4">
-                  <div className="flex items-center gap-2 text-xs text-slate-500 pt-3">
-                    <Mail className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span className="truncate">{member.email}</span>
-                  </div>
-
-                  <button
-                    onClick={() => setActiveVideoMember(member.name)}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition"
-                  >
-                    <Play className="w-3 h-3 text-slate-200 fill-current" />
-                    Watch Intro Video
-                  </button>
-                </div>
-              </div>
-            ))}
+          {/* Row 2: Bottom 3 Leaders (Centered) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch">
+            {row2Members.map(renderLeaderCard)}
           </div>
         </div>
       </section>
@@ -157,16 +143,6 @@ export default function LeadershipPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
       />
-
-      {activeVideoMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-          <div className="bg-slate-900 border border-white/20 p-6 rounded-xl text-center text-white space-y-4 max-w-md w-full">
-            <h3 className="text-lg font-bold font-outfit">{activeVideoMember} — Video Intro</h3>
-            <p className="text-xs text-slate-400">Personal video intro simulation for board member.</p>
-            <button onClick={() => setActiveVideoMember(null)} className="btn-red px-4 py-1.5 rounded text-xs font-bold uppercase">Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
