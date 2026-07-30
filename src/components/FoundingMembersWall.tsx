@@ -43,7 +43,7 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
             >
               {/* Badge Icon / Logo */}
               {member.logo ? (
-                <div className="w-14 h-14 rounded-full bg-white border border-slate-300 flex items-center justify-center overflow-hidden p-2 shadow-md group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 rounded-full bg-[#0B0E14] border border-slate-700/80 flex items-center justify-center overflow-hidden p-2 shadow-md group-hover:scale-110 transition-transform">
                   <img src={member.logo} alt={member.name} className="w-full h-full object-contain" />
                 </div>
               ) : (

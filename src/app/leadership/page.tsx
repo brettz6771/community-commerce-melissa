@@ -118,7 +118,7 @@ export default function LeadershipPage() {
             {MOCK_FOUNDING_MEMBERS.map((fm, i) => (
               <div key={i} className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition flex flex-col items-center justify-between">
                 {fm.logo ? (
-                  <div className="w-12 h-12 rounded-full bg-white border border-slate-300 flex items-center justify-center overflow-hidden p-2 mx-auto shadow-md">
+                  <div className="w-12 h-12 rounded-full bg-[#0B0E14] border border-slate-700/80 flex items-center justify-center overflow-hidden p-2 mx-auto shadow-md">
                     <img src={fm.logo} alt={fm.name} className="w-full h-full object-contain" />
                   </div>
                 ) : (
