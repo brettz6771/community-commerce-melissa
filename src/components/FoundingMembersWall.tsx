@@ -41,16 +41,33 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
               key={index}
               className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 hover:border-slate-300 rounded-xl p-5 text-center flex flex-col items-center justify-between transition-all transform hover:-translate-y-1 shadow-xl group"
             >
-              {/* Badge Icon */}
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-900 to-[#151922] border border-red-500/40 flex items-center justify-center text-white font-outfit font-extrabold text-sm shadow-md group-hover:scale-110 transition-transform">
-                {member.logoText}
-              </div>
+              {/* Badge Icon / Logo */}
+              {member.logo ? (
+                <div className="w-14 h-14 rounded-full bg-white border border-slate-300 flex items-center justify-center overflow-hidden p-2 shadow-md group-hover:scale-110 transition-transform">
+                  <img src={member.logo} alt={member.name} className="w-full h-full object-contain" />
+                </div>
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-900 to-[#151922] border border-red-500/40 flex items-center justify-center text-white font-outfit font-extrabold text-sm shadow-md group-hover:scale-110 transition-transform">
+                  {member.logoText}
+                </div>
+              )}
 
               {/* Title & Category */}
               <div className="mt-3">
-                <h4 className="text-xs font-bold text-white group-hover:text-slate-100 transition-colors line-clamp-1">
-                  {member.name}
-                </h4>
+                {member.website ? (
+                  <a
+                    href={member.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-bold text-white hover:text-red-400 hover:underline transition-colors line-clamp-1 block"
+                  >
+                    {member.name}
+                  </a>
+                ) : (
+                  <h4 className="text-xs font-bold text-white group-hover:text-slate-100 transition-colors line-clamp-1">
+                    {member.name}
+                  </h4>
+                )}
                 <p className="text-[10px] text-slate-300 uppercase font-semibold mt-0.5">
                   {member.category}
                 </p>
@@ -59,7 +76,7 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
               {/* Founding Partner Badge */}
               <div className="mt-3 inline-flex items-center gap-1 text-[9px] bg-slate-100/15 text-slate-200 border border-slate-400/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                 <ShieldCheck className="w-3 h-3 text-slate-300" />
-                FOUNDING PARTNER
+                {member.highlight || "FOUNDING PARTNER"}
               </div>
             </div>
           ))}

@@ -116,11 +116,33 @@ export default function LeadershipPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {MOCK_FOUNDING_MEMBERS.map((fm, i) => (
-              <div key={i} className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition">
-                <div className="w-10 h-10 rounded-full bg-red-800 text-slate-200 font-bold mx-auto flex items-center justify-center text-xs">
-                  {fm.logoText}
+              <div key={i} className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition flex flex-col items-center justify-between">
+                {fm.logo ? (
+                  <div className="w-12 h-12 rounded-full bg-white border border-slate-300 flex items-center justify-center overflow-hidden p-2 mx-auto shadow-md">
+                    <img src={fm.logo} alt={fm.name} className="w-full h-full object-contain" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-red-800 text-slate-200 font-bold mx-auto flex items-center justify-center text-xs">
+                    {fm.logoText}
+                  </div>
+                )}
+
+                <div>
+                  {fm.website ? (
+                    <a
+                      href={fm.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-xs text-white hover:text-red-400 hover:underline transition-colors block truncate"
+                    >
+                      {fm.name}
+                    </a>
+                  ) : (
+                    <div className="font-bold text-xs text-white truncate">{fm.name}</div>
+                  )}
+                  <div className="text-[10px] text-slate-400 font-medium">{fm.category}</div>
                 </div>
-                <div className="font-bold text-xs text-white truncate">{fm.name}</div>
+
                 <div className="text-[10px] text-slate-300 font-semibold uppercase">{fm.highlight}</div>
               </div>
             ))}

@@ -42,6 +42,15 @@ export interface BoardMember {
   objectPosition?: string;
 }
 
+export interface FoundingMember {
+  name: string;
+  category: string;
+  logo?: string;
+  website?: string;
+  logoText?: string;
+  highlight?: string;
+}
+
 export interface SponsorshipTier {
   id: string;
   name: string;
@@ -325,19 +334,14 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
   }
 ];
 
-export const MOCK_FOUNDING_MEMBERS = [
-  { name: "Melissa Family Dental", category: "Healthcare", logoText: "MFD", highlight: "Founding Partner" },
-  { name: "Red Feather Golf & Social", category: "Hospitality", logoText: "RFG", highlight: "Founding Sponsor" },
-  { name: "North Texas Appliance", category: "Home Services", logoText: "NTA", highlight: "Founding Partner" },
-  { name: "Heartland Real Estate", category: "Real Estate", logoText: "HRE", highlight: "Founding Partner" },
-  { name: "Landmark Title & Escrow", category: "Legal & Title", logoText: "LTE", highlight: "Founding Partner" },
-  { name: "Melissa Little Explorers", category: "Education", logoText: "MLE", highlight: "Founding Partner" },
-  { name: "Vance Financial Group", category: "Finance", logoText: "VFG", highlight: "Founding Partner" },
-  { name: "Cardinal Cleaners", category: "Retail", logoText: "CC", highlight: "Founding Partner" },
-  { name: "Texas Heritage Insurance", category: "Insurance", logoText: "THI", highlight: "Founding Partner" },
-  { name: "Melissa Coffee & Bistro", category: "Dining", logoText: "MCB", highlight: "Founding Partner" },
-  { name: "Apex Commercial Construction", category: "Trades", logoText: "ACC", highlight: "Founding Partner" },
-  { name: "Collin County Tech Solutions", category: "IT & Software", logoText: "CCT", highlight: "Founding Partner" }
+export const MOCK_FOUNDING_MEMBERS: FoundingMember[] = [
+  { 
+    name: "Makor Agency", 
+    category: "Business Development", 
+    logo: "/ccm-companies/makor-agency.png",
+    website: "https://makoragency.com",
+    highlight: "Founding Partner" 
+  }
 ];
 
 export const MOCK_SPONSORSHIPS: SponsorshipTier[] = [
