@@ -264,8 +264,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     id: "board-2",
     name: "Joey Mitnick",
     role: "Vice President",
-    business: "Community Commerce Melissa",
-    bio: "Strategic business leader and community connector focused on empowering local entrepreneurs and expanding regional commerce. Joey works closely with Melissa founders, municipal stakeholders, and business leaders to spearhead high-value networking programs, educational workshops, and collaborative partnership initiatives.",
+    business: "Buffalo Joe’s Barber Lounge",
+    bio: "Joey Mitnick is an entrepreneur with a passion for building businesses, developing leaders, and creating opportunities for others to succeed. As the owner of Buffalo Joe’s Barber Lounge, he has focused on growing a business rooted in exceptional customer experience, strong company culture, and community involvement.\n\nJoey is passionate about mentoring the next generation of conscientious business owners, fostering meaningful connections, and helping build a thriving local business community through collaboration, education, and service.",
     headshot: "/ccm-leaders/joey-mitnick.jpg",
     funFact: "Passionate about local business growth and community development.",
     email: "joey@communitycommercemelissa.com",
@@ -319,18 +319,6 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     email: "cindy@communitycommercemelissa.com",
     phone: "(972) 837-1006",
     objectPosition: "center 5%"
-  },
-  {
-    id: "board-7",
-    name: "Joel Valdez",
-    role: "Board Member",
-    business: "Community Commerce Melissa",
-    bio: "Experienced business leader bringing strategic insight, strong community relationships, and economic development focus to the Melissa leadership team. Joel focuses on fostering local trade, supporting young entrepreneurs, and expanding commercial opportunities across North Texas.",
-    headshot: "/ccm-leaders/joel-valdez.png",
-    funFact: "Dedicated to fostering local economic growth and community unity.",
-    email: "joel@communitycommercemelissa.com",
-    phone: "(972) 837-1007",
-    objectPosition: "top"
   }
 ];
 
