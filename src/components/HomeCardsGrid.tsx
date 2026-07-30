@@ -41,11 +41,11 @@ export default function HomeCardsGrid({
 
   return (
     <section className="py-14 bg-[#E5E9EE]">
-      {/* Expanded Container Width to eliminate squished cards */}
-      <div className="max-w-[1536px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
+      {/* Container */}
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
-        {/* 5-Column Responsive Grid with optimized column widths & spacing */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-5 items-stretch">
+        {/* Row 1: EVENTS, BUSINESS DIRECTORY, GET INVOLVED (Centered) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
           
           {/* Card 1: EVENTS */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
@@ -275,6 +275,11 @@ export default function HomeCardsGrid({
             </div>
           </div>
 
+        </div>
+
+        {/* Row 2: MEMBERSHIP, SPONSORSHIP (Centered) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
+          
           {/* Card 4: MEMBERSHIP */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
             <div>
@@ -406,6 +411,7 @@ export default function HomeCardsGrid({
           </div>
 
         </div>
+
       </div>
     </section>
   );
