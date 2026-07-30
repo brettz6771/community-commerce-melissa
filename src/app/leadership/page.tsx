@@ -50,7 +50,7 @@ export default function LeadershipPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
             {MOCK_BOARD_MEMBERS.map((member) => (
               <div
                 key={member.id}
@@ -58,11 +58,11 @@ export default function LeadershipPage() {
               >
                 <div>
                   {/* Headshot */}
-                  <div className="relative h-64 overflow-hidden bg-slate-900">
+                  <div className="relative h-72 overflow-hidden bg-slate-900">
                     <img
                       src={member.headshot}
                       alt={member.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                     
