@@ -44,7 +44,7 @@ export default function LeadershipPage() {
             <div className="text-xs text-red-700 font-semibold">{member.business}</div>
           </div>
 
-          <p className="text-xs text-slate-600 leading-relaxed">
+          <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
             {member.bio}
           </p>
         </div>
