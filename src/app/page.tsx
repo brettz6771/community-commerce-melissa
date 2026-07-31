@@ -126,9 +126,12 @@ export default function HomePage() {
                     UPCOMING INAUGURAL EVENT
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-extrabold font-outfit uppercase tracking-tight text-white">
-                    MEET & GREET NETWORKING MIXER
+                    OUR FIRST EVENT
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  <div className="text-sm font-extrabold text-red-400 uppercase tracking-wider">
+                    Meet & Greet Networking Mixer
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">
                     Join local Melissa business owners, founders, and community leaders for our first Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.
                   </p>
                 </div>
