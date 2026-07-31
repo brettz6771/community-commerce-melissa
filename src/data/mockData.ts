@@ -88,7 +88,7 @@ export const MOCK_EVENTS: EventItem[] = [
     location: "Red Feather Golf & Social, Melissa TX",
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
-    image: "/events/meet-and-greet-aug-24-26.jpeg",
+    image: "/events/meet-and-greet-aug-24-26-v2.jpg",
     isFeatured: true,
     registerUrl: "https://www.eventbrite.com/e/community-commerce-melissa-meet-greet-networking-night-tickets-1995479705516?utm_experiment=test_share_listing&aff=ebdsshios"
   }
