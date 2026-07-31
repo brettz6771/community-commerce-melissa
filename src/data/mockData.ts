@@ -218,11 +218,11 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     role: "Treasurer & Board Member",
     business: "Community Commerce Melissa",
     bio: "Jana Scarpati Martinez is a financial strategist and business owner leading a financial planning practice in Collin County. Holding an MBA and advanced certifications in financial planning and emerging tech, she works closely with entrepreneurs and families to navigate complex financial decisions, manage risk, and plan for long-term goals.\n\nAs Treasurer & Board Member, Jana supports Community Commerce Melissa through thoughtful financial oversight, transparency, and responsible stewardship. She is passionate about strengthening local business connections and keeping our organization community-focused, financially sound, and well-positioned for continued growth.",
-    headshot: "/ccm-leaders/jana.jpg",
+    headshot: "/ccm-leaders/jana-martinez.jpg",
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
     email: "jana@communitycommercemelissa.com",
     phone: "(972) 837-1003",
-    objectPosition: "center 18%"
+    objectPosition: "center 8%"
   },
   {
     id: "board-5",
@@ -234,7 +234,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
     email: "brett@communitycommercemelissa.com",
     phone: "(972) 837-1005",
-    objectPosition: "top"
+    objectPosition: "center 8%"
   },
   {
     id: "board-4",
@@ -246,7 +246,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Passionate about community involvement and local networking.",
     email: "alta@communitycommercemelissa.com",
     phone: "(972) 837-1004",
-    objectPosition: "top"
+    objectPosition: "center 8%"
   },
   {
     id: "board-6",
@@ -258,7 +258,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Loves organizing community gatherings and supporting small business owners.",
     email: "cindy@communitycommercemelissa.com",
     phone: "(972) 837-1006",
-    objectPosition: "center 5%"
+    objectPosition: "center 2%"
   }
 ];
 
