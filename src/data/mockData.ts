@@ -83,7 +83,7 @@ export const MOCK_EVENTS: EventItem[] = [
     title: "Meet & Greet Networking Mixer",
     date: "2026-08-24",
     month: "AUG",
-    day: "24-26",
+    day: "24",
     time: "6:00 PM - 8:00 PM",
     location: "Red Feather Golf & Social, Melissa TX",
     category: "Monthly Networking Mixers",
