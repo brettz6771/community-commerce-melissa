@@ -193,7 +193,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     name: "Chauntel Busche",
     role: "President & Board Member",
     business: "Community Commerce Melissa",
-    bio: "Dedicated community leader and passionate advocate for local Melissa business owners. With years of executive experience in community development and commercial growth, Chauntel leads Community Commerce Melissa with a clear mission: uniting local entrepreneurs, fostering high-impact strategic relationships, and building sustainable economic momentum throughout Collin County.",
+    bio: "Chauntel is the Owner & Founder of Makor Agency, where she helps businesses grow through strategic marketing, branding, and business development. With more than 20 years of leadership experience, she has built a career around creating impactful marketing strategies, developing strong partnerships, and helping organizations achieve sustainable growth.\n\nPassionate about empowering businesses and entrepreneurs, Chauntel combines creativity with proven business strategy to deliver meaningful results. She is committed to building lasting relationships, mentoring others, and helping clients strengthen their brands, expand their reach, and create long-term success through innovation, collaboration, and exceptional marketing.",
     headshot: "/ccm-leaders/chauntel-busche.jpg",
     funFact: "Enjoys spearheading local community initiatives and supporting Melissa businesses!",
     email: "chauntel@communitycommercemelissa.com",
