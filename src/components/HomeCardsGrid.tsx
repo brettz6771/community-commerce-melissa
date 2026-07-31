@@ -433,6 +433,8 @@ export default function HomeCardsGrid({
             </div>
           </div>
 
+        </div>
+
       </div>
 
       <ImageLightboxModal
