@@ -253,7 +253,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     name: "Cindy Karman",
     role: "Board Member",
     business: "Community Commerce Melissa",
-    bio: "Enthusiastic community champion focused on member engagement, local business partnerships, and organizing impactful events throughout Melissa. Cindy is passionate about building genuine business relationships, welcoming new members, and creating memorable networking experiences for our town.",
+    bio: "Cindy Karman is the owner and founder of Barefoot Naturals, a luxury natural bath and body company dedicated to creating handcrafted products made with high-quality ingredients. After moving to the Melissa, Texas area in 2019, Cindy and her family quickly became active members of the community, with two of her children attending Melissa ISD schools.\n\nBeyond her business, she is passionate about serving others through her work at Melissa DAEP, where she supports students, and by teaching parenting classes for Real Options to help strengthen families. Cindy also volunteers alongside her certified therapy dog, providing comfort and emotional support to individuals in hospitals and during crisis situations. Whether through her business, her profession, or her volunteer work, Cindy is committed to making a positive impact by promoting stronger communities.",
     headshot: "/ccm-leaders/cindy-karman.jpg",
     funFact: "Loves organizing community gatherings and supporting small business owners.",
     email: "cindy@communitycommercemelissa.com",
