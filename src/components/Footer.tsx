@@ -109,8 +109,7 @@ export default function Footer() {
               <li><Link href="/leadership" className="hover:text-white transition">Board of Directors</Link></li>
               <li><Link href="/events" className="hover:text-white transition">Interactive Event Calendar</Link></li>
               <li><Link href="/directory" className="hover:text-white transition">Searchable Business Directory</Link></li>
-              <li><Link href="/membership" className="hover:text-white transition">Membership Levels & Pricing</Link></li>
-              <li><Link href="/sponsorship" className="hover:text-white transition">Sponsorship Packages</Link></li>
+              <li><Link href="/news" className="hover:text-white transition">Latest News & Press</Link></li>
             </ul>
           </div>
 
@@ -134,7 +133,7 @@ export default function Footer() {
               STAY CONNECTED
             </h4>
             <p className="text-xs text-slate-400">
-              Subscribe for upcoming Melissa event alerts, member news, and economic development updates.
+              Subscribe for upcoming Melissa event alerts, community news, and economic development updates.
             </p>
             <form onSubmit={(e) => { e.preventDefault(); alert("Thank you for subscribing to Community Commerce Melissa!"); }} className="space-y-2">
               <input
@@ -164,7 +163,7 @@ export default function Footer() {
               className="h-12 w-auto object-contain"
             />
             <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
-              We are in the process of becoming a 501(c)(3)
+              Community Commerce Melissa is a 501(c)(3) non-profit organization.
             </span>
           </div>
 

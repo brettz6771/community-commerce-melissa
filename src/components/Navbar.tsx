@@ -19,8 +19,6 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
     { name: "LEADERSHIP", href: "/leadership" },
     { name: "EVENTS", href: "/events" },
     { name: "DIRECTORY", href: "/directory" },
-    { name: "MEMBERSHIP", href: "/membership" },
-    { name: "SPONSOR", href: "/sponsorship" },
     { name: "NEWS", href: "/news" },
   ];
 
@@ -118,23 +116,23 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
 
         {/* Action CTA */}
         <div className="hidden lg:flex items-center gap-3">
-          <button
-            onClick={onOpenJoinModal}
+          <Link
+            href="/contact"
             className="btn-red px-5 py-2.5 rounded-md font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-red-900/30"
           >
-            <UserPlus className="w-4 h-4 text-slate-200" />
-            JOIN TODAY
-          </button>
+            <PhoneCall className="w-4 h-4 text-slate-200" />
+            CONTACT US
+          </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
         <div className="lg:hidden flex items-center gap-2">
-          <button
-            onClick={onOpenJoinModal}
+          <Link
+            href="/contact"
             className="btn-red px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider"
           >
-            JOIN
-          </button>
+            CONTACT
+          </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-md text-slate-300 hover:text-white hover:bg-white/10 transition"
@@ -184,16 +182,14 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
           </div>
           
           <div className="pt-4 border-t border-white/10 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onOpenJoinModal) onOpenJoinModal();
-              }}
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
               className="w-full btn-red py-3 rounded-md font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
             >
-              <UserPlus className="w-4 h-4 text-slate-200" />
-              JOIN TODAY
-            </button>
+              <PhoneCall className="w-4 h-4 text-slate-200" />
+              CONTACT US
+            </Link>
           </div>
         </div>
       )}

@@ -102,69 +102,7 @@ export default function LeadershipPage() {
         </div>
       </section>
 
-      {/* Founding Members Leadership Recognition */}
-      <section className="py-16 bg-[#0B0E14] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <div className="max-w-2xl mx-auto space-y-3">
-            <h2 className="text-3xl font-extrabold font-outfit uppercase">
-              MEET THE <span className="text-slate-200">FOUNDING MEMBERS</span>
-            </h2>
-            <p className="text-slate-400 text-sm">
-              In addition to our board, these pioneer business leaders are helping lay the groundwork for Community Commerce Melissa.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-            {MOCK_FOUNDING_MEMBERS.map((fm, i) => {
-              const cardContent = (
-                <>
-                  {fm.logo ? (
-                    <div className="w-12 h-12 rounded-full bg-[#0B0E14] border border-slate-700/80 flex items-center justify-center overflow-hidden p-2 mx-auto shadow-md">
-                      <img src={fm.logo} alt={fm.name} className="w-full h-full object-contain" />
-                    </div>
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-red-800 text-slate-200 font-bold mx-auto flex items-center justify-center text-xs">
-                      {fm.logoText}
-                    </div>
-                  )}
-
-                  <div>
-                    <div className="font-bold text-xs text-white group-hover:text-red-400 transition-colors truncate">{fm.name}</div>
-                    <div className="text-[10px] text-slate-400 font-medium">{fm.category}</div>
-                  </div>
-
-                  <div className="text-[10px] text-slate-300 font-semibold uppercase">{fm.highlight}</div>
-                </>
-              );
-
-              return fm.website ? (
-                <a
-                  key={i}
-                  href={fm.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition flex flex-col items-center justify-between group block cursor-pointer"
-                >
-                  {cardContent}
-                </a>
-              ) : (
-                <div key={i} className="bg-[#1F2736] hover:bg-[#2A3447] border border-slate-600/60 p-4 rounded-xl text-center space-y-2 transition flex flex-col items-center justify-between">
-                  {cardContent}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="pt-6">
-            <button
-              onClick={() => setIsJoinModalOpen(true)}
-              className="btn-red px-6 py-3 rounded-md font-bold text-xs uppercase tracking-wider shadow-lg"
-            >
-              JOIN LEADERSHIP WALL AS A FOUNDING MEMBER ($200 LAUNCH RATE)
-            </button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
 

@@ -56,12 +56,12 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
 
           {/* Action CTAs */}
           <div className="pt-2 flex flex-wrap items-center gap-4">
-            <button
-              onClick={onOpenJoinModal}
+            <Link
+              href="/contact"
               className="btn-red px-7 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider shadow-xl shadow-red-950/50 flex items-center gap-2"
             >
-              JOIN THE MOVEMENT
-            </button>
+              GET IN TOUCH
+            </Link>
 
             <Link
               href="/events"

@@ -85,45 +85,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* First 100 Sign-Ups Launch Offer Banner */}
-          <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-2xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 bg-slate-200 text-red-950 font-black px-3 py-1 rounded-full text-xs uppercase tracking-wider shadow">
-                <Sparkles className="w-4 h-4 fill-current" />
-                LIMITED LAUNCH OFFER
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-outfit text-white uppercase tracking-tight">
-                First 100 Sign-Ups Get The <span className="text-slate-200">$200/Yr</span> Deal!
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-200 max-w-xl">
-                Be one of our first 100 members to lock in the Founding Partner rate for only <strong className="text-white font-bold">$200/year</strong> (Saving $150 off standard $350/yr regular pricing).
-              </p>
-            </div>
-
-            <button
-              onClick={() => setIsJoinModalOpen(true)}
-              className="bg-slate-200 hover:bg-white text-red-950 font-black px-7 py-3.5 rounded-xl text-xs uppercase tracking-wider shrink-0 shadow-2xl flex items-center gap-2 transform hover:scale-105 transition"
-            >
-              CLAIM YOUR $200 RATE NOW
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
         </div>
       </section>
 
       {/* Quote & Value Proposition Section */}
       <QuoteSection />
 
-      {/* 5 Feature Cards Grid (Events, Directory, Get Involved, Membership, Sponsorship) */}
+      {/* Feature Cards Grid (Events, Directory, Get Involved) */}
       <HomeCardsGrid
         onOpenJoinModal={() => setIsJoinModalOpen(true)}
         onOpenRSVPModal={handleOpenRSVP}
         onOpenSponsorModal={() => setIsJoinModalOpen(true)}
       />
-
-      {/* Founding Members Recognition Wall */}
-      <FoundingMembersWall onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
       {/* Video & Community Spotlight Banner */}
       <section className="py-16 bg-white text-slate-900 border-t border-b border-slate-200/80 shadow-sm">

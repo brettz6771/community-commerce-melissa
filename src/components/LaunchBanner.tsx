@@ -21,9 +21,8 @@ export default function LaunchBanner({ onOpenJoinModal }: { onOpenJoinModal?: ()
     return () => clearInterval(timer);
   }, []);
 
-  if (!isVisible) return null;
-
-  return (
+  // Hidden for live launch per request
+  return null;
     <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 text-white px-4 py-2.5 shadow-md border-b border-red-700/40 relative z-50">
       <div className="w-full px-4 sm:px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs md:text-sm">
         

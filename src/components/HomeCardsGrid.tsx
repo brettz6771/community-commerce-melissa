@@ -259,188 +259,56 @@ export default function HomeCardsGrid({
 
                 {/* Subitems */}
                 <div className="space-y-2">
-                  <div 
-                    className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer" 
-                    onClick={onOpenJoinModal}
+                  <Link 
+                    href="/directory"
+                    className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer block" 
                   >
                     <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       1
                     </div>
                     <div>
-                      <div className="font-extrabold text-xs text-slate-900">BECOME A MEMBER</div>
-                      <div className="text-[10px] text-slate-600 mt-0.5">Join our community of local business leaders.</div>
+                      <div className="font-extrabold text-xs text-slate-900 uppercase">EXPLORE THE DIRECTORY</div>
+                      <div className="text-[10px] text-slate-600 mt-0.5">Search and connect with local Melissa businesses.</div>
                     </div>
-                  </div>
+                  </Link>
 
-                  <div 
-                    className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer" 
-                    onClick={onOpenSponsorModal}
+                  <Link 
+                    href="/events"
+                    className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer block" 
                   >
                     <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       2
                     </div>
                     <div>
-                      <div className="font-extrabold text-xs text-slate-900">SPONSOR AN EVENT</div>
-                      <div className="text-[10px] text-slate-600 mt-0.5">Promote your business and support our mission.</div>
+                      <div className="font-extrabold text-xs text-slate-900 uppercase">ATTEND AN EVENT</div>
+                      <div className="text-[10px] text-slate-600 mt-0.5">Network, connect, and build lasting relationships.</div>
                     </div>
-                  </div>
+                  </Link>
 
-                  <div className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition">
+                  <Link 
+                    href="/contact"
+                    className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer block"
+                  >
                     <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       3
                     </div>
                     <div>
-                      <div className="font-extrabold text-xs text-slate-900">ATTEND AN EVENT</div>
-                      <div className="text-[10px] text-slate-600 mt-0.5">Network, connect and build lasting relationships.</div>
+                      <div className="font-extrabold text-xs text-slate-900 uppercase">GET IN TOUCH</div>
+                      <div className="text-[10px] text-slate-600 mt-0.5">Reach out to our leadership team and get involved.</div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
 
             {/* Bottom Action Button */}
             <div className="p-3.5 sm:p-4 pt-0">
-              <button
-                onClick={onOpenJoinModal}
+              <Link
+                href="/contact"
                 className="w-full btn-red py-2.5 rounded-xl text-center text-xs font-extrabold uppercase tracking-wider block shadow-md hover:shadow-lg transition-all"
               >
-                GET INVOLVED
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Row 2: MEMBERSHIP, SPONSORSHIP (Centered) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto items-stretch">
-          
-          {/* Card 4: MEMBERSHIP */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
-            <div>
-              {/* Header */}
-              <div className="bg-[#0B0E14] text-white py-3 px-4 flex items-center gap-2.5 border-b-2 border-red-700">
-                <div className="w-8 h-8 rounded-lg bg-red-700 flex items-center justify-center text-white shrink-0 shadow-md">
-                  <Users className="w-4 h-4" />
-                </div>
-                <h3 className="font-outfit font-extrabold text-sm tracking-wider uppercase text-white">
-                  MEMBERSHIP
-                </h3>
-              </div>
-
-              {/* Body */}
-              <div className="p-3.5 sm:p-4 space-y-2.5">
-                <div>
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                    BELONG. CONNECT. GROW TOGETHER.
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Membership opens doors, builds relationships, and strengthens our community.
-                  </p>
-                </div>
-
-                <ul className="space-y-1.5 text-xs text-slate-700 font-medium">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Increase Your Visibility</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Exclusive Networking</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Business Resources</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Community Impact</span>
-                  </li>
-                </ul>
-
-                {/* Photo Preview */}
-                <div className="pt-1">
-                  <img
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=400"
-                    alt="Melissa Members"
-                    className="w-full h-20 object-cover rounded-xl border border-slate-200 shadow-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Action Button */}
-            <div className="p-3.5 sm:p-4 pt-0">
-              <button
-                onClick={onOpenJoinModal}
-                className="w-full btn-red py-2.5 rounded-xl text-center text-xs font-extrabold uppercase tracking-wider block shadow-md hover:shadow-lg transition-all"
-              >
-                BECOME A MEMBER
-              </button>
-            </div>
-          </div>
-
-          {/* Card 5: SPONSORSHIP */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
-            <div>
-              {/* Header */}
-              <div className="bg-[#0B0E14] text-white py-3 px-4 flex items-center gap-2.5 border-b-2 border-red-700">
-                <div className="w-8 h-8 rounded-lg bg-red-700 flex items-center justify-center text-white shrink-0 shadow-md">
-                  <Star className="w-4 h-4" />
-                </div>
-                <h3 className="font-outfit font-extrabold text-sm tracking-wider uppercase text-white">
-                  SPONSORSHIP
-                </h3>
-              </div>
-
-              {/* Body */}
-              <div className="p-3.5 sm:p-4 space-y-2.5">
-                <div>
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                    PARTNER WITH PURPOSE.
-                  </h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Sponsorships help fuel events, programs, and initiatives that make a difference.
-                  </p>
-                </div>
-
-                <ul className="space-y-1.5 text-xs text-slate-700 font-medium">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Showcase Your Brand</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Support Local Growth</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Make Lasting Impact</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                    <span>Reach a Targeted Audience</span>
-                  </li>
-                </ul>
-
-                {/* Photo Preview */}
-                <div className="pt-1">
-                  <img
-                    src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=400"
-                    alt="Sponsor Events"
-                    className="w-full h-20 object-cover rounded-xl border border-slate-200 shadow-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Action Button */}
-            <div className="p-3.5 sm:p-4 pt-0">
-              <button
-                onClick={onOpenSponsorModal}
-                className="w-full btn-red py-2.5 rounded-xl text-center text-xs font-extrabold uppercase tracking-wider block shadow-md hover:shadow-lg transition-all"
-              >
-                SPONSOR TODAY
-              </button>
+                GET IN TOUCH
+              </Link>
             </div>
           </div>
 

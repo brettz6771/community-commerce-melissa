@@ -31,7 +31,7 @@ export default function AboutPage() {
 
   const milestones = [
     { year: "Q1 2026", title: "Community Vision Founded", desc: "Local Melissa business leaders unite to form Community Commerce Melissa." },
-    { year: "Q2 2026", title: "Launch of Founding Member Special", desc: "Released the $200 Launch Special for Founding Partners with permanent logo recognition." },
+    { year: "Q2 2026", title: "Official 501(c)(3) Non-Profit Status", desc: "Established Community Commerce Melissa as a registered 501(c)(3) non-profit organization." },
     { year: "Q3 2026", title: "First Annual Melissa Expo", desc: "Bringing 60+ local vendors and 1,000+ residents together at the Z-Plex." },
     { year: "Q4 2026+", title: "Digital Hub & Member Portal", desc: "Expanding interactive tools, job boards, and business referral automation." }
   ];
