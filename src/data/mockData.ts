@@ -210,7 +210,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Passionate about local business growth and community development.",
     email: "joey@communitycommercemelissa.com",
     phone: "(972) 837-1002",
-    objectPosition: "center 15%"
+    objectPosition: "center top"
   },
   {
     id: "board-3",
