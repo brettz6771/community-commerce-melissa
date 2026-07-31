@@ -31,12 +31,7 @@ export default function EventsPage() {
 
   const categories = [
     "All",
-    "Monthly Networking Mixers",
-    "Coffee & Connections",
-    "Lunch & Learns",
-    "Business Expo",
-    "Women in Business",
-    "Young Professionals"
+    "Monthly Networking Mixers"
   ];
 
   const filteredEvents = MOCK_EVENTS.filter((evt) => {
