@@ -77,20 +77,6 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-                  
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-md flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 fill-current" />
-                    FIRST INAUGURAL EVENT
-                  </div>
-
-                  {/* Zoom Overlay Hint */}
-                  <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/20 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition shadow-lg">
-                    <ZoomIn className="w-4 h-4 text-red-400" />
-                    <span>Expand Flyer</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Right Column: Event Details & Registration */}
               <div className="lg:col-span-7 space-y-5">
