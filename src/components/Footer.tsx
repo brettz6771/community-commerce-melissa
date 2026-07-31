@@ -73,21 +73,21 @@ export default function Footer() {
           
           {/* Col 1: Brand & Monogram */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 group">
               <img
-                src="/community-commerce-logo-transparent.png"
+                src="/ccm-logo-transparent.png"
                 alt="Community Commerce Melissa Logo"
-                className="w-10 h-10 object-contain"
+                className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
               />
               <div className="flex flex-col">
-                <span className="font-outfit font-extrabold text-sm tracking-wider text-white uppercase">
+                <span className="font-outfit font-extrabold text-sm tracking-wider text-white uppercase group-hover:text-red-400 transition-colors">
                   COMMUNITY COMMERCE
                 </span>
                 <span className="font-outfit font-bold text-[10px] tracking-widest text-slate-300 uppercase">
                   MELISSA, TEXAS
                 </span>
               </div>
-            </div>
+            </Link>
 
             <p className="text-xs text-slate-400 leading-relaxed">
               The trusted online business hub connecting, promoting, educating, and strengthening the local business community in Melissa, Texas.
@@ -157,11 +157,13 @@ export default function Footer() {
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           
           <div className="flex items-center gap-3">
-            <img
-              src="/ccm-logo-transparent.png"
-              alt="Community Commerce Melissa Logo"
-              className="h-12 w-auto object-contain"
-            />
+            <Link href="/" className="shrink-0 hover:scale-105 transition-transform">
+              <img
+                src="/ccm-logo-transparent.png"
+                alt="Community Commerce Melissa Logo"
+                className="h-12 w-auto object-contain"
+              />
+            </Link>
             <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
               Community Commerce Melissa is a 501(c)(3) non-profit organization.
             </span>
