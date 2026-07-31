@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
-import { Play, Sparkles, Video, Calendar, Clock, MapPin, Ticket, ExternalLink, ZoomIn } from "lucide-react";
+import { Play, Sparkles, Video, Calendar, Clock, MapPin, Ticket, ExternalLink, ZoomIn, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
