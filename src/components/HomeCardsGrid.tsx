@@ -108,12 +108,23 @@ export default function HomeCardsGrid({
                           <span className="text-xs font-black text-white">{evt.day}</span>
                         </div>
 
-                        <button
-                          onClick={() => onOpenRSVPModal?.(evt.title)}
-                          className="bg-red-700 hover:bg-red-800 text-white font-extrabold text-[9px] px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 transition shadow-sm"
-                        >
-                          REGISTER
-                        </button>
+                        {evt.registerUrl ? (
+                          <a
+                            href={evt.registerUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-red-700 hover:bg-red-800 text-white font-extrabold text-[9px] px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 transition shadow-sm inline-block text-center"
+                          >
+                            REGISTER
+                          </a>
+                        ) : (
+                          <button
+                            onClick={() => onOpenRSVPModal?.(evt.title)}
+                            className="bg-red-700 hover:bg-red-800 text-white font-extrabold text-[9px] px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 transition shadow-sm"
+                          >
+                            REGISTER
+                          </button>
+                        )}
                       </div>
 
                       {/* Event Title */}

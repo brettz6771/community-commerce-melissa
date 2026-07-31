@@ -55,7 +55,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
             <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-xs space-y-2 text-left">
               <div className="flex items-center gap-2 text-slate-300">
                 <Calendar className="w-4 h-4 text-red-500 shrink-0" />
-                <span>May 24, 2026 • 6:00 PM - 8:00 PM</span>
+                <span>August 24, 2026 • 6:00 PM - 8:00 PM</span>
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <MapPin className="w-4 h-4 text-red-500 shrink-0" />

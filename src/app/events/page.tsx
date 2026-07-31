@@ -198,12 +198,23 @@ export default function EventsPage() {
                         Directions
                       </a>
 
-                      <button
-                        onClick={() => handleRSVP(evt.title)}
-                        className="btn-red px-4 py-2 rounded text-xs font-bold uppercase tracking-wider shadow"
-                      >
-                        REGISTER / RSVP NOW
-                      </button>
+                      {evt.registerUrl ? (
+                        <a
+                          href={evt.registerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-red px-4 py-2 rounded text-xs font-bold uppercase tracking-wider shadow inline-block text-center"
+                        >
+                          REGISTER / RSVP NOW
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => handleRSVP(evt.title)}
+                          className="btn-red px-4 py-2 rounded text-xs font-bold uppercase tracking-wider shadow"
+                        >
+                          REGISTER / RSVP NOW
+                        </button>
+                      )}
                     </div>
 
                   </div>

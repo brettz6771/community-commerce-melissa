@@ -10,6 +10,7 @@ export interface EventItem {
   description: string;
   image: string;
   isFeatured?: boolean;
+  registerUrl?: string;
 }
 
 export interface BusinessItem {
@@ -88,7 +89,8 @@ export const MOCK_EVENTS: EventItem[] = [
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
     image: "/events/meet-and-greet-aug-24-26.jpeg",
-    isFeatured: true
+    isFeatured: true,
+    registerUrl: "https://www.eventbrite.com/e/community-commerce-melissa-meet-greet-networking-night-tickets-1995479705516?utm_experiment=test_share_listing&aff=ebdsshios"
   }
 ];
 
