@@ -240,7 +240,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     id: "board-4",
     name: "Alta Simmons",
     role: "Board Member",
-    business: "National University",
+    business: "Community Commerce Melissa",
     bio: "Alta Simmons is the Strategic Partnerships Manager at National University, strengthening workforce development and educational partnerships across Texas. A first-generation college graduate with an M.A. in Education (4.0 GPA) with Distinction, she is a strong advocate for servant leadership and lifelong learning.\n\nWithin CCM, Alta serves as a founding member committed to building meaningful relationships, supporting business owners, and teaching entrepreneurship, financial literacy, and community impact.",
     headshot: "/ccm-leaders/alta-simmons.jpg",
     funFact: "Passionate about community involvement and local networking.",
