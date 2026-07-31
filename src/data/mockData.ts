@@ -322,7 +322,7 @@ export const MOCK_NEWS: NewsArticle[] = [
   {
     id: "announcing-our-first-event",
     title: "Announcing Our Inaugural Event & The Foundation of Community Commerce Melissa",
-    date: "August 1, 2026",
+    date: "July 31, 2026",
     category: "Official Announcement",
     author: "Community Commerce Team",
     summary: "We are thrilled to officially announce our inaugural Meet & Greet Networking Mixer on August 24, 2026! Discover the story behind the founding of Community Commerce Melissa and our mission to unite local entrepreneurs.",
