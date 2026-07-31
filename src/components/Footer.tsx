@@ -3,10 +3,10 @@
 import React from "react";
 import Link from "next/link";
 import { 
-  Users, 
+  Heart, 
   ShieldCheck, 
+  Users, 
   Calendar, 
-  TrendingUp, 
   MapPin,
   Mail,
   Phone
@@ -23,6 +23,28 @@ export default function Footer() {
           {/* Pillar 1 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">501(c)(3) NON-PROFIT</h4>
+              <p className="text-xs text-slate-400 mt-1">Official non-profit organization focused entirely on community service.</p>
+            </div>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
+              <Heart className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">GIVING BACK TO MELISSA</h4>
+              <p className="text-xs text-slate-400 mt-1">Reinvesting in local causes, youth programs, and community needs.</p>
+            </div>
+          </div>
+
+          {/* Pillar 3 */}
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <Users className="w-5 h-5" />
             </div>
             <div>
@@ -31,18 +53,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Pillar 2 */}
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">501(c)(3) NON-PROFIT</h4>
-              <p className="text-xs text-slate-400 mt-1">Transparent stewardship dedicated to serving our community.</p>
-            </div>
-          </div>
-
-          {/* Pillar 3 */}
+          {/* Pillar 4 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <Calendar className="w-5 h-5" />
@@ -50,17 +61,6 @@ export default function Footer() {
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-white">NETWORKING & EVENTS</h4>
               <p className="text-xs text-slate-400 mt-1">Monthly mixers, workshops, and collaborative gatherings.</p>
-            </div>
-          </div>
-
-          {/* Pillar 4 */}
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">COMMUNITY GROWTH</h4>
-              <p className="text-xs text-slate-400 mt-1">Building sustainable economic momentum across Melissa.</p>
             </div>
           </div>
 

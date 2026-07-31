@@ -23,10 +23,10 @@ export default function AboutPage() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const coreValues = [
+    { title: "501(c)(3) Non-Profit Purpose", desc: "Built as an official 501(c)(3) non-profit organization dedicated entirely to serving the Melissa community with transparent stewardship." },
+    { title: "Giving Back to Melissa", desc: "Reinvesting our resources into local community causes, education, youth initiatives, and supporting families throughout Melissa." },
     { title: "Collaboration Over Competition", desc: "We believe when one Melissa business wins, our entire town grows stronger together." },
-    { title: "Accessibility & Value", desc: "Keeping membership accessible and focused on delivering real tangible value rather than steep annual dues." },
-    { title: "Local First Impact", desc: "Prioritizing local vendors, local jobs, and local capital reinvestment in Collin County." },
-    { title: "Authentic Connection", desc: "Fostering genuine business relationships over transactional networking." }
+    { title: "Servant Leadership & Impact", desc: "Fostering genuine relationships, mentorship, and meaningful community service over transactional networking." }
   ];
 
   const milestones = [
@@ -53,7 +53,7 @@ export default function AboutPage() {
               &ldquo;Not a Chamber. <span className="text-slate-200">A Community.&rdquo;</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              We are a modern, relationship-driven commerce network championing Melissa businesses through visibility, mentorship, and high-impact events.
+              We are an official 501(c)(3) non-profit organization dedicated to serving Melissa, giving back to local causes, and championing local business growth.
             </p>
           </div>
         </div>
@@ -77,12 +77,12 @@ export default function AboutPage() {
               </p>
 
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                <strong>Community Commerce Melissa</strong> was founded to provide a nimble, technology-forward platform built on meaningful relationships, accessible membership, and active local promotion.
+                <strong>Community Commerce Melissa</strong> was founded as an official 501(c)(3) non-profit organization to provide a nimble, relationship-driven platform focused on giving back, community stewardship, and active local promotion.
               </p>
 
               <div className="bg-slate-50 border-l-4 border-slate-400 p-4 rounded-r-lg">
                 <p className="text-slate-800 text-sm font-semibold italic">
-                  &ldquo;Our focus is on delivering immediate value to local owners — putting your brand in front of residents and connecting you directly with decision makers.&rdquo;
+                  &ldquo;Our mission is to serve our community — giving back to local initiatives while putting your business directly in front of residents and leaders.&rdquo;
                 </p>
                 <div className="text-xs font-bold text-red-700 mt-2">— Melissa Commerce Founders</div>
               </div>
@@ -145,7 +145,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR MISSION</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                To foster sustainable economic growth in Melissa by connecting local entrepreneurs, amplifying local visibility, and creating powerful networking channels for business leaders.
+                To serve Melissa, Texas as a dedicated 501(c)(3) non-profit organization — connecting local entrepreneurs, giving back to community causes, and building a supportive, thriving economic ecosystem.
               </p>
             </div>
 
