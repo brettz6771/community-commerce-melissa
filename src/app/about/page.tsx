@@ -155,7 +155,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR VISION</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                To build North Texas&apos;s most active, tech-enabled business community — where every local business owner has the tools, connections, and support needed to thrive.
+                To build a vibrant, connected Melissa community where local businesses, entrepreneurs, and families thrive together — creating lasting economic opportunity, fostering genuine relationships, and making a meaningful impact through non-profit service.
               </p>
             </div>
 
