@@ -3,9 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { 
-  Smartphone, 
+  Users, 
   ShieldCheck, 
-  Settings, 
+  Calendar, 
   TrendingUp, 
   MapPin,
   Mail,
@@ -16,51 +16,51 @@ export default function Footer() {
   return (
     <footer className="bg-[#0B0E14] text-white border-t border-white/10">
       
-      {/* 4 Feature Highlights Bar (Directly matching mockup bottom strip) */}
+      {/* 4 Community Pillars Strip */}
       <div className="bg-[#12161F] border-b border-white/10 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-slate-300">
           
-          {/* Highlight 1 */}
+          {/* Pillar 1 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
-              <Smartphone className="w-5 h-5" />
+              <Users className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">MODERN & MOBILE</h4>
-              <p className="text-xs text-slate-400 mt-1">Beautiful design that looks great on any device.</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">LOCAL CONNECTIONS</h4>
+              <p className="text-xs text-slate-400 mt-1">Uniting Melissa business owners, founders, and leaders.</p>
             </div>
           </div>
 
-          {/* Highlight 2 */}
+          {/* Pillar 2 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">FAST & SECURE</h4>
-              <p className="text-xs text-slate-400 mt-1">Built with Next.js for performance and reliability.</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">501(c)(3) NON-PROFIT</h4>
+              <p className="text-xs text-slate-400 mt-1">Transparent stewardship dedicated to serving our community.</p>
             </div>
           </div>
 
-          {/* Highlight 3 */}
+          {/* Pillar 3 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
-              <Settings className="w-5 h-5" />
+              <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">EASY TO MANAGE</h4>
-              <p className="text-xs text-slate-400 mt-1">Simple updates for events, members, and content.</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">NETWORKING & EVENTS</h4>
+              <p className="text-xs text-slate-400 mt-1">Monthly mixers, workshops, and collaborative gatherings.</p>
             </div>
           </div>
 
-          {/* Highlight 4 */}
+          {/* Pillar 4 */}
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-red-900/40 border border-red-600/40 flex items-center justify-center text-slate-300 shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">BUILT TO SCALE</h4>
-              <p className="text-xs text-slate-400 mt-1">Scalable to grow with our community and our mission.</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">COMMUNITY GROWTH</h4>
+              <p className="text-xs text-slate-400 mt-1">Building sustainable economic momentum across Melissa.</p>
             </div>
           </div>
 
