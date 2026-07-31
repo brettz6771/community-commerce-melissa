@@ -229,7 +229,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     name: "Brett Zenker",
     role: "Secretary & Board Member",
     business: "Community Commerce Melissa",
-    bio: "Technology and marketing leader dedicated to innovating digital platforms, driving local business discovery, and expanding community outreach. Brett spearheads our web infrastructure, member directory technology, and digital promotion campaigns to keep Melissa businesses at the forefront of local commerce.",
+    bio: "Brett Zenker is the Co-Owner and Vice President of ZenTek USA, where he leads the company's technology strategy, IT services, software development, and digital innovation initiatives. With extensive expertise spanning managed IT services, cybersecurity, cloud solutions, custom software development, and business technology consulting, Brett is dedicated to helping organizations leverage technology to improve efficiency, security, and long-term growth.\n\nAs a leading expert in web development and digital solutions, Brett is passionate about building scalable systems, solving complex technical challenges, and delivering innovative solutions that empower businesses to succeed. He is committed to providing exceptional client service, staying at the forefront of emerging technologies, and helping organizations confidently navigate an ever-evolving digital landscape.",
     headshot: "/ccm-leaders/brett-zenker.jpg",
     funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
     email: "brett@communitycommercemelissa.com",
