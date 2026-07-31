@@ -191,7 +191,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
   {
     id: "board-1",
     name: "Chauntel Busche",
-    role: "President",
+    role: "President & Board Member",
     business: "Community Commerce Melissa",
     bio: "Dedicated community leader and passionate advocate for local Melissa business owners. With years of executive experience in community development and commercial growth, Chauntel leads Community Commerce Melissa with a clear mission: uniting local entrepreneurs, fostering high-impact strategic relationships, and building sustainable economic momentum throughout Collin County.",
     headshot: "/ccm-leaders/chauntel-busche.jpg",
@@ -203,8 +203,8 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
   {
     id: "board-2",
     name: "Joey Mitnick",
-    role: "Vice President",
-    business: "Buffalo Joe’s Barber Lounge",
+    role: "Vice President & Board Member",
+    business: "Community Commerce Melissa",
     bio: "Joey Mitnick is an entrepreneur with a passion for building businesses, developing leaders, and creating opportunities for others to succeed. As the owner of Buffalo Joe’s Barber Lounge, he has focused on growing a business rooted in exceptional customer experience, strong company culture, and community involvement.\n\nJoey is passionate about mentoring the next generation of conscientious business owners, fostering meaningful connections, and helping build a thriving local business community through collaboration, education, and service.",
     headshot: "/ccm-leaders/joey-mitnick.jpg",
     funFact: "Passionate about local business growth and community development.",
@@ -215,14 +215,26 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
   {
     id: "board-3",
     name: "Jana Scarpati Martinez",
-    role: "Board Member & Treasurer",
+    role: "Treasurer & Board Member",
     business: "Community Commerce Melissa",
-    bio: "Jana Scarpati Martinez is a financial strategist and business owner leading a financial planning practice in Collin County. Holding an MBA and advanced certifications in financial planning and emerging tech, she works closely with entrepreneurs and families to navigate complex financial decisions, manage risk, and plan for long-term goals.\n\nAs Board Member & Treasurer, Jana supports Community Commerce Melissa through thoughtful financial oversight, transparency, and responsible stewardship. She is passionate about strengthening local business connections and keeping our organization community-focused, financially sound, and well-positioned for continued growth.",
+    bio: "Jana Scarpati Martinez is a financial strategist and business owner leading a financial planning practice in Collin County. Holding an MBA and advanced certifications in financial planning and emerging tech, she works closely with entrepreneurs and families to navigate complex financial decisions, manage risk, and plan for long-term goals.\n\nAs Treasurer & Board Member, Jana supports Community Commerce Melissa through thoughtful financial oversight, transparency, and responsible stewardship. She is passionate about strengthening local business connections and keeping our organization community-focused, financially sound, and well-positioned for continued growth.",
     headshot: "/ccm-leaders/jana.jpg",
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
     email: "jana@communitycommercemelissa.com",
     phone: "(972) 837-1003",
     objectPosition: "center 18%"
+  },
+  {
+    id: "board-5",
+    name: "Brett Zenker",
+    role: "Secretary & Board Member",
+    business: "Community Commerce Melissa",
+    bio: "Technology and marketing leader dedicated to innovating digital platforms, driving local business discovery, and expanding community outreach. Brett spearheads our web infrastructure, member directory technology, and digital promotion campaigns to keep Melissa businesses at the forefront of local commerce.",
+    headshot: "/ccm-leaders/brett-zenker.jpg",
+    funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
+    email: "brett@communitycommercemelissa.com",
+    phone: "(972) 837-1005",
+    objectPosition: "top"
   },
   {
     id: "board-4",
@@ -234,18 +246,6 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Passionate about community involvement and local networking.",
     email: "alta@communitycommercemelissa.com",
     phone: "(972) 837-1004",
-    objectPosition: "top"
-  },
-  {
-    id: "board-5",
-    name: "Brett Zenker",
-    role: "Board Member",
-    business: "Community Commerce Melissa",
-    bio: "Technology and marketing leader dedicated to innovating digital platforms, driving local business discovery, and expanding community outreach. Brett spearheads our web infrastructure, member directory technology, and digital promotion campaigns to keep Melissa businesses at the forefront of local commerce.",
-    headshot: "/ccm-leaders/brett-zenker.jpg",
-    funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
-    email: "brett@communitycommercemelissa.com",
-    phone: "(972) 837-1005",
     objectPosition: "top"
   },
   {
