@@ -34,5 +34,3 @@ export default function HomeCardsGrid({
   // Hidden for now until ready
   return null;
 }
-  );
-}
