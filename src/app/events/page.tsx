@@ -7,6 +7,7 @@ import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import { MOCK_EVENTS } from "@/data/mockData";
+import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { 
   Calendar, 
   MapPin, 
@@ -16,7 +17,8 @@ import {
   CheckCircle2, 
   Download, 
   ExternalLink,
-  Tag
+  Tag,
+  ZoomIn
 } from "lucide-react";
 
 export default function EventsPage() {
@@ -25,6 +27,7 @@ export default function EventsPage() {
   const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string } | null>(null);
 
   const categories = [
     "All",
@@ -126,22 +129,30 @@ export default function EventsPage() {
                   className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-lg hover:shadow-xl transition flex flex-col sm:flex-row group"
                 >
                   {/* Event Thumbnail & Date Badge */}
-                  <div className="relative sm:w-48 h-48 sm:h-auto shrink-0 bg-slate-900">
+                  <div
+                    onClick={() => setLightboxImage({ src: evt.image, title: evt.title })}
+                    className="relative sm:w-48 h-48 sm:h-auto shrink-0 bg-slate-900 cursor-pointer overflow-hidden group/img"
+                    title="Click to expand photo"
+                  >
                     <img
                       src={evt.image}
                       alt={evt.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      className="w-full h-full object-cover group-hover/img:scale-110 transition duration-500"
                     />
-                    <div className="absolute inset-0 bg-black/30" />
+                    <div className="absolute inset-0 bg-black/30 group-hover/img:bg-black/10 transition-colors flex items-center justify-center">
+                      <div className="opacity-0 group-hover/img:opacity-100 transition-opacity bg-black/60 text-white p-2 rounded-full backdrop-blur-sm border border-white/20">
+                        <ZoomIn className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
                     
                     {/* Date Badge */}
-                    <div className="absolute top-3 left-3 bg-[#0B0E14] text-white rounded-lg p-2 text-center border border-slate-300/40 shadow-lg min-w-[56px]">
+                    <div className="absolute top-3 left-3 bg-[#0B0E14] text-white rounded-lg p-2 text-center border border-slate-300/40 shadow-lg min-w-[56px] pointer-events-none">
                       <div className="text-[10px] font-black text-slate-300 uppercase tracking-wider">{evt.month}</div>
                       <div className="text-xl font-extrabold text-white leading-none pt-0.5">{evt.day}</div>
                     </div>
 
                     {evt.isFeatured && (
-                      <span className="absolute bottom-3 left-3 bg-red-700 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded shadow">
+                      <span className="absolute bottom-3 left-3 bg-red-700 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded shadow pointer-events-none">
                         FEATURED EVENT
                       </span>
                     )}
@@ -159,7 +170,7 @@ export default function EventsPage() {
                         {evt.title}
                       </h3>
 
-                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-600 leading-relaxed">
                         {evt.description}
                       </p>
 
@@ -216,6 +227,14 @@ export default function EventsPage() {
         onClose={() => setIsRSVPModalOpen(false)}
         eventTitle={selectedEventTitle}
       />
+
+      <ImageLightboxModal
+        isOpen={!!lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        imageSrc={lightboxImage?.src || ""}
+        title={lightboxImage?.title || ""}
+      />
     </div>
   );
+}
 }

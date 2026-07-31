@@ -80,77 +80,15 @@ export const MOCK_EVENTS: EventItem[] = [
   {
     id: "evt-1",
     title: "Meet & Greet Networking Mixer",
-    date: "2026-05-24",
-    month: "MAY",
-    day: "24",
+    date: "2026-08-24",
+    month: "AUG",
+    day: "24-26",
     time: "6:00 PM - 8:00 PM",
     location: "Red Feather Golf & Social, Melissa TX",
     category: "Monthly Networking Mixers",
-    description: "Join local business owners and leaders for an evening of structured networking, complimentary appetizers, and community building.",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
+    description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
+    image: "/events/meet-and-greet-aug-24-26.jpeg",
     isFeatured: true
-  },
-  {
-    id: "evt-2",
-    title: "Melissa Business Expo & Showcase",
-    date: "2026-06-05",
-    month: "JUN",
-    day: "05",
-    time: "4:00 PM - 8:00 PM",
-    location: "Melissa Z-Plex Sports Center",
-    category: "Business Expo",
-    description: "The premier local showcase! Over 60 Melissa businesses presenting products, services, and live demonstrations to the community.",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800",
-    isFeatured: true
-  },
-  {
-    id: "evt-3",
-    title: "Coffee & Connections Morning Briefing",
-    date: "2026-06-18",
-    month: "JUN",
-    day: "18",
-    time: "8:30 AM - 10:00 AM",
-    location: "Daily Grind Coffee Shop, Melissa TX",
-    category: "Coffee & Connections",
-    description: "Start your morning with freshly brewed coffee and high-value conversations with fellow Melissa entrepreneurs.",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
-    isFeatured: true
-  },
-  {
-    id: "evt-4",
-    title: "Lunch & Learn: Digital Marketing Tactics for 2026",
-    date: "2026-07-08",
-    month: "JUL",
-    day: "08",
-    time: "11:45 AM - 1:15 PM",
-    location: "Melissa City Hall Community Room",
-    category: "Lunch & Learns",
-    description: "Learn practical SEO, social media strategies, and AI tools to convert local online searches into loyal customers.",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"
-  },
-  {
-    id: "evt-5",
-    title: "Women in Business Leadership Summit",
-    date: "2026-07-22",
-    month: "JUL",
-    day: "22",
-    time: "1:00 PM - 4:30 PM",
-    location: "Landmark Event Center",
-    category: "Women in Business",
-    description: "Empowering female business founders in Melissa with inspiring keynote speakers, roundtable discussions, and executive mentorship.",
-    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800"
-  },
-  {
-    id: "evt-6",
-    title: "Young Professionals Sunset Social",
-    date: "2026-08-12",
-    month: "AUG",
-    day: "12",
-    time: "6:30 PM - 8:30 PM",
-    location: "Melissa Town Center Lawn",
-    category: "Young Professionals",
-    description: "Casual evening event designed for next-generation business leaders and emerging entrepreneurs in North Texas.",
-    image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800"
   }
 ];
 

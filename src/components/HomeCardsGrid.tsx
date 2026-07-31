@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { 
   Calendar, 
   Search, 
@@ -13,7 +14,8 @@ import {
   Handshake,
   Building2,
   Clock,
-  MapPin
+  MapPin,
+  ZoomIn
 } from "lucide-react";
 import Link from "next/link";
 import { MOCK_EVENTS, MOCK_BUSINESSES } from "@/data/mockData";
@@ -31,6 +33,7 @@ export default function HomeCardsGrid({
 }: HomeCardsGridProps) {
   const [directoryQuery, setDirectoryQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string } | null>(null);
 
   const filteredPreviewBusinesses = MOCK_BUSINESSES.filter(biz => {
     const matchesSearch = biz.name.toLowerCase().includes(directoryQuery.toLowerCase()) ||
@@ -76,8 +79,28 @@ export default function HomeCardsGrid({
                   {MOCK_EVENTS.slice(0, 3).map((evt) => (
                     <div 
                       key={evt.id} 
-                      className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 p-2.5 rounded-xl space-y-1.5 transition-colors"
+                      className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 p-2.5 rounded-xl space-y-2 transition-colors"
                     >
+                      {/* Event Image Banner (Clickable Lightbox) */}
+                      {evt.image && (
+                        <div
+                          onClick={() => setLightboxImage({ src: evt.image, title: evt.title })}
+                          className="relative h-28 w-full rounded-lg overflow-hidden bg-slate-900 cursor-pointer group/img"
+                          title="Click to view full image"
+                        >
+                          <img
+                            src={evt.image}
+                            alt={evt.title}
+                            className="w-full h-full object-cover group-hover/img:scale-105 transition duration-500"
+                          />
+                          <div className="absolute inset-0 bg-black/20 group-hover/img:bg-black/10 transition-colors flex items-center justify-center">
+                            <div className="opacity-0 group-hover/img:opacity-100 transition-opacity bg-black/60 text-white p-1.5 rounded-full backdrop-blur-sm border border-white/20">
+                              <ZoomIn className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Top Bar: Date Badge & Register Button */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="bg-[#0B0E14] text-white rounded-md px-2 py-0.5 flex items-center gap-1 shrink-0 border border-slate-300/30">
@@ -87,19 +110,19 @@ export default function HomeCardsGrid({
 
                         <button
                           onClick={() => onOpenRSVPModal?.(evt.title)}
-                          className="bg-red-700 hover:bg-red-800 text-white font-extrabold text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider shrink-0 transition shadow-sm"
+                          className="bg-red-700 hover:bg-red-800 text-white font-extrabold text-[9px] px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0 transition shadow-sm"
                         >
                           REGISTER
                         </button>
                       </div>
 
-                      {/* Event Title (No Truncation) */}
+                      {/* Event Title */}
                       <div>
                         <h5 className="font-extrabold text-xs text-slate-900 leading-snug group-hover:text-red-700 transition-colors">
                           {evt.title}
                         </h5>
                         
-                        <div className="mt-0.5 flex flex-col text-[10px] text-slate-500 space-y-0.5">
+                        <div className="mt-1 flex flex-col text-[10px] text-slate-500 space-y-0.5">
                           <div className="flex items-center gap-1 truncate">
                             <MapPin className="w-3 h-3 text-red-600 shrink-0" />
                             <span className="truncate">{evt.location}</span>
@@ -410,9 +433,14 @@ export default function HomeCardsGrid({
             </div>
           </div>
 
-        </div>
-
       </div>
+
+      <ImageLightboxModal
+        isOpen={!!lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        imageSrc={lightboxImage?.src || ""}
+        title={lightboxImage?.title || ""}
+      />
     </section>
   );
 }
