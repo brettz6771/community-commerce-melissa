@@ -108,7 +108,6 @@ export default function Footer() {
               <li><Link href="/about" className="hover:text-white transition">About Community Commerce</Link></li>
               <li><Link href="/leadership" className="hover:text-white transition">Board of Directors</Link></li>
               <li><Link href="/events" className="hover:text-white transition">Interactive Event Calendar</Link></li>
-              <li><Link href="/directory" className="hover:text-white transition">Searchable Business Directory</Link></li>
               <li><Link href="/news" className="hover:text-white transition">Latest News & Press</Link></li>
             </ul>
           </div>

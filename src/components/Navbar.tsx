@@ -18,7 +18,6 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
     { name: "ABOUT", href: "/about" },
     { name: "LEADERSHIP", href: "/leadership" },
     { name: "EVENTS", href: "/events" },
-    { name: "DIRECTORY", href: "/directory" },
     { name: "NEWS", href: "/news" },
   ];
 

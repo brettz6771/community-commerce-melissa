@@ -47,8 +47,8 @@ export default function HomeCardsGrid({
       {/* Container */}
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
         
-        {/* Row 1: EVENTS, BUSINESS DIRECTORY, GET INVOLVED (Centered) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto items-stretch">
+        {/* Row 1: EVENTS, GET INVOLVED (Centered 2-Column Grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
           
           {/* Card 1: EVENTS */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
@@ -161,79 +161,7 @@ export default function HomeCardsGrid({
             </div>
           </div>
 
-          {/* Card 2: BUSINESS DIRECTORY */}
-          <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
-            <div>
-              {/* Header */}
-              <div className="bg-[#0B0E14] text-white py-3 px-4 flex items-center gap-2.5 border-b-2 border-red-700">
-                <div className="w-8 h-8 rounded-lg bg-red-700 flex items-center justify-center text-white shrink-0 shadow-md">
-                  <Building2 className="w-4 h-4" />
-                </div>
-                <h3 className="font-outfit font-extrabold text-sm tracking-wider uppercase text-white">
-                  BUSINESS DIRECTORY
-                </h3>
-              </div>
-
-              {/* Body */}
-              <div className="p-3.5 sm:p-4 space-y-2.5">
-                <div>
-                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-                    FIND LOCAL. SUPPORT LOCAL. GROW LOCAL.
-                  </h4>
-                </div>
-
-                {/* Filter Controls */}
-                <div className="space-y-1.5">
-                  <div className="relative">
-                    <Search className="w-3.5 h-3.5 absolute left-2.5 top-2 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Search businesses..."
-                      value={directoryQuery}
-                      onChange={(e) => setDirectoryQuery(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600 transition"
-                    />
-                  </div>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-red-600"
-                  >
-                    <option value="All">All Categories</option>
-                    <option value="Health & Wellness">Health & Wellness</option>
-                    <option value="Home Services">Home Services</option>
-                    <option value="Real Estate">Real Estate</option>
-                    <option value="Hospitality & Dining">Hospitality & Dining</option>
-                  </select>
-                </div>
-
-                {/* Business Preview List */}
-                <div className="space-y-1.5 pt-0.5">
-                  {filteredPreviewBusinesses.map((biz) => (
-                    <div key={biz.id} className="bg-slate-50 border border-slate-200/80 p-2 rounded-xl flex items-center gap-2.5 hover:bg-slate-100/80 transition-colors">
-                      <img src={biz.logo} alt={biz.name} className="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0 shadow-sm" />
-                      <div className="min-w-0 flex-1">
-                        <div className="font-extrabold text-xs text-slate-900 truncate leading-tight">{biz.name}</div>
-                        <div className="text-[10px] text-slate-500 truncate mt-0.5">{biz.category} • Melissa, TX</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Action Button */}
-            <div className="p-3.5 sm:p-4 pt-0">
-              <Link
-                href="/directory"
-                className="w-full btn-red py-2.5 rounded-xl text-center text-xs font-extrabold uppercase tracking-wider block shadow-md hover:shadow-lg transition-all"
-              >
-                VIEW DIRECTORY
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 3: GET INVOLVED */}
+          {/* Card 2: GET INVOLVED */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200/90 overflow-hidden flex flex-col justify-between group hover:shadow-2xl transition-all duration-300">
             <div>
               {/* Header */}
@@ -260,15 +188,15 @@ export default function HomeCardsGrid({
                 {/* Subitems */}
                 <div className="space-y-2">
                   <Link 
-                    href="/directory"
+                    href="/about"
                     className="flex items-start gap-2.5 p-2 rounded-xl border border-transparent hover:border-slate-300 bg-slate-50 hover:bg-slate-100 transition cursor-pointer block" 
                   >
                     <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-900 flex items-center justify-center shrink-0 font-black text-xs shadow-sm">
                       1
                     </div>
                     <div>
-                      <div className="font-extrabold text-xs text-slate-900 uppercase">EXPLORE THE DIRECTORY</div>
-                      <div className="text-[10px] text-slate-600 mt-0.5">Search and connect with local Melissa businesses.</div>
+                      <div className="font-extrabold text-xs text-slate-900 uppercase">OUR MISSION & LEADERSHIP</div>
+                      <div className="text-[10px] text-slate-600 mt-0.5">Learn about our vision, leaders, and community goals.</div>
                     </div>
                   </Link>
 
