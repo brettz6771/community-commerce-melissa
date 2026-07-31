@@ -198,7 +198,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Enjoys spearheading local community initiatives and supporting Melissa businesses!",
     email: "chauntel@communitycommercemelissa.com",
     phone: "(972) 837-1001",
-    objectPosition: "top"
+    objectPosition: "center 15%"
   },
   {
     id: "board-2",
@@ -210,7 +210,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Passionate about local business growth and community development.",
     email: "joey@communitycommercemelissa.com",
     phone: "(972) 837-1002",
-    objectPosition: "top"
+    objectPosition: "center 15%"
   },
   {
     id: "board-3",
@@ -222,7 +222,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
     email: "jana@communitycommercemelissa.com",
     phone: "(972) 837-1003",
-    objectPosition: "center 8%"
+    objectPosition: "center 78%"
   },
   {
     id: "board-5",
@@ -234,7 +234,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
     email: "brett@communitycommercemelissa.com",
     phone: "(972) 837-1005",
-    objectPosition: "center 8%"
+    objectPosition: "center 18%"
   },
   {
     id: "board-4",
@@ -246,7 +246,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Passionate about community involvement and local networking.",
     email: "alta@communitycommercemelissa.com",
     phone: "(972) 837-1004",
-    objectPosition: "center 8%"
+    objectPosition: "center 18%"
   },
   {
     id: "board-6",
@@ -258,7 +258,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     funFact: "Loves organizing community gatherings and supporting small business owners.",
     email: "cindy@communitycommercemelissa.com",
     phone: "(972) 837-1006",
-    objectPosition: "center 2%"
+    objectPosition: "center 10%"
   }
 ];
 
