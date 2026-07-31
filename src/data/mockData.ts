@@ -218,11 +218,11 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     role: "Treasurer & Board Member",
     business: "Community Commerce Melissa",
     bio: "Jana Scarpati Martinez is a financial strategist and business owner leading a financial planning practice in Collin County. Holding an MBA and advanced certifications in financial planning and emerging tech, she works closely with entrepreneurs and families to navigate complex financial decisions, manage risk, and plan for long-term goals.\n\nAs Treasurer & Board Member, Jana supports Community Commerce Melissa through thoughtful financial oversight, transparency, and responsible stewardship. She is passionate about strengthening local business connections and keeping our organization community-focused, financially sound, and well-positioned for continued growth.",
-    headshot: "/ccm-leaders/jana-martinez.jpg",
+    headshot: "/ccm-leaders/jana-martinez-v2.jpg",
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
     email: "jana@communitycommercemelissa.com",
     phone: "(972) 837-1003",
-    objectPosition: "center 18%"
+    objectPosition: "center 15%"
   },
   {
     id: "board-5",
