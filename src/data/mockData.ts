@@ -206,7 +206,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     role: "Vice President & Board Member",
     business: "Community Commerce Melissa",
     bio: "Joey Mitnick is an entrepreneur with a passion for building businesses, developing leaders, and creating opportunities for others to succeed. As the owner of Buffalo Joe’s Barber Lounge, he has focused on growing a business rooted in exceptional customer experience, strong company culture, and community involvement.\n\nJoey is passionate about mentoring the next generation of conscientious business owners, fostering meaningful connections, and helping build a thriving local business community through collaboration, education, and service.",
-    headshot: "/ccm-leaders/joey-mitnick.jpg",
+    headshot: "/ccm-leaders/joey-mitnick-v2.jpg",
     funFact: "Passionate about local business growth and community development.",
     email: "joey@communitycommercemelissa.com",
     phone: "(972) 837-1002",
