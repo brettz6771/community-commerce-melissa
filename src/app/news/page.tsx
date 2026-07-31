@@ -1,22 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import { MOCK_NEWS } from "@/data/mockData";
-import { Newspaper, Calendar, User, ArrowRight, Tag } from "lucide-react";
+import { Newspaper, Calendar, User, ArrowRight, Tag, Sparkles } from "lucide-react";
 
 export default function NewsPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<any | null>(null);
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
+      {/* Header Banner */}
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
@@ -25,64 +26,80 @@ export default function NewsPage() {
               NEWS & BLOG HUB
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              MELISSA BUSINESS <span className="text-slate-200">NEWS</span>
+              COMMUNITY <span className="text-slate-200">ANNOUNCEMENTS</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Stay informed with local commercial updates, economic development insights, and marketing tips for Melissa entrepreneurs.
+              Stay informed with official announcements, community milestone updates, and event news from Community Commerce Melissa.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="py-12 bg-[#E5E9EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MOCK_NEWS.map((art) => (
-              <div
-                key={art.id}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-lg hover:shadow-xl transition flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-48 bg-slate-900 overflow-hidden">
-                    <img
-                      src={art.image}
-                      alt={art.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    />
-                    <div className="absolute top-3 left-3 bg-red-700 text-white text-[10px] font-extrabold px-2.5 py-1 rounded uppercase tracking-wider">
-                      {art.category}
-                    </div>
+      {/* Blog Posts Grid */}
+      <section className="py-12 bg-[#E5E9EE] flex-grow">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          {MOCK_NEWS.map((art) => (
+            <div
+              key={art.id}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xl hover:shadow-2xl transition duration-300 grid grid-cols-1 md:grid-cols-12 group"
+            >
+              {/* Left Column: Image Banner */}
+              <Link href={`/news/${art.id}`} className="md:col-span-5 relative h-64 md:h-auto bg-slate-900 overflow-hidden block">
+                <img
+                  src={art.image}
+                  alt={art.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute top-4 left-4 bg-red-700 text-white text-[10px] font-extrabold px-3 py-1 rounded-md uppercase tracking-wider shadow-md flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 fill-current" />
+                  {art.category}
+                </div>
+              </Link>
+
+              {/* Right Column: Article Summary & Details */}
+              <div className="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-red-600" />
+                      {art.date}
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-slate-400" />
+                      By {art.author}
+                    </span>
                   </div>
 
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-red-600" />{art.date}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1"><User className="w-3.5 h-3.5 text-slate-400" />{art.author}</span>
-                    </div>
-
-                    <h3 className="font-extrabold text-lg font-outfit text-slate-900 group-hover:text-red-700 transition">
+                  <Link href={`/news/${art.id}`}>
+                    <h2 className="text-xl sm:text-2xl font-extrabold font-outfit text-slate-900 group-hover:text-red-700 transition-colors leading-snug">
                       {art.title}
-                    </h3>
+                    </h2>
+                  </Link>
 
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                      {art.summary}
-                    </p>
-                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-3">
+                    {art.summary}
+                  </p>
                 </div>
 
-                <div className="p-6 pt-0 border-t border-slate-100 mt-4">
-                  <button
-                    onClick={() => setSelectedArticle(art)}
-                    className="text-xs font-bold text-red-700 hover:text-red-800 flex items-center gap-1 uppercase tracking-wider pt-3"
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <Link
+                    href={`/news/${art.id}`}
+                    className="btn-red px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow flex items-center gap-2"
                   >
-                    Read Full Article
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                    <span>READ FULL ARTICLE</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+
+                  <span className="text-xs font-bold text-slate-400">
+                    Official Story
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+
         </div>
       </section>
 
@@ -92,20 +109,7 @@ export default function NewsPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
       />
-
-      {selectedArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-4 max-h-[85vh] overflow-y-auto text-slate-900 relative">
-            <button onClick={() => setSelectedArticle(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 text-lg">✕</button>
-            <span className="bg-red-100 text-red-700 text-[10px] font-bold uppercase px-2 py-0.5 rounded">{selectedArticle.category}</span>
-            <h2 className="text-2xl font-extrabold font-outfit">{selectedArticle.title}</h2>
-            <div className="text-xs text-slate-400">{selectedArticle.date} • By {selectedArticle.author}</div>
-            <img src={selectedArticle.image} alt={selectedArticle.title} className="w-full h-56 object-cover rounded-xl" />
-            <p className="text-sm text-slate-700 leading-relaxed">{selectedArticle.content}</p>
-            <p className="text-xs text-slate-500">For more community updates or to submit a member announcement, contact Community Commerce Melissa.</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+

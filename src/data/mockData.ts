@@ -320,33 +320,13 @@ export const MOCK_SPONSORSHIPS: SponsorshipTier[] = [
 
 export const MOCK_NEWS: NewsArticle[] = [
   {
-    id: "news-1",
-    title: "Community Commerce Melissa Officially Launches Founding Member Campaign",
-    date: "May 10, 2026",
-    category: "Community Announcement",
-    author: "Melissa Commerce Team",
-    summary: "Local business owners gather to announce a fresh, modern approach to business growth and networking in Melissa, Texas.",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
-    content: "Melissa, TX — Community Commerce Melissa is excited to introduce a new business organization built specifically for local entrepreneurs..."
-  },
-  {
-    id: "news-2",
-    title: "5 Proven Local Marketing Strategies for Melissa Small Businesses",
-    date: "May 02, 2026",
-    category: "Small Business Tips",
-    author: "Elena Rodriguez",
-    summary: "How to capture local search traffic, leverage community partnerships, and host memorable ribbon cutting celebrations.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-    content: "Growing a business in a rapidly expanding town like Melissa requires localized digital presence and genuine relationship building..."
-  },
-  {
-    id: "news-3",
-    title: "Spotlight on New Commercial Development Along Central Expressway",
-    date: "April 24, 2026",
-    category: "Economic Development",
-    author: "Marcus Vance",
-    summary: "New retail centers, dining options, and medical offices planned to open in Melissa later this year.",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
-    content: "The City of Melissa continues its historic commercial expansion with over $45M in new development scheduled for 2026..."
+    id: "announcing-our-first-event",
+    title: "Announcing Our Inaugural Event & The Foundation of Community Commerce Melissa",
+    date: "August 1, 2026",
+    category: "Official Announcement",
+    author: "Community Commerce Team",
+    summary: "We are thrilled to officially announce our inaugural Meet & Greet Networking Mixer on August 24, 2026! Discover the story behind the founding of Community Commerce Melissa and our mission to unite local entrepreneurs.",
+    image: "/events/meet-and-greet-aug-24-26-v2.jpg",
+    content: "We are thrilled to officially announce the launch of Community Commerce Melissa and invite our entire business community to our inaugural event: the Meet & Greet Networking Mixer on Monday, August 24, 2026, from 6:00 PM to 8:00 PM at Red Feather Golf & Social Club!\n\nCommunity Commerce Melissa was founded with a clear, singular vision: to create a dedicated, modern platform built by local business leaders, for local business leaders. As Melissa continues its remarkable growth, we recognized the vital need for an organization focused entirely on empowering entrepreneurs, fostering meaningful professional relationships, and driving sustainable commercial momentum throughout Collin County.\n\nNow established as an official 501(c)(3) non-profit organization, Community Commerce Melissa is built on four core pillars: Connection, Education, Promotion, and Community Stewardship. We believe that when local businesses thrive, our entire town grows stronger. Through interactive networking events, workshops, and digital promotion tools, we are dedicated to ensuring every Melissa business owner has the resources, visibility, and support they need to succeed.\n\nOur first Meet & Greet Networking Mixer will bring together local founders, small business owners, corporate leaders, and community partners for an evening of warm connections, collaborative discussion, and complimentary refreshments in a relaxed setting at Red Feather Golf & Social Club. Admission is completely free, and all local business owners and community members are warmly invited to attend!\n\nEvent Details:\n• Date: Monday, August 24, 2026\n• Time: 6:00 PM – 8:00 PM\n• Location: Red Feather Golf & Social Club, Melissa TX\n• Admission: FREE Event — Open to All Local Entrepreneurs\n\nReserve your ticket today via Eventbrite and be a part of history as we kick off Community Commerce Melissa together!"
   }
 ];
