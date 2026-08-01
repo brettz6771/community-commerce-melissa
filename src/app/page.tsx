@@ -5,6 +5,7 @@ import LaunchBanner from "@/components/LaunchBanner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import QuoteSection from "@/components/QuoteSection";
+import HomeCardsGrid from "@/components/HomeCardsGrid";
 import MobileLogoBanner from "@/components/MobileLogoBanner";
 import FoundingMembersWall from "@/components/FoundingMembersWall";
 import Footer from "@/components/Footer";
