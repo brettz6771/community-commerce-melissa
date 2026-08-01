@@ -30,10 +30,15 @@ export default function LeadershipPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
           
-          <div className="absolute bottom-3 left-3 right-3">
-            <span className="bg-red-700 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider shadow">
-              {member.role}
-            </span>
+          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-1.5 items-start">
+            {member.role.split(" / ").map((rolePart, idx) => (
+              <span
+                key={idx}
+                className="bg-red-700 text-white font-extrabold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider shadow inline-block"
+              >
+                {rolePart.trim()}
+              </span>
+            ))}
           </div>
         </div>
 
