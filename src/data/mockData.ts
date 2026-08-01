@@ -259,6 +259,18 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     email: "cindy@communitycommercemelissa.com",
     phone: "(972) 837-1006",
     objectPosition: "center 10%"
+  },
+  {
+    id: "board-7",
+    name: "Jax Edwards",
+    role: "Executive Advisor / Board Member",
+    business: "Community Commerce Melissa",
+    bio: "Jax Edwards is a business advisor, tax strategist, and legal professional dedicated to helping entrepreneurs build stronger, more successful organizations. As the founder of Jaxes Taxes, he works with business owners on tax planning, accounting, business strategy, and organizational structure, helping clients make informed decisions that support long-term growth.\n\nJax is passionate about equipping entrepreneurs with practical knowledge that creates lasting value for their businesses and communities. Through his expertise in business, taxation, and law, he is committed to helping organizations build strong foundations while fostering responsible entrepreneurship and sustainable economic growth.",
+    headshot: "/ccm-leaders/jax.jpg",
+    funFact: "Passionate about helping entrepreneurs build strong foundations.",
+    email: "jax@communitycommercemelissa.com",
+    phone: "(972) 837-1007",
+    objectPosition: "center 10%"
   }
 ];
 

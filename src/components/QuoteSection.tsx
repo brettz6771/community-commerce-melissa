@@ -10,7 +10,8 @@ const LEADERS = [
   { name: "Jana Scarpati Martinez", headshot: "/ccm-leaders/jana-martinez-v2.jpg" },
   { name: "Brett Zenker", headshot: "/ccm-leaders/brett-zenker.jpg" },
   { name: "Alta Simmons", headshot: "/ccm-leaders/alta-simmons.jpg" },
-  { name: "Cindy Karman", headshot: "/ccm-leaders/cindy-karman.jpg" }
+  { name: "Cindy Karman", headshot: "/ccm-leaders/cindy-karman.jpg" },
+  { name: "Jax Edwards", headshot: "/ccm-leaders/jax.jpg" }
 ];
 
 export default function QuoteSection() {
@@ -86,7 +87,7 @@ export default function QuoteSection() {
                   ))}
                 </div>
                 <span className="text-xs text-slate-500 font-semibold tracking-wide">
-                  6 Board Members
+                  7 Board Members
                 </span>
               </div>
             </div>

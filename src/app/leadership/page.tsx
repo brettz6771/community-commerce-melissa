@@ -11,8 +11,8 @@ import { Award, Mail, Phone, Play, ShieldCheck, Sparkles, Smile } from "lucide-r
 export default function LeadershipPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
-  const row1Members = MOCK_BOARD_MEMBERS.slice(0, 3);
-  const row2Members = MOCK_BOARD_MEMBERS.slice(3, 6);
+  const row1Members = MOCK_BOARD_MEMBERS.slice(0, 4);
+  const row2Members = MOCK_BOARD_MEMBERS.slice(4, 7);
 
   const renderLeaderCard = (member: typeof MOCK_BOARD_MEMBERS[0]) => (
     <div
@@ -90,13 +90,13 @@ export default function LeadershipPage() {
             </p>
           </div>
 
-          {/* Row 1: 3 Leaders */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
+          {/* Row 1: 4 Leaders */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
             {row1Members.map(renderLeaderCard)}
           </div>
 
           {/* Row 2: 3 Leaders */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch">
             {row2Members.map(renderLeaderCard)}
           </div>
         </div>
