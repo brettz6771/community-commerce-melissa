@@ -71,18 +71,6 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
               <ChevronRight className="w-4 h-4 text-slate-300" />
             </Link>
 
-            {/* Video Play Button */}
-            {onOpenVideoModal && (
-              <button
-                onClick={onOpenVideoModal}
-                className="hidden sm:flex items-center gap-2 text-xs text-slate-300 hover:text-white transition group ml-2"
-              >
-                <span className="w-10 h-10 rounded-full bg-white/10 group-hover:bg-red-600 flex items-center justify-center border border-white/20 transition backdrop-blur-sm">
-                  <Play className="w-4 h-4 text-white fill-current ml-0.5" />
-                </span>
-                <span className="font-semibold underline underline-offset-4 decoration-slate-300">Watch Welcome Video</span>
-              </button>
-            )}
           </div>
 
         </div>
