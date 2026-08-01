@@ -85,7 +85,7 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "AUG",
     day: "24",
     time: "6:00 PM - 8:00 PM",
-    location: "Red Feather, Melissa TX",
+    location: "The Red Feather",
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
     image: "/events/meet-and-greet-aug-24-26-v2.jpg",
