@@ -5,7 +5,7 @@ import LaunchBanner from "@/components/LaunchBanner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import QuoteSection from "@/components/QuoteSection";
-import HomeCardsGrid from "@/components/HomeCardsGrid";
+import MobileLogoBanner from "@/components/MobileLogoBanner";
 import FoundingMembersWall from "@/components/FoundingMembersWall";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
@@ -36,18 +36,7 @@ export default function HomePage() {
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
       {/* Mobile-Only Animated Logo Banner at the top above Hero */}
-      <div className="block md:hidden w-full bg-[#0B0E14] border-b border-white/10 p-4 text-center shadow-lg">
-        <video
-          src="/logo-animation.mp4"
-          poster="/logo-animation-still.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="w-full max-w-[280px] h-auto max-h-[160px] object-contain mx-auto rounded-lg"
-        />
-      </div>
+      <MobileLogoBanner />
 
       {/* Hero Section with Overlapping Stats */}
       <HeroSection
