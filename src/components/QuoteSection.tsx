@@ -4,43 +4,32 @@ import React, { useState, useEffect, useRef } from "react";
 import { CheckCircle2, Quote } from "lucide-react";
 
 export default function QuoteSection() {
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [isVideoEnded, setIsVideoEnded] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoCardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const attemptPlay = () => {
-      if (videoRef.current && !isVideoEnded) {
-        videoRef.current.play().catch((err) => {
-          console.log("Autoplay deferred:", err);
-        });
-      }
-    };
-
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting) {
-          attemptPlay();
+        if (entry.isIntersecting && !hasPlayed && videoRef.current) {
+          videoRef.current.play().catch((err) => {
+            console.log("Autoplay on scroll deferred:", err);
+          });
+          setHasPlayed(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.35 }
     );
 
     if (videoCardRef.current) {
       observer.observe(videoCardRef.current);
     }
 
-    // Try playing immediately in case section is already in viewport on page load
-    attemptPlay();
-
-    window.addEventListener("scroll", attemptPlay, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", attemptPlay);
-    };
-  }, [isVideoEnded]);
+    return () => observer.disconnect();
+  }, [hasPlayed]);
 
   const checkItems = [
     "Official 501(c)(3) non-profit organization",
@@ -58,31 +47,30 @@ export default function QuoteSection() {
           {/* Left White Box: Pure Animated Logo Video */}
           <div
             ref={videoCardRef}
-            className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-6 sm:p-8 shadow-lg border border-slate-200 flex items-center justify-center relative overflow-hidden min-h-[340px]"
+            className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 flex items-center justify-center relative overflow-hidden min-h-[380px]"
           >
             {!isVideoEnded ? (
               <video
                 ref={videoRef}
                 src="/logo-animation.mp4"
                 poster="/logo-animation-still.jpg"
-                autoPlay
                 muted
                 playsInline
                 preload="auto"
                 onEnded={() => setIsVideoEnded(true)}
-                className="w-full h-auto max-h-[300px] object-contain rounded-xl transition-all duration-500"
+                className="w-full h-full max-h-[360px] sm:max-h-[380px] object-contain rounded-xl transform scale-105 transition-all duration-500"
               />
             ) : (
               <img
                 src="/logo-animation-still.jpg"
                 alt="Community Commerce Melissa Logo"
-                className="w-full h-auto max-h-[300px] object-contain rounded-xl animate-in fade-in duration-700"
+                className="w-full h-full max-h-[360px] sm:max-h-[380px] object-contain rounded-xl transform scale-105 animate-in fade-in duration-700"
               />
             )}
           </div>
 
           {/* Middle Dark Card: OUR COMMITMENT */}
-          <div className="lg:col-span-4 bg-[#0F1218] text-white rounded-2xl p-8 md:p-10 shadow-xl border border-slate-800 relative overflow-hidden flex flex-col justify-between min-h-[340px]">
+          <div className="lg:col-span-4 bg-[#0F1218] text-white rounded-2xl p-8 md:p-10 shadow-xl border border-slate-800 relative overflow-hidden flex flex-col justify-between min-h-[380px]">
             {/* Background watermark quote */}
             <div className="absolute top-2 right-4 text-white/10 font-serif text-9xl font-black pointer-events-none select-none">
               “
@@ -114,7 +102,7 @@ export default function QuoteSection() {
           </div>
 
           {/* Right White Card: BUILT FOR CONNECTION */}
-          <div className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200 flex flex-col justify-between min-h-[340px]">
+          <div className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-6 md:p-8 shadow-lg border border-slate-200 flex flex-col justify-between min-h-[380px]">
             <div className="space-y-5">
               <div>
                 <h3 className="text-lg font-extrabold font-outfit uppercase tracking-wide text-slate-900 leading-tight">
