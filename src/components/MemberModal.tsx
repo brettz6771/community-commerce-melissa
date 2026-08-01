@@ -20,13 +20,42 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
     website: "",
     notes: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `New Member Application: ${formData.businessName || formData.ownerName} (${selectedTier})`,
+          formType: "Member Application Form",
+          senderEmail: formData.email,
+          senderName: formData.ownerName,
+          details: {
+            "Selected Tier": selectedTier,
+            "Business Name": formData.businessName,
+            "Owner / Contact Name": formData.ownerName,
+            "Email Address": formData.email,
+            "Phone Number": formData.phone || "N/A",
+            "Business Category": formData.category,
+            "Website": formData.website || "N/A",
+            "Additional Notes": formData.notes || "None"
+          }
+        })
+      });
+    } catch (err) {
+      console.error("Error submitting member application:", err);
+    } finally {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }
   };
 
   return (

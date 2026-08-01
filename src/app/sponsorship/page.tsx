@@ -20,11 +20,37 @@ import {
 export default function SponsorshipPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", company: "", email: "", phone: "", tier: "Community Champion (Platinum)" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `New Sponsorship Request: ${formData.company || formData.name} (${formData.tier})`,
+          formType: "Sponsorship Inquiry Form",
+          senderEmail: formData.email,
+          senderName: formData.name,
+          details: {
+            "Contact Name": formData.name,
+            "Company / Organization": formData.company,
+            "Email Address": formData.email,
+            "Phone Number": formData.phone || "N/A",
+            "Sponsorship Tier": formData.tier
+          }
+        })
+      });
+    } catch (err) {
+      console.error("Error submitting sponsorship inquiry:", err);
+    } finally {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }
   };
 
   return (

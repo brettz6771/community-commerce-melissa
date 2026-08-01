@@ -131,7 +131,35 @@ export default function Footer() {
             <p className="text-xs text-slate-400">
               Subscribe for upcoming Melissa event alerts, community news, and economic development updates.
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); alert("Thank you for subscribing to Community Commerce Melissa!"); }} className="space-y-2">
+            <form 
+              onSubmit={async (e) => { 
+                e.preventDefault(); 
+                const formEl = e.currentTarget;
+                const emailInput = formEl.querySelector<HTMLInputElement>("input[type='email']");
+                const emailVal = emailInput?.value || "";
+                
+                try {
+                  await fetch("/api/send-email", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      subject: `New Newsletter Subscription: ${emailVal}`,
+                      formType: "Newsletter Subscription",
+                      senderEmail: emailVal,
+                      details: {
+                        "Subscriber Email": emailVal
+                      }
+                    })
+                  });
+                } catch (err) {
+                  console.error("Error subscribing:", err);
+                }
+                
+                alert("Thank you for subscribing to Community Commerce Melissa!"); 
+                if (emailInput) emailInput.value = "";
+              }} 
+              className="space-y-2"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"

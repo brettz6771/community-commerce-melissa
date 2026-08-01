@@ -17,13 +17,40 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
     guests: "1",
     company: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsRegistered(true);
+    setIsSubmitting(true);
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `New Event RSVP: ${eventTitle} - ${formData.fullName}`,
+          formType: "Event RSVP Form",
+          senderEmail: formData.email,
+          senderName: formData.fullName,
+          details: {
+            "Event Title": eventTitle,
+            "Attendee Name": formData.fullName,
+            "Email Address": formData.email,
+            "Phone Number": formData.phone || "N/A",
+            "Company / Organization": formData.company || "N/A",
+            "Total Guests": formData.guests
+          }
+        })
+      });
+    } catch (err) {
+      console.error("Error submitting RSVP:", err);
+    } finally {
+      setIsSubmitting(false);
+      setIsRegistered(true);
+    }
   };
 
   return (

@@ -19,11 +19,37 @@ import {
 export default function ContactPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "General Inquiry", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSent(true);
+    setIsSubmitting(true);
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `Contact Form Submission: ${formData.subject}`,
+          formType: "Contact Us Form",
+          senderEmail: formData.email,
+          senderName: formData.name,
+          details: {
+            "Full Name": formData.name,
+            "Email Address": formData.email,
+            "Phone Number": formData.phone || "N/A",
+            "Subject": formData.subject,
+            "Message": formData.message
+          }
+        })
+      });
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+    } finally {
+      setIsSubmitting(false);
+      setIsSent(true);
+    }
   };
 
   return (

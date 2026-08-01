@@ -27,11 +27,38 @@ export default function VolunteerPage() {
     availability: "Weekends / Evenings",
     notes: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `New Volunteer Application: ${formData.fullName}`,
+          formType: "Volunteer Application Form",
+          senderEmail: formData.email,
+          senderName: formData.fullName,
+          details: {
+            "Full Name": formData.fullName,
+            "Email Address": formData.email,
+            "Phone Number": formData.phone || "N/A",
+            "Area of Interest": formData.roleInterest,
+            "Availability": formData.availability,
+            "Additional Notes": formData.notes || "None"
+          }
+        })
+      });
+    } catch (err) {
+      console.error("Error submitting volunteer form:", err);
+    } finally {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }
   };
 
   const volunteerRoles = [
