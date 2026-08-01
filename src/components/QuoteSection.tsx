@@ -4,32 +4,43 @@ import React, { useState, useEffect, useRef } from "react";
 import { CheckCircle2, Quote } from "lucide-react";
 
 export default function QuoteSection() {
-  const [hasPlayed, setHasPlayed] = useState(false);
   const [isVideoEnded, setIsVideoEnded] = useState(false);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoCardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    const attemptPlay = () => {
+      if (videoRef.current && !isVideoEnded) {
+        videoRef.current.play().catch((err) => {
+          console.log("Autoplay deferred:", err);
+        });
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting && !hasPlayed && videoRef.current) {
-          videoRef.current.play().catch((err) => {
-            console.log("Autoplay deferred:", err);
-          });
-          setHasPlayed(true);
+        if (entry.isIntersecting) {
+          attemptPlay();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
 
     if (videoCardRef.current) {
       observer.observe(videoCardRef.current);
     }
 
-    return () => observer.disconnect();
-  }, [hasPlayed]);
+    // Try playing immediately in case section is already in viewport on page load
+    attemptPlay();
+
+    window.addEventListener("scroll", attemptPlay, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", attemptPlay);
+    };
+  }, [isVideoEnded]);
 
   const checkItems = [
     "Official 501(c)(3) non-profit organization",
@@ -54,6 +65,7 @@ export default function QuoteSection() {
                 ref={videoRef}
                 src="/logo-animation.mp4"
                 poster="/logo-animation-still.jpg"
+                autoPlay
                 muted
                 playsInline
                 preload="auto"
