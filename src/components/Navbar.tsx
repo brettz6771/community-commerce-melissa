@@ -125,12 +125,6 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
 
         {/* Mobile Hamburger Button */}
         <div className="lg:hidden flex items-center gap-2">
-          <Link
-            href="/contact"
-            className="btn-red px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider"
-          >
-            CONTACT
-          </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-md text-slate-300 hover:text-white hover:bg-white/10 transition"
