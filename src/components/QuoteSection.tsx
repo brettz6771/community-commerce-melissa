@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { CheckCircle2, Quote } from "lucide-react";
+import { CheckCircle2, Quote, Users, ArrowRight } from "lucide-react";
+import Link from "next/link";
+
+const LEADERS = [
+  { name: "Chauntel Busche", headshot: "/ccm-leaders/chauntel-busche.jpg" },
+  { name: "Joey Mitnick", headshot: "/ccm-leaders/joey-mitnick-v2.jpg" },
+  { name: "Jana Scarpati Martinez", headshot: "/ccm-leaders/jana-martinez-v2.jpg" },
+  { name: "Brett Zenker", headshot: "/ccm-leaders/brett-zenker.jpg" },
+  { name: "Alta Simmons", headshot: "/ccm-leaders/alta-simmons.jpg" },
+  { name: "Cindy Karman", headshot: "/ccm-leaders/cindy-karman.jpg" }
+];
 
 export default function QuoteSection() {
   const [hasPlayed, setHasPlayed] = useState(false);
@@ -42,10 +52,60 @@ export default function QuoteSection() {
       <div className="w-full max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
-          {/* Left White Box: Pure Animated Logo Video (Continuously Looping) */}
+          {/* Mobile Only: Meet Our Leaders Card */}
+          <div className="flex lg:hidden flex-col justify-between bg-gradient-to-br from-white to-slate-50 text-slate-900 rounded-2xl p-6 sm:p-8 shadow-lg border border-slate-200 min-h-[380px]">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 text-red-700 font-bold text-xs uppercase tracking-widest">
+                <Users className="w-4 h-4" />
+                COMMUNITY LEADERS
+              </div>
+
+              <div>
+                <h3 className="text-xl sm:text-2xl font-extrabold font-outfit uppercase tracking-tight text-slate-900 leading-tight">
+                  THE VISIONARIES <br />
+                  BEHIND THE MISSION
+                </h3>
+                <div className="h-1 w-10 bg-red-600 rounded mt-2"></div>
+              </div>
+
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal pt-1">
+                Our board of dedicated local business owners, founders, and advocates is committed to championing economic momentum and community service in Melissa, Texas.
+              </p>
+
+              {/* Avatars Stack */}
+              <div className="flex items-center gap-3 pt-3">
+                <div className="flex -space-x-2.5 overflow-visible">
+                  {LEADERS.map((leader, i) => (
+                    <img
+                      key={i}
+                      className="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover transition-transform duration-300 hover:scale-110 hover:z-10 cursor-pointer"
+                      src={leader.headshot}
+                      alt={leader.name}
+                      title={leader.name}
+                    />
+                  ))}
+                </div>
+                <span className="text-xs text-slate-500 font-semibold tracking-wide">
+                  6 Board Members
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-slate-100">
+              <Link
+                href="/leadership"
+                className="inline-flex items-center justify-between w-full px-5 py-3.5 bg-[#0F1218] hover:bg-red-700 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wide uppercase transition-all duration-300 shadow-md group"
+              >
+                <span>Meet the Leadership Team</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1.5 transition-transform duration-300" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Left White Box: Pure Animated Logo Video (Continuously Looping) - Desktop Only */}
           <div
             ref={videoCardRef}
-            className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 flex items-center justify-center relative overflow-hidden min-h-[380px]"
+            className="hidden lg:flex lg:col-span-4 bg-white text-slate-900 rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 items-center justify-center relative overflow-hidden min-h-[380px]"
           >
             <video
               ref={videoRef}
