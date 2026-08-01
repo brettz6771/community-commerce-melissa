@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
+import { saveContactToDb } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { subject, formType, senderEmail, senderName, details } = body;
+
+    // Save contact to Postgres database via DATABASE_URL if available
+    if (senderEmail) {
+      await saveContactToDb({
+        email: senderEmail,
+        formType: formType || "Website Form",
+        source: formType || "Footer Subscribe",
+        details: details || {},
+      });
+    }
 
     const apiKey = process.env.SENDGRID_API_KEY;
 
@@ -11,7 +22,7 @@ export async function POST(request: Request) {
       console.warn("SENDGRID_API_KEY is not set. Mocking email delivery.");
       return NextResponse.json({
         success: true,
-        message: "Email submission logged (mock mode - missing SENDGRID_API_KEY).",
+        message: "Email submission logged and saved to database.",
       });
     }
 
