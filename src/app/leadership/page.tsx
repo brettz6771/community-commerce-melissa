@@ -59,7 +59,7 @@ export default function LeadershipPage() {
 
       {/* Header Banner */}
       <section className="bg-[#0B0E14] text-white py-16 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200/10 border border-slate-300/30 text-slate-200 font-bold text-xs uppercase tracking-widest">
               <Award className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function LeadershipPage() {
 
       {/* Board of Directors Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-4">
             <h2 className="text-3xl font-extrabold font-outfit uppercase text-slate-900">
               COMMUNITY COMMERCE LEADERSHIP TEAM
@@ -91,12 +91,12 @@ export default function LeadershipPage() {
           </div>
 
           {/* Row 1: 4 Leaders */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 max-w-7xl mx-auto items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
             {row1Members.map(renderLeaderCard)}
           </div>
 
           {/* Row 2: 3 Leaders */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-[1080px] mx-auto items-stretch">
             {row2Members.map(renderLeaderCard)}
           </div>
         </div>
