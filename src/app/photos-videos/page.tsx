@@ -13,7 +13,7 @@ export default function PhotosVideosPage() {
 
   const mediaItems = [
     { title: "Melissa Business Expo Highlights", type: "video", url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800" },
-    { title: "Monthly Mixer at Red Feather Social", type: "photo", url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800" },
+    { title: "Monthly Mixer at The Red Feather", type: "photo", url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800" },
     { title: "Ribbon Cutting: Landmark Title Melissa", type: "video", url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" },
     { title: "Drone Aerial View of Melissa Town Center", type: "video", url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800" },
     { title: "Coffee & Connections Morning Meetup", type: "photo", url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800" },

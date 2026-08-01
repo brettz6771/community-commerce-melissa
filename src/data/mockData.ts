@@ -85,7 +85,7 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "AUG",
     day: "24",
     time: "6:00 PM - 8:00 PM",
-    location: "Red Feather Golf & Social, Melissa TX",
+    location: "Red Feather, Melissa TX",
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
     image: "/events/meet-and-greet-aug-24-26-v2.jpg",
@@ -112,7 +112,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   },
   {
     id: "biz-2",
-    name: "Red Feather Golf & Social Club",
+    name: "The Red Feather",
     category: "Hospitality & Dining",
     description: "Premier private golf club and event lawn offering world-class dining, corporate events, and networking spaces.",
     address: "3400 Red Feather Way, Melissa, TX",
@@ -327,6 +327,6 @@ export const MOCK_NEWS: NewsArticle[] = [
     author: "Community Commerce Team",
     summary: "We are thrilled to officially announce our inaugural Meet & Greet Networking Mixer on August 24, 2026! Discover the story behind the founding of Community Commerce Melissa and our mission to unite local entrepreneurs.",
     image: "/events/meet-and-greet-aug-24-26-v2.jpg",
-    content: "We are thrilled to officially announce the launch of Community Commerce Melissa and invite our entire business community to our inaugural event: the Meet & Greet Networking Mixer on Monday, August 24, 2026, from 6:00 PM to 8:00 PM at Red Feather Golf & Social Club!\n\nCommunity Commerce Melissa was founded with a clear, singular vision: to create a dedicated, modern platform built by local business leaders, for local business leaders. As Melissa continues its remarkable growth, we recognized the vital need for an organization focused entirely on empowering entrepreneurs, fostering meaningful professional relationships, and driving sustainable commercial momentum throughout Collin County.\n\nNow established as an official 501(c)(3) non-profit organization, Community Commerce Melissa is built on four core pillars: Connection, Education, Promotion, and Community Stewardship. We believe that when local businesses thrive, our entire town grows stronger. Through interactive networking events, workshops, and digital promotion tools, we are dedicated to ensuring every Melissa business owner has the resources, visibility, and support they need to succeed.\n\nOur first Meet & Greet Networking Mixer will bring together local founders, small business owners, corporate leaders, and community partners for an evening of warm connections, collaborative discussion, and complimentary refreshments in a relaxed setting at Red Feather Golf & Social Club. Admission is completely free, and all local business owners and community members are warmly invited to attend!\n\nEvent Details:\n• Date: Monday, August 24, 2026\n• Time: 6:00 PM – 8:00 PM\n• Location: Red Feather Golf & Social Club, Melissa TX\n• Admission: FREE Event — Open to All Local Entrepreneurs\n\nReserve your ticket today via Eventbrite and be a part of history as we kick off Community Commerce Melissa together!"
+    content: "We are thrilled to officially announce the launch of Community Commerce Melissa and invite our entire business community to our inaugural event: the Meet & Greet Networking Mixer on Monday, August 24, 2026, from 6:00 PM to 8:00 PM at The Red Feather!\n\nCommunity Commerce Melissa was founded with a clear, singular vision: to create a dedicated, modern platform built by local business leaders, for local business leaders. As Melissa continues its remarkable growth, we recognized the vital need for an organization focused entirely on empowering entrepreneurs, fostering meaningful professional relationships, and driving sustainable commercial momentum throughout Collin County.\n\nNow established as an official 501(c)(3) non-profit organization, Community Commerce Melissa is built on four core pillars: Connection, Education, Promotion, and Community Stewardship. We believe that when local businesses thrive, our entire town grows stronger. Through interactive networking events, workshops, and digital promotion tools, we are dedicated to ensuring every Melissa business owner has the resources, visibility, and support they need to succeed.\n\nOur first Meet & Greet Networking Mixer will bring together local founders, small business owners, corporate leaders, and community partners for an evening of warm connections, collaborative discussion, and complimentary refreshments in a relaxed setting at The Red Feather. Admission is completely free, and all local business owners and community members are warmly invited to attend!\n\nEvent Details:\n• Date: Monday, August 24, 2026\n• Time: 6:00 PM – 8:00 PM\n• Location: The Red Feather, Melissa TX\n• Admission: FREE Event — Open to All Local Entrepreneurs\n\nReserve your ticket today via Eventbrite and be a part of history as we kick off Community Commerce Melissa together!"
   }
 ];

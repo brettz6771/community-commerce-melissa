@@ -163,7 +163,7 @@ export default function SponsorshipPage() {
                       required
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      placeholder="Red Feather Golf Club"
+                      placeholder="The Red Feather"
                       className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
                     />
                   </div>

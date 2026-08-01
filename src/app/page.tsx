@@ -118,7 +118,7 @@ export default function HomePage() {
                     <MapPin className="w-4 h-4 text-red-500 shrink-0" />
                     <div>
                       <div className="text-[10px] font-bold text-slate-400 uppercase">LOCATION</div>
-                      <div className="font-extrabold text-white">Red Feather Golf & Social Club</div>
+                      <div className="font-extrabold text-white">The Red Feather</div>
                     </div>
                   </div>
 

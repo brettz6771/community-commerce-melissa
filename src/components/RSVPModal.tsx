@@ -59,7 +59,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
               </div>
               <div className="flex items-center gap-2 text-slate-300">
                 <MapPin className="w-4 h-4 text-red-500 shrink-0" />
-                <span>Red Feather Golf & Social, Melissa TX</span>
+                <span>The Red Feather, Melissa TX</span>
               </div>
             </div>
 

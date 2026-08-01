@@ -132,7 +132,7 @@ export default function NewsArticlePage({ params }: NewsArticlePageProps) {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase">LOCATION</div>
-                  <div className="font-extrabold text-white">Red Feather Golf & Social</div>
+                  <div className="font-extrabold text-white">The Red Feather</div>
                 </div>
               </div>
 
