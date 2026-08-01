@@ -5,8 +5,6 @@ import { CheckCircle2, Quote } from "lucide-react";
 
 export default function QuoteSection() {
   const [hasPlayed, setHasPlayed] = useState(false);
-  const [isVideoEnded, setIsVideoEnded] = useState(false);
-
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoCardRef = useRef<HTMLDivElement | null>(null);
 
@@ -16,12 +14,12 @@ export default function QuoteSection() {
         const [entry] = entries;
         if (entry.isIntersecting && !hasPlayed && videoRef.current) {
           videoRef.current.play().catch((err) => {
-            console.log("Autoplay on scroll deferred:", err);
+            console.log("Autoplay deferred:", err);
           });
           setHasPlayed(true);
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0.2 }
     );
 
     if (videoCardRef.current) {
@@ -44,29 +42,22 @@ export default function QuoteSection() {
       <div className="w-full max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
-          {/* Left White Box: Pure Animated Logo Video */}
+          {/* Left White Box: Pure Animated Logo Video (Continuously Looping) */}
           <div
             ref={videoCardRef}
             className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-3 sm:p-4 shadow-lg border border-slate-200 flex items-center justify-center relative overflow-hidden min-h-[380px]"
           >
-            {!isVideoEnded ? (
-              <video
-                ref={videoRef}
-                src="/logo-animation.mp4"
-                poster="/logo-animation-still.jpg"
-                muted
-                playsInline
-                preload="auto"
-                onEnded={() => setIsVideoEnded(true)}
-                className="w-full h-full max-h-[360px] sm:max-h-[380px] object-contain rounded-xl transform scale-105 transition-all duration-500"
-              />
-            ) : (
-              <img
-                src="/logo-animation-still.jpg"
-                alt="Community Commerce Melissa Logo"
-                className="w-full h-full max-h-[360px] sm:max-h-[380px] object-contain rounded-xl transform scale-105 animate-in fade-in duration-700"
-              />
-            )}
+            <video
+              ref={videoRef}
+              src="/logo-animation.mp4"
+              poster="/logo-animation-still.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full h-full max-h-[360px] sm:max-h-[380px] object-contain rounded-xl transform scale-105 transition-all duration-500"
+            />
           </div>
 
           {/* Middle Dark Card: OUR COMMITMENT */}
