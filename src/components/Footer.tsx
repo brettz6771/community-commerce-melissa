@@ -135,18 +135,23 @@ export default function Footer() {
               onSubmit={async (e) => { 
                 e.preventDefault(); 
                 const formEl = e.currentTarget;
-                const emailInput = formEl.querySelector<HTMLInputElement>("input[type='email']");
-                const emailVal = emailInput?.value || "";
+                const formData = new FormData(formEl);
+                const firstNameVal = formData.get("firstName") as string || "";
+                const lastNameVal = formData.get("lastName") as string || "";
+                const emailVal = formData.get("email") as string || "";
                 
                 try {
                   await fetch("/api/send-email", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      subject: `New Newsletter Subscription: ${emailVal}`,
+                      subject: `New Newsletter Subscription: ${firstNameVal} ${lastNameVal} (${emailVal})`,
                       formType: "Newsletter Subscription",
                       senderEmail: emailVal,
+                      senderName: `${firstNameVal} ${lastNameVal}`,
                       details: {
+                        "First Name": firstNameVal,
+                        "Last Name": lastNameVal,
                         "Subscriber Email": emailVal
                       }
                     })
@@ -156,12 +161,29 @@ export default function Footer() {
                 }
                 
                 alert("Thank you for subscribing to Community Commerce Melissa!"); 
-                if (emailInput) emailInput.value = "";
+                formEl.reset();
               }} 
               className="space-y-2"
             >
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  name="firstName"
+                  placeholder="First Name"
+                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  required
+                />
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last Name"
+                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  required
+                />
+              </div>
               <input
                 type="email"
+                name="email"
                 placeholder="Enter your email"
                 className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                 required

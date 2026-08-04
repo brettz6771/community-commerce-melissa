@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import Link from "next/link";
 import { MOCK_BUSINESSES } from "@/data/mockData";
 import { 
   Building2, 
@@ -84,18 +85,18 @@ export default function DirectoryPage() {
           </div>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <a
+            <Link
               href="/"
               className="btn-red px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg"
             >
               RETURN HOME
-            </a>
-            <a
+            </Link>
+            <Link
               href="/contact"
               className="px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition shadow"
             >
               GET IN TOUCH
-            </a>
+            </Link>
           </div>
         </div>
       </section>

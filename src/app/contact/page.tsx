@@ -18,7 +18,7 @@ import {
 
 export default function ContactPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "General Inquiry", message: "" });
+  const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", phone: "", subject: "General Inquiry", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
@@ -34,9 +34,10 @@ export default function ContactPage() {
           subject: `Contact Form Submission: ${formData.subject}`,
           formType: "Contact Us Form",
           senderEmail: formData.email,
-          senderName: formData.name,
+          senderName: `${formData.firstName} ${formData.lastName}`,
           details: {
-            "Full Name": formData.name,
+            "First Name": formData.firstName,
+            "Last Name": formData.lastName,
             "Email Address": formData.email,
             "Phone Number": formData.phone || "N/A",
             "Subject": formData.subject,
@@ -90,24 +91,38 @@ export default function ContactPage() {
                   <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
                   <h4 className="font-extrabold text-lg">Message Delivered!</h4>
                   <p className="text-xs text-slate-600">
-                    Thank you <strong className="text-slate-900">{formData.name}</strong>. Your message regarding <em>{formData.subject}</em> has been routed to our leadership team.
+                    Thank you <strong className="text-slate-900">{formData.firstName} {formData.lastName}</strong>. Your message regarding <em>{formData.subject}</em> has been routed to our leadership team.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Your Full Name *</label>
+                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">First Name *</label>
                       <input
                         type="text"
                         required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="John Doe"
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        placeholder="John"
                         className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
                       />
                     </div>
 
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Last Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        placeholder="Doe"
+                        className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address *</label>
                       <input
@@ -119,9 +134,7 @@ export default function ContactPage() {
                         className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Phone Number</label>
                       <input
@@ -132,21 +145,21 @@ export default function ContactPage() {
                         className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
                       />
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Inquiry Type *</label>
-                      <select
-                        value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
-                      >
-                        <option value="General Inquiry">General Inquiry</option>
-                        <option value="Membership Question">Membership Question</option>
-                        <option value="Sponsorship Opportunity">Sponsorship Opportunity</option>
-                        <option value="Volunteer Signup">Volunteer Signup</option>
-                        <option value="Press / Media">Press / Media</option>
-                      </select>
-                    </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Inquiry Type *</label>
+                    <select
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-600"
+                    >
+                      <option value="General Inquiry">General Inquiry</option>
+                      <option value="Membership Question">Membership Question</option>
+                      <option value="Sponsorship Opportunity">Sponsorship Opportunity</option>
+                      <option value="Volunteer Signup">Volunteer Signup</option>
+                      <option value="Press / Media">Press / Media</option>
+                    </select>
                   </div>
 
                   <div>

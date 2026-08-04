@@ -28,7 +28,7 @@ export async function saveContactToDb({
   email: string;
   formType?: string;
   source?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }) {
   const dbPool = getDbPool();
   if (!dbPool) {
@@ -37,6 +37,10 @@ export async function saveContactToDb({
   }
 
   try {
+    // Extract first name and last name if present in details
+    const firstName = details["First Name"] || details["firstName"] || null;
+    const lastName = details["Last Name"] || details["lastName"] || null;
+
     // Ensure table exists
     await dbPool.query(`
       CREATE TABLE IF NOT EXISTS website_contacts (
@@ -49,13 +53,21 @@ export async function saveContactToDb({
       );
     `);
 
+    // Ensure columns exist (for backwards compatibility if table already exists)
+    await dbPool.query(`
+      ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS first_name VARCHAR(100);
+    `);
+    await dbPool.query(`
+      ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS last_name VARCHAR(100);
+    `);
+
     // Insert record
     await dbPool.query(
       `
-      INSERT INTO website_contacts (email, form_type, source, details)
-      VALUES ($1, $2, $3, $4);
+      INSERT INTO website_contacts (email, form_type, source, first_name, last_name, details)
+      VALUES ($1, $2, $3, $4, $5, $6);
       `,
-      [email, formType, source, JSON.stringify(details)]
+      [email, formType, source, firstName, lastName, JSON.stringify(details)]
     );
 
     console.log(`Successfully saved contact ${email} to Postgres database.`);
