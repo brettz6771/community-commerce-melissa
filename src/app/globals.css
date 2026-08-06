@@ -10,11 +10,16 @@
   --accent-gold-light: #F1F5F9;
 }
 
+html {
+  cursor: url('/cardinal-cursor-32.png'), auto;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: #E5E9EE;
   color: #1E293B;
   overflow-x: hidden;
+  cursor: url('/cardinal-cursor-32.png'), auto;
 }
 
 /* Custom script font utility */
