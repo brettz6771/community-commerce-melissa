@@ -12,13 +12,67 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.com";
+
 export const metadata: Metadata = {
-  title: "Community Commerce - Melissa, TX",
-  description: "Connecting, promoting, and empowering local Melissa businesses, entrepreneurs, and community leaders.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Community Commerce Melissa | Local Business & Stewardship",
+    template: "%s | Community Commerce Melissa"
+  },
+  description: "Connecting, promoting, and empowering local Melissa businesses, entrepreneurs, and community leaders. Fostering growth, servant leadership, and non-profit stewardship in Melissa, Texas.",
+  keywords: ["Melissa TX", "Melissa Texas", "Local Business", "Community Commerce", "Networking Melissa", "Small Business Support", "Non-profit stewardship", "Collin County Business"],
+  authors: [{ name: "Community Commerce Melissa" }],
+  creator: "Community Commerce Melissa",
+  publisher: "Community Commerce Melissa",
+  formatDetection: {
+    email: false,
+    address: true,
+    telephone: true,
+  },
   icons: {
     icon: "/cardinal.png",
     shortcut: "/cardinal.png",
     apple: "/cardinal.png",
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Community Commerce Melissa | Local Business & Stewardship",
+    description: "Connecting, promoting, and empowering local Melissa businesses, entrepreneurs, and community leaders. Fostering economic momentum and non-profit stewardship in Collin County.",
+    url: siteUrl,
+    siteName: "Community Commerce Melissa",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/hero-networking.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Community Commerce Melissa Networking Event",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Community Commerce Melissa",
+    description: "Connecting, promoting, and empowering local Melissa businesses, entrepreneurs, and community leaders.",
+    images: ["/hero-networking.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
   },
 };
 

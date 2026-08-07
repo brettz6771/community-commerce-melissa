@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import PageTitle from "@/components/PageTitle";
 import { 
   PhoneCall, 
   Mail, 
@@ -55,6 +56,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
+      <PageTitle title="Contact Us" />
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 

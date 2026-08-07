@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import PageTitle from "@/components/PageTitle";
 import { 
   Users, 
   Target, 
@@ -23,10 +24,9 @@ export default function AboutPage() {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const coreValues = [
-    { title: "501(c)(3) Non-Profit Purpose", desc: "Built as an official 501(c)(3) non-profit organization dedicated entirely to serving the Melissa community with transparent stewardship." },
-    { title: "Giving Back to Melissa", desc: "Reinvesting our resources into local community causes, education, youth initiatives, and supporting families throughout Melissa." },
-    { title: "Collaboration Over Competition", desc: "We believe when one Melissa business wins, our entire town grows stronger together." },
-    { title: "Servant Leadership & Impact", desc: "Fostering genuine relationships, mentorship, and meaningful community service over transactional networking." }
+    { title: "Servant Leadership & Impact", desc: "Fostering genuine relationships, mentorship, and meaningful community service over transactional networking." },
+    { title: "Economic Momentum", desc: "Equipping small businesses, corporate entities, and entrepreneurs with tools, visibility, and networking to scale." },
+    { title: "Non-profit stewardship", desc: "Funneling membership dues and expo proceeds back into Collin County school districts and local charities." }
   ];
 
   const milestones = [
@@ -38,6 +38,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
+      <PageTitle title="About Us" />
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 

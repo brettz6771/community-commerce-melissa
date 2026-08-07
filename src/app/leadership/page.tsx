@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import PageTitle from "@/components/PageTitle";
 import { MOCK_BOARD_MEMBERS, MOCK_FOUNDING_MEMBERS } from "@/data/mockData";
 import { Award, Mail, Phone, Play, ShieldCheck, Sparkles, Smile } from "lucide-react";
 
@@ -59,6 +60,7 @@ export default function LeadershipPage() {
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
+      <PageTitle title="Leadership Team" />
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
