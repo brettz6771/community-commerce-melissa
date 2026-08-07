@@ -196,7 +196,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Chauntel is the Owner & Founder of Makor Agency, where she helps businesses grow through strategic marketing, branding, and business development. With more than 20 years of leadership experience, she has built a career around creating impactful marketing strategies, developing strong partnerships, and helping organizations achieve sustainable growth.\n\nPassionate about empowering businesses and entrepreneurs, Chauntel combines creativity with proven business strategy to deliver meaningful results. She is committed to building lasting relationships, mentoring others, and helping clients strengthen their brands, expand their reach, and create long-term success through innovation, collaboration, and exceptional marketing.",
     headshot: "/ccm-leaders/chauntel-busche.jpg",
     funFact: "Enjoys spearheading local community initiatives and supporting Melissa businesses!",
-    email: "chauntel@communitycommercemelissa.com",
+    email: "chauntel@communitycommercemelissa.org",
     phone: "(972) 837-1001",
     objectPosition: "center 15%"
   },
@@ -208,7 +208,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Joey Mitnick is an entrepreneur with a passion for building businesses, developing leaders, and creating opportunities for others to succeed. As the owner of Buffalo Joe’s Barber Lounge, he has focused on growing a business rooted in exceptional customer experience, strong company culture, and community involvement.\n\nJoey is passionate about mentoring the next generation of conscientious business owners, fostering meaningful connections, and helping build a thriving local business community through collaboration, education, and service.",
     headshot: "/ccm-leaders/joey-mitnick-v2.jpg",
     funFact: "Passionate about local business growth and community development.",
-    email: "joey@communitycommercemelissa.com",
+    email: "joey@communitycommercemelissa.org",
     phone: "(972) 837-1002",
     objectPosition: "center top"
   },
@@ -220,7 +220,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Jana Scarpati Martinez is a financial strategist and business owner leading a financial planning practice in Collin County. Holding an MBA and advanced certifications in financial planning and emerging tech, she works closely with entrepreneurs and families to navigate complex financial decisions, manage risk, and plan for long-term goals.\n\nAs Treasurer & Board Member, Jana supports Community Commerce Melissa through thoughtful financial oversight, transparency, and responsible stewardship. She is passionate about strengthening local business connections and keeping our organization community-focused, financially sound, and well-positioned for continued growth.",
     headshot: "/ccm-leaders/jana-martinez-v2.jpg",
     funFact: "Enjoys financial planning and active involvement in local Melissa events.",
-    email: "jana@communitycommercemelissa.com",
+    email: "jana@communitycommercemelissa.org",
     phone: "(972) 837-1003",
     objectPosition: "center 15%"
   },
@@ -232,7 +232,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Brett Zenker is the Co-Owner and Vice President of ZenTek USA, where he leads the company's technology initiatives with a focus on managed IT services, cybersecurity, website and software development. He is passionate about helping businesses leverage technology to improve efficiency, security, and long-term success.\n\nWith extensive expertise in information technology and web development, Brett is committed to solving complex challenges through innovative solutions and exceptional client service. He enjoys building lasting relationships with clients and helping organizations confidently navigate today's ever-changing technology landscape.",
     headshot: "/ccm-leaders/brett-zenker.jpg",
     funFact: "Enjoys building digital solutions and supporting local entrepreneurs.",
-    email: "brett@communitycommercemelissa.com",
+    email: "brett@communitycommercemelissa.org",
     phone: "(972) 837-1005",
     objectPosition: "center 18%"
   },
@@ -244,7 +244,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Alta Simmons is the Strategic Partnerships Manager at National University, strengthening workforce development and educational partnerships across Texas. A first-generation college graduate with an M.A. in Education (4.0 GPA) with Distinction, she is a strong advocate for servant leadership and lifelong learning.\n\nWithin CCM, Alta serves as a founding member committed to building meaningful relationships, supporting business owners, and teaching entrepreneurship, financial literacy, and community impact.",
     headshot: "/ccm-leaders/alta-simmons.jpg",
     funFact: "Passionate about community involvement and local networking.",
-    email: "alta@communitycommercemelissa.com",
+    email: "alta@communitycommercemelissa.org",
     phone: "(972) 837-1004",
     objectPosition: "center 18%"
   },
@@ -256,7 +256,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Cindy Karman is the owner and founder of Barefoot Naturals, a luxury natural bath and body company dedicated to creating handcrafted products made with high-quality ingredients. After moving to the Melissa, Texas area in 2019, Cindy and her family quickly became active members of the community, with two of her children attending Melissa ISD schools.\n\nBeyond her business, she is passionate about serving others through her work at Melissa DAEP, where she supports students, and by teaching parenting classes for Real Options to help strengthen families. Cindy also volunteers alongside her certified therapy dog, providing comfort and emotional support to individuals in hospitals and during crisis situations. Whether through her business, her profession, or her volunteer work, Cindy is committed to making a positive impact by promoting stronger communities.",
     headshot: "/ccm-leaders/cindy-karman.jpg",
     funFact: "Loves organizing community gatherings and supporting small business owners.",
-    email: "cindy@communitycommercemelissa.com",
+    email: "cindy@communitycommercemelissa.org",
     phone: "(972) 837-1006",
     objectPosition: "center 10%"
   },
@@ -268,7 +268,7 @@ export const MOCK_BOARD_MEMBERS: BoardMember[] = [
     bio: "Jax Edwards is a business advisor, tax strategist, and legal professional dedicated to helping entrepreneurs build stronger, more successful organizations. As the founder of Jaxes Taxes, he works with business owners on tax planning, accounting, business strategy, and organizational structure, helping clients make informed decisions that support long-term growth.\n\nJax is passionate about equipping entrepreneurs with practical knowledge that creates lasting value for their businesses and communities. Through his expertise in business, taxation, and law, he is committed to helping organizations build strong foundations while fostering responsible entrepreneurship and sustainable economic growth.",
     headshot: "/ccm-leaders/jax.jpg",
     funFact: "Passionate about helping entrepreneurs build strong foundations.",
-    email: "jax@communitycommercemelissa.com",
+    email: "jax@communitycommercemelissa.org",
     phone: "(972) 837-1007",
     objectPosition: "center 10%"
   }
