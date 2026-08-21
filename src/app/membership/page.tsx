@@ -35,6 +35,7 @@ export default function MembershipPage() {
     { benefit: "Educational Opportunities", member: "check", partner: "check" },
     { benefit: "Member Badge", member: "check", partner: "check" },
     { benefit: "Community Participation", member: "check", partner: "check" },
+    { benefit: "Special Discounts from Local Businesses", member: "dash", partner: "check" },
     { benefit: "Business Spotlight Opportunities", member: "Standard", partner: "Priority" },
     { benefit: "Social/Digital Promotion", member: "Limited", partner: "Enhanced" },
     { benefit: "Event Recognition", member: "dash", partner: "check" },
@@ -46,11 +47,15 @@ export default function MembershipPage() {
   const faqs = [
     { 
       q: "What is the difference between Community Member and Community Partner?", 
-      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($399/yr limited sale, regularly $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, social media features, collaborative campaigns, and event recognition for maximum visibility." 
+      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($399/yr limited sale, regularly $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
     },
     { 
       q: "How does the limited-time Community Partner sale work?", 
-      a: "For a limited time, you can secure the Community Partner membership level for $399/year (saving $91 off the standard $490/year regular price). This includes all premium visibility perks, spotlight priority, and event recognition." 
+      a: "For a limited time, you can secure the Community Partner membership level for $399/year (saving $91 off the standard $490/year regular price). This includes all premium visibility perks, spotlight priority, local business discount access, and event recognition." 
+    },
+    { 
+      q: "What are the Special Discounts from local businesses?", 
+      a: "Community Partners gain exclusive access to special discounts, member-to-member B2B savings, and partner promotions offered across participating Melissa businesses." 
     },
     { 
       q: "How are Corporate & Community Sponsorships structured?", 
@@ -130,12 +135,12 @@ export default function MembershipPage() {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
             
-            {/* TIER 1: COMMUNITY MEMBER */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-md flex flex-col justify-between overflow-hidden relative transition hover:shadow-lg">
+            {/* TIER 1: COMMUNITY MEMBER (STANDARD / NEUTRAL SLATE) */}
+            <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
               <div>
-                {/* Red Header Bar */}
-                <div className="bg-[#A81C24] text-white py-3.5 px-6 text-center">
-                  <h3 className="font-outfit font-extrabold text-base tracking-wider uppercase">
+                {/* Standard Dark Slate Header Bar */}
+                <div className="bg-[#151922] text-white py-3.5 px-6 text-center border-b border-slate-700">
+                  <h3 className="font-outfit font-bold text-base tracking-wider uppercase text-slate-200">
                     1. COMMUNITY MEMBER
                   </h3>
                 </div>
@@ -143,8 +148,8 @@ export default function MembershipPage() {
                 <div className="p-6 space-y-6">
                   {/* Pricing */}
                   <div className="text-center pb-4 border-b border-slate-100">
-                    <div className="inline-block bg-slate-900 text-white font-outfit font-extrabold text-2xl px-6 py-2 rounded-xl shadow-sm">
-                      $350<span className="text-xs font-medium text-slate-300">/year</span>
+                    <div className="inline-block bg-slate-100 border border-slate-200 text-slate-900 font-outfit font-extrabold text-2xl px-6 py-2 rounded-xl shadow-xs">
+                      $350<span className="text-xs font-medium text-slate-500">/year</span>
                     </div>
                     <p className="text-xs text-slate-600 mt-4 leading-relaxed font-medium text-left">
                       Designed for small businesses, entrepreneurs, independent professionals, and organizations that want to connect, participate, and become more involved in the Melissa business community.
@@ -153,7 +158,7 @@ export default function MembershipPage() {
 
                   {/* Included Perks */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-black text-[#A81C24] uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                       MEMBERSHIP INCLUDES:
                     </h4>
                     <ul className="space-y-2.5">
@@ -169,7 +174,7 @@ export default function MembershipPage() {
                         "Opportunities to connect and collaborate with other local businesses"
                       ].map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#A81C24] shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -180,12 +185,12 @@ export default function MembershipPage() {
 
               {/* Best For Box & Button */}
               <div className="p-6 pt-0 space-y-4">
-                <div className="bg-red-50/70 border border-red-100 rounded-xl p-3.5 flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-red-100 text-[#A81C24] flex items-center justify-center shrink-0">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
                     <Users className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black text-[#A81C24] uppercase tracking-wider">BEST FOR:</div>
+                    <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">BEST FOR:</div>
                     <p className="text-xs text-slate-600 mt-0.5 leading-snug">
                       Businesses that primarily want networking, education, community involvement, and greater connections throughout Melissa.
                     </p>
@@ -194,7 +199,7 @@ export default function MembershipPage() {
 
                 <button
                   onClick={() => handleJoinClick("Community Member ($350/yr)")}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2"
                 >
                   <span>JOIN AS COMMUNITY MEMBER ($350)</span>
                   <ArrowRight className="w-4 h-4" />
@@ -202,47 +207,49 @@ export default function MembershipPage() {
               </div>
             </div>
 
-            {/* TIER 2: COMMUNITY PARTNER (FEATURED / SALE) */}
-            <div className="bg-white rounded-2xl border-2 border-[#A81C24] shadow-2xl flex flex-col justify-between overflow-hidden relative transform lg:-translate-y-2">
+            {/* TIER 2: COMMUNITY PARTNER (STANDOUT HERO RED TIER) */}
+            <div className="bg-gradient-to-b from-white to-red-50/40 rounded-2xl border-2 border-[#A81C24] shadow-2xl flex flex-col justify-between overflow-hidden relative transform lg:-translate-y-3 ring-4 ring-red-500/20">
               
               {/* Top Banner Tag */}
-              <div className="absolute top-0 right-0 bg-[#A81C24] text-white text-[10px] font-black uppercase px-3 py-1 rounded-bl-lg tracking-wider shadow-sm z-10">
-                MOST POPULAR
+              <div className="absolute top-0 right-0 bg-[#A81C24] text-white text-[11px] font-black uppercase px-3.5 py-1.5 rounded-bl-xl tracking-wider shadow-md z-10 flex items-center gap-1">
+                <Star className="w-3.5 h-3.5 fill-current" />
+                MOST POPULAR • BEST VALUE
               </div>
 
               <div>
-                {/* Charcoal / Slate Header Bar */}
-                <div className="bg-[#151922] text-white py-3.5 px-6 text-center border-b-2 border-[#A81C24]">
-                  <h3 className="font-outfit font-extrabold text-base tracking-wider uppercase flex items-center justify-center gap-2">
-                    <Star className="w-4 h-4 text-slate-200 fill-slate-200" />
+                {/* Vibrant Brand Red Header Bar */}
+                <div className="bg-[#A81C24] text-white py-4 px-6 text-center shadow-md">
+                  <h3 className="font-outfit font-black text-lg tracking-wider uppercase flex items-center justify-center gap-2">
+                    <Star className="w-5 h-5 text-white fill-white" />
                     2. COMMUNITY PARTNER
                   </h3>
                 </div>
 
                 <div className="p-6 space-y-6">
                   {/* Pricing Box with Sale Highlight */}
-                  <div className="text-center pb-4 border-b border-slate-100">
-                    <div className="inline-flex flex-col items-center bg-red-950 text-white px-6 py-2 rounded-xl shadow-md border border-red-700/60">
+                  <div className="text-center pb-4 border-b border-red-100">
+                    <div className="inline-flex flex-col items-center bg-gradient-to-br from-red-950 via-[#A81C24] to-red-900 text-white px-7 py-3 rounded-2xl shadow-lg border-2 border-red-500/50 ring-2 ring-red-500/20">
                       <div className="flex items-baseline gap-2">
-                        <span className="font-outfit font-black text-3xl text-white">$399</span>
-                        <span className="text-xs font-medium text-slate-300">/year</span>
+                        <span className="font-outfit font-black text-3.5xl sm:text-4xl text-white tracking-tight">$399</span>
+                        <span className="text-xs font-semibold text-red-200">/year</span>
                       </div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
+                      <div className="flex items-center gap-1.5 mt-1">
                         <span className="line-through text-red-300 text-xs font-semibold">$490 Regular</span>
-                        <span className="bg-white text-red-950 text-[9px] font-black uppercase px-1.5 py-0.2 rounded font-mono">
-                          SAVE $91
+                        <span className="bg-white text-[#A81C24] text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
+                          SAVE $91 LIMITED TIME
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 mt-4 leading-relaxed font-medium text-left">
-                      Designed for businesses that want everything included in membership plus greater visibility, promotion, and opportunities to engage with the community.
+                    <p className="text-xs text-slate-700 mt-4 leading-relaxed font-semibold text-left">
+                      Designed for businesses that want everything included in membership plus greater visibility, promotion, exclusive partner discounts, and opportunities to engage with the community.
                     </p>
                   </div>
 
                   {/* Included Perks */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-black text-[#A81C24] uppercase tracking-wider">
+                    <h4 className="text-xs font-black text-[#A81C24] uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
                       INCLUDES EVERYTHING IN COMMUNITY MEMBER, PLUS:
                     </h4>
                     <ul className="space-y-2.5">
@@ -250,14 +257,15 @@ export default function MembershipPage() {
                         "Enhanced business directory listing",
                         "Priority consideration for business spotlights",
                         "Opportunities to be featured through Community Commerce Melissa social media and digital channels",
+                        "Special discounts and exclusive offers provided by other local businesses",
                         "Priority access to select networking and community opportunities",
                         "Opportunities to host or participate in educational sessions, panels, or business discussions",
                         "Additional recognition at select Community Commerce Melissa events",
                         "Priority consideration for collaborative community campaigns",
-                        "Opportunities to provide member-exclusive promotions or offers",
+                        "Opportunities to provide member-exclusive promotions or offers to the community",
                         "Greater visibility across Community Commerce Melissa programs and communications"
                       ].map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-800 font-semibold">
+                        <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-900 font-bold">
                           <CheckCircle2 className="w-4 h-4 text-[#A81C24] shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
@@ -269,21 +277,21 @@ export default function MembershipPage() {
 
               {/* Best For Box & Button */}
               <div className="p-6 pt-0 space-y-4">
-                <div className="bg-slate-100 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0">
+                <div className="bg-red-100/80 border border-red-200 rounded-xl p-3.5 flex items-start gap-3 shadow-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[#A81C24] text-white flex items-center justify-center shrink-0 shadow-xs">
                     <Star className="w-4 h-4 fill-current" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black text-slate-900 uppercase tracking-wider">BEST FOR:</div>
-                    <p className="text-xs text-slate-600 mt-0.5 leading-snug">
-                      Established local businesses that want networking and increased exposure throughout the Melissa community.
+                    <div className="text-[11px] font-black text-[#A81C24] uppercase tracking-wider">BEST FOR:</div>
+                    <p className="text-xs text-slate-700 mt-0.5 leading-snug font-medium">
+                      Established local businesses that want networking, special business discounts, and increased exposure throughout the Melissa community.
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleJoinClick("Community Partner ($399/yr)")}
-                  className="w-full btn-red py-3.5 rounded-xl font-black text-xs uppercase tracking-wider transition shadow-xl flex items-center justify-center gap-2 hover:scale-[1.02]"
+                  className="w-full btn-red py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02] ring-2 ring-red-500/50"
                 >
                   <span>JOIN AS COMMUNITY PARTNER ($399 SALE)</span>
                   <ArrowRight className="w-4 h-4" />
@@ -291,12 +299,12 @@ export default function MembershipPage() {
               </div>
             </div>
 
-            {/* TIER 3: CORPORATE & COMMUNITY SPONSORSHIPS */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-md flex flex-col justify-between overflow-hidden relative transition hover:shadow-lg">
+            {/* TIER 3: CORPORATE & COMMUNITY SPONSORSHIPS (STANDARD / NEUTRAL SLATE) */}
+            <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
               <div>
-                {/* Red Header Bar */}
-                <div className="bg-[#A81C24] text-white py-3.5 px-6 text-center">
-                  <h3 className="font-outfit font-extrabold text-sm sm:text-base tracking-wider uppercase">
+                {/* Standard Dark Slate Header Bar */}
+                <div className="bg-[#151922] text-white py-3.5 px-6 text-center border-b border-slate-700">
+                  <h3 className="font-outfit font-bold text-sm sm:text-base tracking-wider uppercase text-slate-200">
                     3. CORPORATE & COMMUNITY SPONSORSHIPS
                   </h3>
                 </div>
@@ -304,7 +312,7 @@ export default function MembershipPage() {
                 <div className="p-6 space-y-6">
                   {/* Custom Header Box */}
                   <div className="text-center pb-4 border-b border-slate-100">
-                    <div className="inline-block bg-slate-900 text-white font-outfit font-extrabold text-sm px-4 py-2 rounded-xl shadow-sm uppercase tracking-wider">
+                    <div className="inline-block bg-slate-100 border border-slate-200 text-slate-900 font-outfit font-bold text-xs px-4 py-2 rounded-xl shadow-xs uppercase tracking-wider">
                       CUSTOM SPONSORSHIP OPPORTUNITIES
                     </div>
                     <p className="text-xs text-slate-600 mt-4 leading-relaxed font-medium text-left">
@@ -317,7 +325,7 @@ export default function MembershipPage() {
 
                   {/* Included Perks */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-black text-[#A81C24] uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                       SPONSORSHIP OPPORTUNITIES MAY INCLUDE:
                     </h4>
                     <ul className="space-y-2">
@@ -337,7 +345,7 @@ export default function MembershipPage() {
                         "Customized partnership opportunities"
                       ].map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#A81C24] shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -348,12 +356,12 @@ export default function MembershipPage() {
 
               {/* Best For Box & Button */}
               <div className="p-6 pt-0 space-y-4">
-                <div className="bg-red-50/70 border border-red-100 rounded-xl p-3.5 flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-red-100 text-[#A81C24] flex items-center justify-center shrink-0">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
                     <Handshake className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black text-[#A81C24] uppercase tracking-wider">
+                    <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">
                       INTERESTED IN BECOMING A CORPORATE SPONSOR?
                     </div>
                     <p className="text-xs text-slate-600 mt-0.5 leading-snug">
@@ -364,7 +372,7 @@ export default function MembershipPage() {
 
                 <Link
                   href="/contact"
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 text-center"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2 text-center"
                 >
                   <span>INQUIRE ABOUT CORPORATE SPONSORSHIP</span>
                   <ArrowRight className="w-4 h-4" />
@@ -397,15 +405,15 @@ export default function MembershipPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-[#A81C24] text-white font-outfit uppercase tracking-wider font-extrabold">
-                        <th className="py-3 px-4 text-xs">BENEFIT</th>
-                        <th className="py-3 px-4 text-xs text-center border-l border-red-800/50">
+                      <tr className="font-outfit uppercase tracking-wider">
+                        <th className="py-3 px-4 text-xs font-bold bg-slate-900 text-white">BENEFIT</th>
+                        <th className="py-3 px-4 text-xs text-center border-l border-slate-700 bg-slate-800 text-white font-bold">
                           COMMUNITY MEMBER<br/>
-                          <span className="text-[10px] font-medium text-red-200">$350/YEAR</span>
+                          <span className="text-[10px] font-normal text-slate-300">$350/YEAR</span>
                         </th>
-                        <th className="py-3 px-4 text-xs text-center border-l border-red-800/50 bg-red-950">
+                        <th className="py-3 px-4 text-xs text-center border-l border-red-800/50 bg-[#A81C24] text-white font-extrabold">
                           COMMUNITY PARTNER<br/>
-                          <span className="text-[10px] font-bold text-white">$399 SALE <span className="line-through text-red-300 font-normal">$490</span></span>
+                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$399 SALE <span className="line-through text-red-300 font-normal">$490</span></span>
                         </th>
                       </tr>
                     </thead>
@@ -417,14 +425,14 @@ export default function MembershipPage() {
                           </td>
                           <td className="py-3 px-4 text-center border-l border-slate-100 font-medium text-slate-700">
                             {row.member === "check" ? (
-                              <Check className="w-4 h-4 text-[#A81C24] mx-auto stroke-[2.5]" />
+                              <Check className="w-4 h-4 text-slate-600 mx-auto stroke-[2.5]" />
                             ) : row.member === "dash" ? (
                               <Minus className="w-4 h-4 text-slate-400 mx-auto" />
                             ) : (
                               <span>{row.member}</span>
                             )}
                           </td>
-                          <td className="py-3 px-4 text-center border-l border-slate-100 font-bold text-slate-900 bg-red-50/30">
+                          <td className="py-3 px-4 text-center border-l border-red-100 font-bold text-slate-900 bg-red-50/40">
                             {row.partner === "check" ? (
                               <Check className="w-4 h-4 text-[#A81C24] mx-auto stroke-[3]" />
                             ) : row.partner === "dash" ? (
