@@ -31,13 +31,17 @@ export default function EventsPage() {
 
   const categories = [
     "All",
-    "Monthly Networking Mixers"
+    "Monthly Networking Mixers",
+    "Lunch and Learn"
   ];
 
   const filteredEvents = MOCK_EVENTS.filter((evt) => {
-    const matchesCat = selectedCategory === "All" || evt.category === selectedCategory;
+    const matchesCat = selectedCategory === "All" || 
+      evt.category.toLowerCase() === selectedCategory.toLowerCase() ||
+      (selectedCategory === "Lunch and Learn" && evt.category.toLowerCase().includes("lunch"));
     const matchesQuery = evt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         evt.location.toLowerCase().includes(searchQuery.toLowerCase());
+                         evt.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         evt.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesQuery;
   });
 

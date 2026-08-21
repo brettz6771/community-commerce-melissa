@@ -85,12 +85,40 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "AUG",
     day: "24",
     time: "6:00 PM - 8:00 PM",
-    location: "The Red Feather",
+    location: "The Red Feather, Melissa, TX",
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
     image: "/events/meet-and-greet-aug-24-26-v2.jpg",
     isFeatured: true,
     registerUrl: "https://www.eventbrite.com/e/community-commerce-melissa-meet-greet-networking-night-tickets-1995479705516?utm_experiment=test_share_listing&aff=ebdsshios"
+  },
+  {
+    id: "evt-2",
+    title: "Lunch & Learn: Building A Stronger Community",
+    date: "2026-09-14",
+    month: "SEP",
+    day: "14",
+    time: "11:00 AM - 12:30 PM",
+    location: "First United Bank, 1700 Redbud Blvd Suite 130, McKinney, TX 75069",
+    category: "Lunch and Learn",
+    description: "Be Involved. Make an Impact! Discover what Community Commerce Melissa is all about, connect with fellow business owners, share ideas, and explore committees and volunteer opportunities. FREE Lunch included for attendees sponsored by First United Bank!",
+    image: "/events/lunch-and-learn-9-14-26.jpg",
+    isFeatured: true,
+    registerUrl: "https://www.eventbrite.com/e/1998600679433?aff=oddtdtcreator"
+  },
+  {
+    id: "evt-3",
+    title: "CCM Networking Night at Mountain Mike's",
+    date: "2026-09-21",
+    month: "SEP",
+    day: "21",
+    time: "6:00 PM - 8:00 PM",
+    location: "Mountain Mike's Pizza, 3031 Washington Drive, Melissa, TX 75454",
+    category: "Monthly Networking Mixers",
+    description: "One Community, Endless Connections! A fresh local non-profit networking evening to connect, support, and grow Melissa businesses together. Enjoy complimentary appetizers, door prizes, giveaways, and collaborative community building. Free admission — space is limited!",
+    image: "/events/networking-night-mountain-mikes-9-21-26.jpg",
+    isFeatured: true,
+    registerUrl: "https://www.eventbrite.com/e/community-commerce-melissa-meet-greet-networking-night-tickets-1995479705516"
   }
 ];
 
