@@ -139,8 +139,8 @@ export default function MembershipPage() {
             <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
               <div>
                 {/* Standard Dark Slate Header Bar */}
-                <div className="bg-[#151922] text-white py-3.5 px-6 text-center border-b border-slate-700">
-                  <h3 className="font-outfit font-bold text-base tracking-wider uppercase text-slate-200">
+                <div className="bg-[#151922] text-white py-4 px-6 text-center border-b border-slate-700">
+                  <h3 className="font-outfit font-bold text-base sm:text-lg tracking-wider uppercase text-slate-200">
                     1. COMMUNITY MEMBER
                   </h3>
                 </div>
@@ -199,10 +199,15 @@ export default function MembershipPage() {
 
                 <button
                   onClick={() => handleJoinClick("Community Member ($350/yr)")}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-4 rounded-xl transition shadow-sm flex flex-col items-center justify-center gap-0.5 group"
                 >
-                  <span>JOIN AS COMMUNITY MEMBER ($350)</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-slate-100 font-outfit uppercase">
+                    <span>JOIN AS COMMUNITY MEMBER</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    $350 / YEAR
+                  </div>
                 </button>
               </div>
             </div>
@@ -210,17 +215,16 @@ export default function MembershipPage() {
             {/* TIER 2: COMMUNITY PARTNER (STANDOUT HERO RED TIER) */}
             <div className="bg-gradient-to-b from-white to-red-50/40 rounded-2xl border-2 border-[#A81C24] shadow-2xl flex flex-col justify-between overflow-hidden relative transform lg:-translate-y-3 ring-4 ring-red-500/20">
               
-              {/* Top Banner Tag */}
-              <div className="absolute top-0 right-0 bg-[#A81C24] text-white text-[11px] font-black uppercase px-3.5 py-1.5 rounded-bl-xl tracking-wider shadow-md z-10 flex items-center gap-1">
-                <Star className="w-3.5 h-3.5 fill-current" />
-                MOST POPULAR • BEST VALUE
-              </div>
-
               <div>
+                {/* Top Dark "Most Popular" Strip with ample room and zero overlap */}
+                <div className="bg-slate-950 text-slate-200 py-2.5 px-4 text-center border-b border-white/10 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest shadow-inner">
+                  <Star className="w-3.5 h-3.5 text-red-500 fill-red-500" />
+                  <span>MOST POPULAR • BEST VALUE</span>
+                </div>
+
                 {/* Vibrant Brand Red Header Bar */}
                 <div className="bg-[#A81C24] text-white py-4 px-6 text-center shadow-md">
-                  <h3 className="font-outfit font-black text-lg tracking-wider uppercase flex items-center justify-center gap-2">
-                    <Star className="w-5 h-5 text-white fill-white" />
+                  <h3 className="font-outfit font-black text-lg sm:text-xl tracking-wider uppercase flex items-center justify-center gap-2">
                     2. COMMUNITY PARTNER
                   </h3>
                 </div>
@@ -291,10 +295,15 @@ export default function MembershipPage() {
 
                 <button
                   onClick={() => handleJoinClick("Community Partner ($399/yr)")}
-                  className="w-full btn-red py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider transition shadow-2xl flex items-center justify-center gap-2 hover:scale-[1.02] ring-2 ring-red-500/50"
+                  className="w-full btn-red py-3.5 px-4 rounded-xl transition shadow-2xl flex flex-col items-center justify-center gap-0.5 group hover:scale-[1.02] ring-2 ring-red-500/50"
                 >
-                  <span>JOIN AS COMMUNITY PARTNER ($399 SALE)</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-white font-outfit uppercase">
+                    <span>JOIN AS COMMUNITY PARTNER</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                  <div className="text-[11px] font-bold text-red-100 uppercase tracking-wider">
+                    $399 / YEAR • SAVE $91 SALE
+                  </div>
                 </button>
               </div>
             </div>
@@ -303,7 +312,7 @@ export default function MembershipPage() {
             <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
               <div>
                 {/* Standard Dark Slate Header Bar */}
-                <div className="bg-[#151922] text-white py-3.5 px-6 text-center border-b border-slate-700">
+                <div className="bg-[#151922] text-white py-4 px-6 text-center border-b border-slate-700">
                   <h3 className="font-outfit font-bold text-sm sm:text-base tracking-wider uppercase text-slate-200">
                     3. CORPORATE & COMMUNITY SPONSORSHIPS
                   </h3>
@@ -372,10 +381,15 @@ export default function MembershipPage() {
 
                 <Link
                   href="/contact"
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center justify-center gap-2 text-center"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-4 rounded-xl transition shadow-sm flex flex-col items-center justify-center gap-0.5 group text-center"
                 >
-                  <span>INQUIRE ABOUT CORPORATE SPONSORSHIP</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-slate-100 font-outfit uppercase">
+                    <span>INQUIRE ABOUT SPONSORSHIP</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    CUSTOM CORPORATE PARTNERSHIPS
+                  </div>
                 </Link>
               </div>
             </div>

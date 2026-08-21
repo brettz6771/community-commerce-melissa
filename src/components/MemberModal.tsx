@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, Star, Users, Handshake } from "lucide-react";
 
 interface MemberModalProps {
@@ -22,6 +22,12 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (defaultTier) {
+      setSelectedTier(defaultTier);
+    }
+  }, [defaultTier, isOpen]);
 
   if (!isOpen) return null;
 
