@@ -108,17 +108,17 @@ export const MOCK_EVENTS: EventItem[] = [
   },
   {
     id: "evt-3",
-    title: "CCM Networking Night at Mountain Mike's",
+    title: "CCM Networking Night at Mountain Mike's Pizza",
     date: "2026-09-21",
     month: "SEP",
     day: "21",
     time: "6:00 PM - 8:00 PM",
     location: "Mountain Mike's Pizza, 3031 Washington Drive, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
-    description: "One Community, Endless Connections! A fresh local non-profit networking evening to connect, support, and grow Melissa businesses together. Enjoy complimentary appetizers, door prizes, giveaways, and collaborative community building. Free admission — space is limited!",
+    description: "One Community, Endless Connections! A fresh local non-profit networking evening to connect, support, and grow Melissa businesses together. Enjoy complimentary appetizers, door prizes & giveaways, and community collaboration. Free event — space is limited, please register in advance!",
     image: "/events/networking-night-mountain-mikes-9-21-26.jpg",
     isFeatured: true,
-    registerUrl: "https://www.eventbrite.com/e/community-commerce-melissa-meet-greet-networking-night-tickets-1995479705516"
+    registerUrl: "https://www.eventbrite.com/e/1998545201497?aff=oddtdtcreator"
   }
 ];
 
