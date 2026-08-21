@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock } from "lucide-react";
+import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, Star, Users, Handshake } from "lucide-react";
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface MemberModalProps {
   defaultTier?: string;
 }
 
-export default function MemberModal({ isOpen, onClose, defaultTier = "Founding Partner" }: MemberModalProps) {
+export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($399/yr)" }: MemberModalProps) {
   const [selectedTier, setSelectedTier] = useState(defaultTier);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -81,15 +81,15 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
             </h3>
 
             <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-              Thank you for registering <strong className="text-slate-200">{formData.businessName || "your business"}</strong> as a <span className="text-white font-bold">{selectedTier}</span>.
+              Thank you for registering <strong className="text-slate-200">{formData.businessName || "your business"}</strong> for <span className="text-white font-bold">{selectedTier}</span>.
             </p>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-xs text-left max-w-md mx-auto space-y-2">
               <div className="font-bold text-slate-200">Next Steps:</div>
               <ul className="list-disc list-inside space-y-1 text-slate-300">
                 <li>Check your email inbox for your Welcome Packet & Member Toolkit.</li>
-                <li>Your business profile is now active on the Melissa Business Directory.</li>
-                <li>Your logo has been submitted for placement on the Founding Members Wall.</li>
+                <li>Our team will verify and activate your business directory profile.</li>
+                <li>You will receive calendar invites for upcoming member networking events.</li>
               </ul>
             </div>
 
@@ -110,72 +110,69 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
             <div>
               <div className="inline-flex items-center gap-2 text-slate-300 text-xs font-bold uppercase tracking-widest mb-1">
                 <Sparkles className="w-4 h-4" />
-                JOIN THE MELISSA MOVEMENT
+                JOIN COMMUNITY COMMERCE MELISSA
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit text-white">
                 Member Application & Registration
               </h2>
               <p className="text-xs sm:text-sm text-slate-400">
-                Connect your business to Melissa&apos;s primary commerce network.
+                Select your membership tier and connect your business to Melissa&apos;s commerce network.
               </p>
             </div>
 
-            {/* Launch Banner inside modal */}
+            {/* Promo Alert inside modal */}
             <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-slate-200 font-medium">
                 <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                <span>Founding Special: <strong>$200/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$350 Regular</span> — Save $150!</span>
+                <span>Community Partner Special: <strong>$399/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$490 Regular</span></span>
               </div>
-              <span className="bg-emerald-500 text-slate-950 font-extrabold px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                100% Free Tier Available
+              <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
+                SAVE $91 LIMITED TIME
               </span>
             </div>
 
             {/* Tier Selector Tabs */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
-                onClick={() => setSelectedTier("Community Member (FREE)")}
-                className={`p-3 rounded-lg border text-center transition relative ${
-                  selectedTier.includes("FREE")
-                    ? "bg-emerald-950/60 border-emerald-500 text-white font-bold ring-2 ring-emerald-500/40"
-                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
-                }`}
-              >
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
-                  100% FREE
-                </span>
-                <div className="text-xs font-bold mt-1">Community</div>
-                <div className="text-sm font-extrabold text-emerald-400">$0 Dues</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedTier("Business Member")}
+                onClick={() => setSelectedTier("Community Member ($350/yr)")}
                 className={`p-3 rounded-lg border text-center transition ${
-                  selectedTier === "Business Member"
-                    ? "bg-red-900/40 border-red-500 text-white font-bold"
+                  selectedTier.includes("Community Member")
+                    ? "bg-[#A81C24]/30 border-[#A81C24] text-white font-bold ring-2 ring-red-500/40"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <div className="text-xs font-bold">Business</div>
-                <div className="text-sm font-extrabold text-white">$150/yr</div>
+                <div className="text-[11px] font-bold">1. Community Member</div>
+                <div className="text-sm font-extrabold text-white mt-0.5">$350/yr</div>
               </button>
 
               <button
                 type="button"
-                onClick={() => setSelectedTier("Founding Partner")}
+                onClick={() => setSelectedTier("Community Partner ($399/yr)")}
                 className={`p-3 rounded-lg border text-center transition relative ${
-                  selectedTier === "Founding Partner"
-                    ? "bg-gradient-to-br from-red-950 to-red-900 border-slate-300 text-white font-bold shadow-lg"
+                  selectedTier.includes("Community Partner")
+                    ? "bg-gradient-to-br from-red-950 to-red-900 border-[#A81C24] text-white font-bold shadow-lg ring-2 ring-red-500/50"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-slate-200 text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase">
-                  SAVE $150
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
+                  SAVE $91 SALE
                 </span>
-                <div className="text-xs font-bold text-slate-200 mt-1">Founding Partner</div>
-                <div className="text-sm font-extrabold text-white">$200 <span className="line-through text-red-200 bg-red-950/80 border border-red-500/40 px-1 py-0.2 rounded text-[10px] font-bold ml-0.5">$350</span></div>
+                <div className="text-[11px] font-bold text-slate-200 mt-1">2. Community Partner</div>
+                <div className="text-sm font-extrabold text-white">$399 <span className="line-through text-red-300 text-[10px] font-normal">$490</span></div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTier("Corporate & Community Sponsorship")}
+                className={`p-3 rounded-lg border text-center transition ${
+                  selectedTier.includes("Corporate")
+                    ? "bg-slate-800 border-slate-400 text-white font-bold ring-2 ring-slate-400/40"
+                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                }`}
+              >
+                <div className="text-[11px] font-bold">3. Sponsorship</div>
+                <div className="text-xs font-extrabold text-slate-200 mt-1">Custom / Inquire</div>
               </button>
             </div>
 
@@ -189,8 +186,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    placeholder="e.g. Melissa Family Dental"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                    placeholder="e.g. Melissa Family Dentistry"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
 
@@ -202,7 +199,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.ownerName}
                     onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
                     placeholder="First & Last Name"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
               </div>
@@ -216,7 +213,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="contact@business.com"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
 
@@ -228,7 +225,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="(972) 837-0000"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
               </div>
@@ -239,7 +236,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-slate-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
                   >
                     <option value="Health & Wellness">Health & Wellness</option>
                     <option value="Home Services">Home Services</option>
@@ -247,6 +244,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     <option value="Hospitality & Dining">Hospitality & Dining</option>
                     <option value="Legal & Financial">Legal & Financial</option>
                     <option value="Daycare & Retail">Daycare & Retail</option>
+                    <option value="Professional Services">Professional Services</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
@@ -257,7 +256,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
                     value={formData.website}
                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     placeholder="https://yourwebsite.com"
-                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
               </div>
@@ -266,20 +265,21 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Founding P
               <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
                 <div className="flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-slate-300" />
-                  <span>Selected: <strong className="text-white">{selectedTier}</strong></span>
+                  <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px]">
                   <Lock className="w-3 h-3 text-emerald-400" />
-                  <span>256-Bit SSL Encrypted</span>
+                  <span>256-Bit SSL Secure</span>
                 </div>
               </div>
 
               {/* Submit CTA */}
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full btn-red py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
               >
-                <span>COMPLETE REGISTRATION & ACTIVATE MEMBERSHIP</span>
+                <span>{isSubmitting ? "PROCESSING..." : "SUBMIT APPLICATION"}</span>
               </button>
             </form>
           </div>
