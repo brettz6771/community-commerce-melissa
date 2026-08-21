@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, Star, Users, Handshake } from "lucide-react";
+import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface MemberModalProps {
   defaultTier?: string;
 }
 
-export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($399/yr)" }: MemberModalProps) {
+export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390/yr)" }: MemberModalProps) {
   const [selectedTier, setSelectedTier] = useState(defaultTier);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -22,6 +22,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (defaultTier) {
@@ -31,11 +32,17 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   if (!isOpen) return null;
 
+  const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
+  const isPartner = selectedTier.toLowerCase().includes("partner");
+  const amountDisplay = isCorporate ? "Custom" : isPartner ? "$390" : "$350";
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
+      // 1. Send application info to database & email notification
       await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,12 +62,46 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             "Additional Notes": formData.notes || "None"
           }
         })
-      });
-    } catch (err) {
+      }).catch((err) => console.warn("Email notice warning:", err));
+
+      // 2. If paid tier (Community Member $350 or Community Partner $390), initiate Stripe Checkout
+      if (!isCorporate) {
+        const checkoutRes = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tier: selectedTier,
+            businessName: formData.businessName,
+            ownerName: formData.ownerName,
+            email: formData.email,
+            phone: formData.phone,
+            category: formData.category,
+            website: formData.website,
+            notes: formData.notes,
+          }),
+        });
+
+        const checkoutData = await checkoutRes.json();
+
+        if (checkoutRes.ok && checkoutData?.url) {
+          // Redirect directly to Stripe Checkout
+          window.location.href = checkoutData.url;
+          return;
+        }
+
+        // If Stripe is not yet configured with secret key, gracefully fallback to application submitted
+        if (checkoutData?.isConfigured === false) {
+          console.warn("Stripe key pending in environment. Application logged.");
+        }
+      }
+
+      // 3. For corporate sponsorship or fallback: show confirmation
+      setIsSubmitted(true);
+    } catch (err: any) {
       console.error("Error submitting member application:", err);
+      setIsSubmitted(true);
     } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
     }
   };
 
@@ -130,10 +171,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-slate-200 font-medium">
                 <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                <span>Community Partner Special: <strong>$399/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$490 Regular</span></span>
+                <span>Community Partner Special: <strong>$390/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$490 Regular</span></span>
               </div>
               <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                SAVE $91 LIMITED TIME
+                SAVE $100 LIMITED TIME
               </span>
             </div>
 
@@ -154,7 +195,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
               <button
                 type="button"
-                onClick={() => setSelectedTier("Community Partner ($399/yr)")}
+                onClick={() => setSelectedTier("Community Partner ($390/yr)")}
                 className={`p-3 rounded-lg border text-center transition relative ${
                   selectedTier.includes("Community Partner")
                     ? "bg-gradient-to-br from-red-950 to-red-900 border-[#A81C24] text-white font-bold shadow-lg ring-2 ring-red-500/50"
@@ -162,17 +203,17 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 }`}
               >
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
-                  SAVE $91 SALE
+                  SAVE $100 SALE
                 </span>
                 <div className="text-[11px] font-bold text-slate-200 mt-1">2. Community Partner</div>
-                <div className="text-sm font-extrabold text-white">$399 <span className="line-through text-red-300 text-[10px] font-normal">$490</span></div>
+                <div className="text-sm font-extrabold text-white">$390 <span className="line-through text-red-300 text-[10px] font-normal">$490</span></div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedTier("Corporate & Community Sponsorship")}
                 className={`p-3 rounded-lg border text-center transition ${
-                  selectedTier.includes("Corporate")
+                  selectedTier.includes("Corporate") || selectedTier.includes("Sponsorship")
                     ? "bg-slate-800 border-slate-400 text-white font-bold ring-2 ring-slate-400/40"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
@@ -275,7 +316,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 </div>
                 <div className="flex items-center gap-1 text-[11px]">
                   <Lock className="w-3 h-3 text-emerald-400" />
-                  <span>256-Bit SSL Secure</span>
+                  <span>Stripe 256-Bit SSL Secure</span>
                 </div>
               </div>
 
@@ -283,9 +324,24 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full btn-red py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
+                className="w-full btn-red py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition"
               >
-                <span>{isSubmitting ? "PROCESSING..." : "SUBMIT APPLICATION"}</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>CONNECTING TO STRIPE CHECKOUT...</span>
+                  </>
+                ) : isCorporate ? (
+                  <>
+                    <span>SUBMIT CORPORATE SPONSORSHIP APPLICATION</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                ) : (
+                  <>
+                    <span>PROCEED TO SECURE CHECKOUT ({amountDisplay})</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -295,3 +351,4 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     </div>
   );
 }
+

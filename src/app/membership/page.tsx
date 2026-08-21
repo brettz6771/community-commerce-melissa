@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
@@ -17,12 +18,19 @@ import {
   Globe, 
   Check, 
   Minus,
-  Lock
+  Lock,
+  PartyPopper,
+  AlertCircle
 } from "lucide-react";
 
-export default function MembershipPage() {
+function MembershipContent() {
+  const searchParams = useSearchParams();
+  const isSuccess = searchParams.get("success") === "true";
+  const isCanceled = searchParams.get("canceled") === "true";
+  const paidTier = searchParams.get("tier") || "Membership";
+
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [modalTier, setModalTier] = useState("Community Partner ($399/yr)");
+  const [modalTier, setModalTier] = useState("Community Partner ($390/yr)");
 
   const handleJoinClick = (tierName: string) => {
     setModalTier(tierName);
@@ -47,11 +55,11 @@ export default function MembershipPage() {
   const faqs = [
     { 
       q: "What is the difference between Community Member and Community Partner?", 
-      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($399/yr limited sale, regularly $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
+      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($390/yr limited sale, regularly $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
     },
     { 
       q: "How does the limited-time Community Partner sale work?", 
-      a: "For a limited time, you can secure the Community Partner membership level for $399/year (saving $91 off the standard $490/year regular price). This includes all premium visibility perks, spotlight priority, local business discount access, and event recognition." 
+      a: "For a limited time, you can secure the Community Partner membership level for $390/year (saving $100 off the standard $490/year regular price). This includes all premium visibility perks, spotlight priority, local business discount access, and event recognition." 
     },
     { 
       q: "What are the Special Discounts from local businesses?", 
@@ -67,13 +75,13 @@ export default function MembershipPage() {
     },
     { 
       q: "How quickly is my business directory listing activated?", 
-      a: "Upon completing your member application, our team verifies and activates your directory profile within 24 to 48 business hours." 
+      a: "Upon completing your member application and Stripe payment, our team verifies and activates your directory profile within 24 to 48 business hours." 
     }
   ];
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
-      <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($399/yr)")} />
+      <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($390/yr)")} />
 
       {/* Internal Preview Notification Banner */}
       <div className="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800 text-center flex items-center justify-center gap-2">
@@ -82,6 +90,31 @@ export default function MembershipPage() {
           <strong>Team Preview Mode:</strong> This page is accessible at <code className="bg-slate-800 text-slate-200 px-1.5 py-0.5 rounded font-mono">/membership</code> for review and approval before public launch.
         </span>
       </div>
+
+      {/* Stripe Payment Success Notification Banner */}
+      {isSuccess && (
+        <div className="bg-emerald-900 border-b border-emerald-700 text-white py-4 px-4 text-center">
+          <div className="max-w-4xl mx-auto flex items-center justify-center gap-3">
+            <PartyPopper className="w-6 h-6 text-emerald-300 shrink-0" />
+            <div className="text-left">
+              <h3 className="font-outfit font-black text-base text-emerald-100 uppercase tracking-wide">
+                Payment Successful! Welcome to Community Commerce Melissa
+              </h3>
+              <p className="text-xs text-emerald-200">
+                Your payment for <strong>{paidTier}</strong> has been confirmed by Stripe. Check your email for your receipt, Welcome Packet, and directory setup instructions.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stripe Payment Canceled Notification Banner */}
+      {isCanceled && (
+        <div className="bg-amber-950 border-b border-amber-800 text-amber-200 py-3 px-4 text-center text-xs flex items-center justify-center gap-2">
+          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>Checkout was canceled. Whenever you&apos;re ready, you can choose a membership plan below to complete your registration.</span>
+        </div>
+      )}
 
       {/* Hero Header */}
       <section className="bg-[#0B0E14] text-white py-14 border-b border-white/10 relative overflow-hidden">
@@ -111,19 +144,19 @@ export default function MembershipPage() {
                 <span className="bg-white text-red-950 font-black text-[10px] uppercase px-2 py-0.5 rounded shadow">
                   LIMITED TIME OFFER
                 </span>
-                <span className="text-xs font-bold text-slate-200">Save $91 Instantly</span>
+                <span className="text-xs font-bold text-slate-200">Save $100 Instantly</span>
               </div>
               <h2 className="text-lg sm:text-xl font-extrabold font-outfit text-white mt-0.5">
-                Join as a Community Partner for $399/year <span className="line-through text-red-200 text-sm font-semibold ml-1">$490 Regular</span>
+                Join as a Community Partner for $390/year <span className="line-through text-red-200 text-sm font-semibold ml-1">$490 Regular</span>
               </h2>
             </div>
           </div>
 
           <button
-            onClick={() => handleJoinClick("Community Partner ($399/yr)")}
+            onClick={() => handleJoinClick("Community Partner ($390/yr)")}
             className="bg-white hover:bg-slate-100 text-red-950 font-black px-6 py-2.5 rounded-lg text-xs uppercase tracking-wider shrink-0 shadow-xl flex items-center gap-2 transition hover:scale-105"
           >
-            CLAIM $399 SPECIAL
+            CLAIM $390 SPECIAL
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -234,13 +267,13 @@ export default function MembershipPage() {
                   <div className="text-center pb-4 border-b border-red-100">
                     <div className="inline-flex flex-col items-center bg-gradient-to-br from-red-950 via-[#A81C24] to-red-900 text-white px-7 py-3 rounded-2xl shadow-lg border-2 border-red-500/50 ring-2 ring-red-500/20">
                       <div className="flex items-baseline gap-2">
-                        <span className="font-outfit font-black text-3.5xl sm:text-4xl text-white tracking-tight">$399</span>
+                        <span className="font-outfit font-black text-3.5xl sm:text-4xl text-white tracking-tight">$390</span>
                         <span className="text-xs font-semibold text-red-200">/year</span>
                       </div>
                       <div className="flex items-center gap-1.5 mt-1">
                         <span className="line-through text-red-300 text-xs font-semibold">$490 Regular</span>
                         <span className="bg-white text-[#A81C24] text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
-                          SAVE $91 LIMITED TIME
+                          SAVE $100 LIMITED TIME
                         </span>
                       </div>
                     </div>
@@ -294,7 +327,7 @@ export default function MembershipPage() {
                 </div>
 
                 <button
-                  onClick={() => handleJoinClick("Community Partner ($399/yr)")}
+                  onClick={() => handleJoinClick("Community Partner ($390/yr)")}
                   className="w-full btn-red py-3.5 px-4 rounded-xl transition shadow-2xl flex flex-col items-center justify-center gap-0.5 group hover:scale-[1.02] ring-2 ring-red-500/50"
                 >
                   <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-white font-outfit uppercase">
@@ -302,7 +335,7 @@ export default function MembershipPage() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                   <div className="text-[11px] font-bold text-red-100 uppercase tracking-wider">
-                    $399 / YEAR • SAVE $91 SALE
+                    $390 / YEAR • SAVE $100 SALE
                   </div>
                 </button>
               </div>
@@ -427,7 +460,7 @@ export default function MembershipPage() {
                         </th>
                         <th className="py-3 px-4 text-xs text-center border-l border-red-800/50 bg-[#A81C24] text-white font-extrabold">
                           COMMUNITY PARTNER<br/>
-                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$399 SALE <span className="line-through text-red-300 font-normal">$490</span></span>
+                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$390 SALE <span className="line-through text-red-300 font-normal">$490</span></span>
                         </th>
                       </tr>
                     </thead>
@@ -580,5 +613,13 @@ export default function MembershipPage() {
         defaultTier={modalTier}
       />
     </div>
+  );
+}
+
+export default function MembershipPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#E5E9EE] flex items-center justify-center">Loading...</div>}>
+      <MembershipContent />
+    </Suspense>
   );
 }
