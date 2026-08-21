@@ -158,14 +158,14 @@ export default function EventsPage() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col justify-between flex-grow space-y-4">
-                    <div className="space-y-2">
+                  <div className="p-6 sm:p-7 flex flex-col justify-between flex-grow space-y-5">
+                    <div className="space-y-2.5">
                       <div className="flex items-center gap-2 text-[11px] text-red-700 font-bold uppercase tracking-wider">
                         <Tag className="w-3 h-3" />
                         {evt.category}
                       </div>
 
-                      <h3 className="text-lg font-extrabold font-outfit text-slate-900 group-hover:text-red-700 transition-colors">
+                      <h3 className="text-lg sm:text-xl font-extrabold font-outfit text-slate-900 group-hover:text-red-700 transition-colors">
                         {evt.title}
                       </h3>
 
@@ -173,25 +173,30 @@ export default function EventsPage() {
                         {evt.description}
                       </p>
 
-                      <div className="pt-1 space-y-1 text-xs text-slate-500">
-                        <div className="flex items-center gap-2">
+                      <div className="pt-2 space-y-2 text-xs">
+                        <div className="flex items-center gap-2 text-slate-700 font-semibold">
                           <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span>{evt.time}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span className="truncate">{evt.location}</span>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0 mt-0.5" />
+                          <div className="leading-snug">
+                            <div className="font-bold text-slate-900">{evt.location}</div>
+                            {evt.address && (
+                              <div className="text-[11px] text-slate-500 font-medium">{evt.address}</div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                       <a
-                        href={`https://maps.google.com/?q=${encodeURIComponent(evt.location)}`}
+                        href={`https://maps.google.com/?q=${encodeURIComponent(evt.address ? `${evt.location}, ${evt.address}` : evt.location)}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-slate-500 hover:text-slate-900 text-xs font-semibold flex items-center gap-1"
+                        className="text-slate-600 hover:text-slate-900 text-xs font-semibold flex items-center gap-1.5 transition"
                       >
                         <MapPin className="w-3.5 h-3.5 text-red-600" />
                         Directions
@@ -202,16 +207,17 @@ export default function EventsPage() {
                           href={evt.registerUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn-red px-4 py-2 rounded text-xs font-bold uppercase tracking-wider shadow inline-block text-center"
+                          className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:scale-[1.02] transition inline-flex items-center gap-1.5 text-center shrink-0"
                         >
-                          REGISTER / RSVP NOW
+                          <span>REGISTER / RSVP NOW</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       ) : (
                         <button
                           onClick={() => handleRSVP(evt.title)}
-                          className="btn-red px-4 py-2 rounded text-xs font-bold uppercase tracking-wider shadow"
+                          className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:scale-[1.02] transition inline-flex items-center gap-1.5 shrink-0"
                         >
-                          REGISTER / RSVP NOW
+                          <span>REGISTER / RSVP NOW</span>
                         </button>
                       )}
                     </div>

@@ -6,6 +6,7 @@ export interface EventItem {
   month: string;
   time: string;
   location: string;
+  address?: string;
   category: string;
   description: string;
   image: string;
@@ -85,7 +86,8 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "AUG",
     day: "24",
     time: "6:00 PM - 8:00 PM",
-    location: "The Red Feather, Melissa, TX",
+    location: "The Red Feather",
+    address: "3400 Red Feather Way, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
     description: "Join local Melissa business owners, founders, and community leaders for our August Meet & Greet Networking Mixer! Connect with fellow entrepreneurs, build strategic partnerships, and enjoy complimentary refreshments in a relaxed setting.",
     image: "/events/meet-and-greet-aug-24-26-v2.jpg",
@@ -99,7 +101,8 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "SEP",
     day: "14",
     time: "11:00 AM - 12:30 PM",
-    location: "First United Bank, 1700 Redbud Blvd Suite 130, McKinney, TX 75069",
+    location: "First United Bank",
+    address: "1700 Redbud Blvd, Suite 130, McKinney, TX 75069",
     category: "Lunch and Learn",
     description: "Be Involved. Make an Impact! Discover what Community Commerce Melissa is all about, connect with fellow business owners, share ideas, and explore committees and volunteer opportunities. FREE Lunch included for attendees sponsored by First United Bank!",
     image: "/events/lunch-and-learn-9-14-26.jpg",
@@ -113,7 +116,8 @@ export const MOCK_EVENTS: EventItem[] = [
     month: "SEP",
     day: "21",
     time: "6:00 PM - 8:00 PM",
-    location: "Mountain Mike's Pizza, 3031 Washington Drive, Melissa, TX 75454",
+    location: "Mountain Mike's Pizza",
+    address: "3031 Washington Drive, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
     description: "One Community, Endless Connections! A fresh local non-profit networking evening to connect, support, and grow Melissa businesses together. Enjoy complimentary appetizers, door prizes & giveaways, and community collaboration. Free event — space is limited, please register in advance!",
     image: "/events/networking-night-mountain-mikes-9-21-26.jpg",
