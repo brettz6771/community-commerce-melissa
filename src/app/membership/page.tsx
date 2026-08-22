@@ -39,8 +39,8 @@ function MembershipContent() {
 
   const comparisonRows = [
     { benefit: "Business Directory Listing", member: "Standard", partner: "Enhanced" },
-    { benefit: "Networking Events", member: "check", partner: "check" },
-    { benefit: "Educational Opportunities", member: "check", partner: "check" },
+    { benefit: "Networking Events", member: "Standard", partner: "Enhanced" },
+    { benefit: "Educational Opportunities", member: "Standard", partner: "Enhanced" },
     { benefit: "Member Badge", member: "check", partner: "check" },
     { benefit: "Community Participation", member: "check", partner: "check" },
     { benefit: "Special Discounts from Local Businesses", member: "dash", partner: "check" },
