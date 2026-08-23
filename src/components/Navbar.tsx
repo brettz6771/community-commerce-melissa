@@ -24,6 +24,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
 
   const contactSublinks = [
     { name: "Contact Us", href: "/contact" },
+    { name: "Leave Feedback", href: "/contact/feedback" },
     { name: "Volunteer", href: "/volunteer" },
   ];
 

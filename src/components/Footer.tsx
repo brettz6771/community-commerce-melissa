@@ -119,6 +119,7 @@ export default function Footer() {
               COMMUNITY RESOURCES
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
+              <li><Link href="/contact/feedback" className="hover:text-white transition">Leave Feedback / Suggestions</Link></li>
               <li><Link href="/volunteer" className="hover:text-white transition">Volunteer Program</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
             </ul>
