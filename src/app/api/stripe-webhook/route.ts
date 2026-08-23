@@ -41,22 +41,29 @@ export async function POST(request: Request) {
 
         console.log("Stripe Checkout Completed:", {
           id: session.id,
+          subscriptionId: session.subscription,
+          customerId: session.customer,
           customerEmail: session.customer_email || metadata.email,
           amount: session.amount_total,
           tier: metadata.tier,
+          isTest: metadata.isTest,
         });
 
         // Save to database
         if (session.customer_email || metadata.email) {
           await saveContactToDb({
             email: (session.customer_email || metadata.email) as string,
-            formType: "Paid Membership (Stripe)",
-            source: "Stripe Checkout",
+            formType: metadata.isTest === "true" ? "Live Test Membership (Stripe)" : "Paid Membership (Stripe)",
+            source: "Stripe Subscription Checkout",
             details: {
-              "Payment Status": "Paid",
+              "Payment Status": "Active Subscription",
               "Stripe Session ID": session.id,
+              "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
+              "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
               "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+              "Billing Frequency": "Annual Recurring",
               "Membership Tier": metadata.tier || "N/A",
+              "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
               "Business Name": metadata.businessName || "N/A",
               "Contact Name": metadata.contactName || "N/A",
               "Phone": metadata.phone || "N/A",
@@ -65,6 +72,36 @@ export async function POST(request: Request) {
               "Notes": metadata.notes || "None",
             },
           });
+        }
+        break;
+      }
+
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as any;
+        // Ignore the very first invoice if it was already handled by checkout.session.completed
+        if (invoice.billing_reason === "subscription_cycle") {
+          const subscriptionId = invoice.subscription || invoice.parent?.subscription_details?.subscription || invoice.subscription_details?.subscription || "N/A";
+          console.log("Stripe Recurring Subscription Payment Succeeded:", {
+            invoiceId: invoice.id,
+            subscriptionId: subscriptionId,
+            customerEmail: invoice.customer_email,
+            amountPaid: invoice.amount_paid,
+          });
+
+          if (invoice.customer_email) {
+            await saveContactToDb({
+              email: invoice.customer_email,
+              formType: "Membership Subscription Renewal (Stripe)",
+              source: "Stripe Recurring Billing",
+              details: {
+                "Payment Status": "Renewed",
+                "Invoice ID": invoice.id,
+                "Subscription ID": String(subscriptionId),
+                "Amount Paid": `$${((invoice.amount_paid || 0) / 100).toFixed(2)}`,
+                "Billing Reason": invoice.billing_reason,
+              },
+            });
+          }
         }
         break;
       }

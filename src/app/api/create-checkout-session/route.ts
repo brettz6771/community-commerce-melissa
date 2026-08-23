@@ -32,14 +32,25 @@ export async function POST(request: Request) {
       apiVersion: "2025-02-24.acacia" as any,
     });
 
-    const isPartner = tier.toLowerCase().includes("partner");
-    const amountInCents = isPartner ? 39000 : 35000; // $390 for Partner, $350 for Member
-    const productName = isPartner 
-      ? "Community Partner — Annual Membership" 
-      : "Community Member — Annual Membership";
-    const productDesc = isPartner
-      ? "Community Commerce Melissa — Enhanced Partner Membership (1 Year • Limited-Time Rate)"
-      : "Community Commerce Melissa — Community Member Level (1 Year)";
+    const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
+    const isPartner = !isTest && tier.toLowerCase().includes("partner");
+
+    let amountInCents = 35000; // default Community Member $350/yr
+    let productName = "Community Member — Annual Membership";
+    let productDesc = "Community Commerce Melissa — Community Member Level (1 Year Recurring Membership)";
+    let successTierParam = "Community Member";
+
+    if (isTest) {
+      amountInCents = 100; // $1.00 for testing
+      productName = "Community Commerce Melissa — Live Test Membership ($1.00/yr)";
+      productDesc = "Live Stripe testing checkout for Community Commerce Melissa (Annual Recurring Subscription)";
+      successTierParam = "Live Test Membership ($1.00)";
+    } else if (isPartner) {
+      amountInCents = 39000; // $390 for Partner
+      productName = "Community Partner — Annual Membership";
+      productDesc = "Community Commerce Melissa — Enhanced Partner Membership (1 Year • Limited-Time Rate • Annual Recurring)";
+      successTierParam = "Community Partner";
+    }
 
     // Determine site base URL
     const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
@@ -56,14 +67,19 @@ export async function POST(request: Request) {
               images: [`${origin}/ccm-logo-transparent.png`],
             },
             unit_amount: amountInCents,
+            recurring: {
+              interval: "year",
+              interval_count: 1,
+            },
           },
           quantity: 1,
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       customer_email: email && email.includes("@") ? email : undefined,
       metadata: {
         tier,
+        isTest: isTest ? "true" : "false",
         businessName: businessName || "N/A",
         contactName: ownerName || "N/A",
         email: email || "N/A",
@@ -72,7 +88,7 @@ export async function POST(request: Request) {
         website: website || "N/A",
         notes: notes || "None",
       },
-      success_url: `${origin}/membership?success=true&tier=${encodeURIComponent(isPartner ? "Community Partner" : "Community Member")}&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/membership?success=true&tier=${encodeURIComponent(successTierParam)}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/membership?canceled=true`,
     });
 

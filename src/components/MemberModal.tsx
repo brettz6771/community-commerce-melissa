@@ -7,9 +7,10 @@ interface MemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTier?: string;
+  isTestMode?: boolean;
 }
 
-export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390/yr)" }: MemberModalProps) {
+export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390/yr)", isTestMode = false }: MemberModalProps) {
   const [selectedTier, setSelectedTier] = useState(defaultTier);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -32,9 +33,12 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   if (!isOpen) return null;
 
-  const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
-  const isPartner = selectedTier.toLowerCase().includes("partner");
-  const amountDisplay = isCorporate ? "Custom" : isPartner ? "$390" : "$350";
+  const isTest = selectedTier.toLowerCase().includes("test");
+  const isCorporate = !isTest && (selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship"));
+  const isPartner = !isTest && selectedTier.toLowerCase().includes("partner");
+  const amountDisplay = isTest ? "$1.00/yr" : isCorporate ? "Custom" : isPartner ? "$390/yr" : "$350/yr";
+
+  const showTestOption = isTestMode || defaultTier.toLowerCase().includes("test") || isTest;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +52,12 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subject: `New Member Application: ${formData.businessName || formData.ownerName} (${selectedTier})`,
-          formType: "Member Application Form",
+          formType: isTest ? "Live Test Member Application" : "Member Application Form",
           senderEmail: formData.email,
           senderName: formData.ownerName,
           details: {
             "Selected Tier": selectedTier,
+            "Is Test Mode": isTest ? "Yes ($1.00 Test)" : "No",
             "Business Name": formData.businessName,
             "Owner / Contact Name": formData.ownerName,
             "Email Address": formData.email,
@@ -64,13 +69,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         })
       }).catch((err) => console.warn("Email notice warning:", err));
 
-      // 2. If paid tier (Community Member $350 or Community Partner $390), initiate Stripe Checkout
+      // 2. If paid tier (Community Member $350, Partner $390, or Live Test $1.00), initiate Stripe Checkout
       if (!isCorporate) {
         const checkoutRes = await fetch("/api/create-checkout-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             tier: selectedTier,
+            isTest: isTest,
             businessName: formData.businessName,
             ownerName: formData.ownerName,
             email: formData.email,
@@ -89,6 +95,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           return;
         }
 
+        if (checkoutData?.error) {
+          setErrorMessage(checkoutData.error);
+        }
+
         // If Stripe is not yet configured with secret key, gracefully fallback to application submitted
         if (checkoutData?.isConfigured === false) {
           console.warn("Stripe key pending in environment. Application logged.");
@@ -99,7 +109,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
       setIsSubmitted(true);
     } catch (err: any) {
       console.error("Error submitting member application:", err);
-      setIsSubmitted(true);
+      setErrorMessage(err?.message || "Failed to submit. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -179,7 +189,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             </div>
 
             {/* Tier Selector Tabs */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className={`grid gap-2 ${showTestOption ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1 sm:grid-cols-3"}`}>
               <button
                 type="button"
                 onClick={() => setSelectedTier("Community Member ($350/yr)")}
@@ -203,9 +213,9 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 }`}
               >
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
-                  SAVE $100 SALE
+                  SAVE $100
                 </span>
-                <div className="text-[11px] font-bold text-slate-200 mt-1">2. Community Partner</div>
+                <div className="text-[11px] font-bold text-slate-200 mt-1">2. Partner</div>
                 <div className="text-sm font-extrabold text-white">$390 <span className="line-through text-red-300 text-[10px] font-normal">$490</span></div>
               </button>
 
@@ -221,6 +231,24 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <div className="text-[11px] font-bold">3. Sponsorship</div>
                 <div className="text-xs font-extrabold text-slate-200 mt-1">Custom / Inquire</div>
               </button>
+
+              {showTestOption && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier("Live Test Membership ($1.00/yr)")}
+                  className={`p-3 rounded-lg border text-center transition relative ${
+                    isTest
+                      ? "bg-purple-900/80 border-purple-400 text-white font-bold shadow-lg ring-2 ring-purple-500/50"
+                      : "bg-purple-950/30 border-purple-800/40 text-purple-300 hover:text-white"
+                  }`}
+                >
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-purple-400 text-purple-950 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shadow">
+                    ADMIN TEST
+                  </span>
+                  <div className="text-[11px] font-bold text-purple-200 mt-1">🧪 Live Test</div>
+                  <div className="text-sm font-extrabold text-purple-100">$1.00/yr</div>
+                </button>
+              )}
             </div>
 
             {/* Form */}
@@ -316,24 +344,37 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 </div>
                 <div className="flex items-center gap-1 text-[11px]">
                   <Lock className="w-3 h-3 text-emerald-400" />
-                  <span>Stripe 256-Bit SSL Secure</span>
+                  <span>Annual Auto-Renewing Subscription</span>
                 </div>
               </div>
+
+              {errorMessage && (
+                <div className="bg-red-950/80 border border-red-500/50 rounded-lg p-3 text-xs text-red-200">
+                  {errorMessage}
+                </div>
+              )}
 
               {/* Submit CTA */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full btn-red py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition"
+                className={`w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition ${
+                  isTest ? "bg-purple-600 hover:bg-purple-500 text-white" : "btn-red"
+                }`}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>CONNECTING TO STRIPE CHECKOUT...</span>
+                    <span>CONNECTING TO STRIPE SECURE CHECKOUT...</span>
                   </>
                 ) : isCorporate ? (
                   <>
                     <span>SUBMIT CORPORATE SPONSORSHIP APPLICATION</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                ) : isTest ? (
+                  <>
+                    <span>PROCEED TO $1.00 TEST CHECKOUT (AUTO-RENEWING)</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 ) : (
