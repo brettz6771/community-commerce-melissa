@@ -142,7 +142,7 @@ function ReceiptBadgeContent() {
 
       if (!ctx) return;
 
-      const cleanTier = receiptData?.tier?.toLowerCase().includes("partner")
+      const cleanTier = receiptData?.tier?.toLowerCase().includes("partner") || receiptData?.isTest
         ? "COMMUNITY PARTNER"
         : receiptData?.tier?.toLowerCase().includes("member")
         ? "COMMUNITY MEMBER"
@@ -286,7 +286,7 @@ function ReceiptBadgeContent() {
     );
   }
 
-  const cleanTierDisplay = receiptData?.tier?.includes("Partner")
+  const cleanTierDisplay = receiptData?.tier?.includes("Partner") || receiptData?.isTest
     ? "Community Partner"
     : receiptData?.tier?.includes("Member")
     ? "Community Member"

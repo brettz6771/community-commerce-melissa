@@ -38,11 +38,13 @@ export async function GET(request: Request) {
     const metadata = session.metadata || {};
     const customerDetails = session.customer_details;
     const isDonation = metadata.type === "donation";
-
+    const isTestSession = metadata.isTest === "true" || (metadata.tier && metadata.tier.toLowerCase().includes("test"));
     const customerName = metadata.contactName || metadata.donorName || customerDetails?.name || "Community Supporter";
     const customerEmail = customerDetails?.email || metadata.donorEmail || metadata.email || "";
     const businessName = metadata.businessName || metadata.company || customerDetails?.name || "Melissa Community Member";
-    const tier = metadata.tier || (isDonation ? "One-Time Contribution" : "Community Partner ($390/yr)");
+    const tier = isTestSession 
+      ? "Community Partner ($390 1st Yr • Renews $490/yr)" 
+      : metadata.tier || (isDonation ? "One-Time Contribution" : "Community Partner ($390/yr)");
     const amount = (session.amount_total || 0) / 100;
     const shortId = session.id.slice(-6).toUpperCase();
     const memberId = `CCM-2026-${shortId}`;

@@ -107,9 +107,9 @@ export async function POST(request: Request) {
 
     if (isTest) {
       amountInCents = 100; // $1.00 for testing
-      productName = "Community Commerce Melissa — Live Test Membership ($1.00/yr)";
-      productDesc = "Live Stripe testing checkout for Community Commerce Melissa (Annual Recurring Subscription)";
-      successTierParam = "Live Test Membership ($1.00)";
+      productName = "Community Partner — Live Test ($1.00/yr)";
+      productDesc = "Live Stripe testing checkout for Community Partner Level (Annual Recurring Subscription)";
+      successTierParam = "Community Partner";
     } else if (isPartner) {
       amountInCents = 49000; // Base rate is $490/yr
       productName = "Community Partner — Annual Membership";
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
       mode: "subscription",
       customer_email: email && email.includes("@") ? email : undefined,
       metadata: {
-        tier,
+        tier: isTest ? "Community Partner ($390 1st Yr • Renews $490/yr)" : tier,
         isTest: isTest ? "true" : "false",
         businessName: businessName || "N/A",
         contactName: ownerName || "N/A",
