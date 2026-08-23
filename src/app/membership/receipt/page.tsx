@@ -79,6 +79,12 @@ function ReceiptBadgeContent() {
                 tier: data.tier,
                 memberId: data.memberId,
                 amount: data.amount,
+                city: data.city,
+                state: data.state,
+                phone: data.phone,
+                category: data.category,
+                website: data.website,
+                sessionId: data.id,
               }),
             })
               .then(() => setIsEmailSent(true))
@@ -109,6 +115,12 @@ function ReceiptBadgeContent() {
           tier: receiptData.tier,
           memberId: receiptData.memberId,
           amount: receiptData.amount,
+          city: receiptData.city,
+          state: receiptData.state,
+          phone: receiptData.phone,
+          category: receiptData.category,
+          website: receiptData.website,
+          sessionId: receiptData.id,
         }),
       });
       setIsEmailSent(true);

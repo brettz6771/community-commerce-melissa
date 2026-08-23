@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { saveContactToDb } from "@/lib/db";
+import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -10,26 +10,33 @@ export async function POST(request: Request) {
       ownerName, 
       tier, 
       memberId, 
-      amount 
+      amount,
+      city,
+      state,
+      phone,
+      category,
+      website,
+      sessionId
     } = body;
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Valid email address required" }, { status: 400 });
     }
 
-    // Save/Update in Postgres DB
-    await saveContactToDb({
-      email,
-      formType: "Member Badge Dispatched",
-      source: "Post-Checkout Digital Badge System",
-      details: {
-        "Member ID": memberId || "CCM-2026-MEMBER",
-        "Member Business": businessName || "N/A",
-        "Owner / Contact": ownerName || "N/A",
-        "Membership Level": tier || "Community Partner",
-        "Amount Paid": `$${amount || 390}`,
-        "Email Dispatched At": new Date().toISOString(),
-      },
+    // Dispatch welcome email to member and alert email to info@communitycommercemelissa.org
+    await sendMemberWelcomeAndAdminAlert({
+      memberEmail: email,
+      businessName: businessName || "Melissa Community Member",
+      ownerName: ownerName || "",
+      tier: tier || "Community Partner",
+      memberId: memberId || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+      amount: amount || 390,
+      city: city || "Melissa",
+      state: state || "TX",
+      phone: phone || "",
+      category: category || "General Business",
+      website: website || "",
+      sessionId: sessionId || "",
     });
 
     console.log(`Digital Membership Badge dispatched to ${email} for Member ID ${memberId}`);

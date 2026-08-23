@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
+import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 
 export async function POST(request: Request) {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -107,6 +108,24 @@ export async function POST(request: Request) {
                 tier: metadata.tier || "Community Partner",
                 isTest: metadata.isTest === "true",
               });
+
+              // Dispatch Member Welcome Email & Admin Notification
+              const shortId = session.id.slice(-6).toUpperCase();
+              const memberId = `CCM-2026-${shortId}`;
+              await sendMemberWelcomeAndAdminAlert({
+                memberEmail: targetEmail as string,
+                businessName: metadata.businessName,
+                ownerName: metadata.contactName || "",
+                tier: metadata.tier || "Community Partner",
+                memberId,
+                amount: ((session.amount_total || 0) / 100).toFixed(2),
+                city: metadata.city || "Melissa",
+                state: metadata.state || "TX",
+                phone: metadata.phone || "",
+                category: metadata.category || "General Business",
+                website: metadata.website || "",
+                sessionId: session.id,
+              }).catch((err) => console.warn("Webhook email dispatch notice:", err));
             }
           }
         }

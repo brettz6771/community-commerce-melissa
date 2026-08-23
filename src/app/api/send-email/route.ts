@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { saveContactToDb } from "@/lib/db";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -16,17 +17,6 @@ export async function POST(request: Request) {
       });
     }
 
-    const apiKey = process.env.SENDGRID_API_KEY;
-
-    if (!apiKey) {
-      console.warn("SENDGRID_API_KEY is not set. Mocking email delivery.");
-      return NextResponse.json({
-        success: true,
-        message: "Email submission logged and saved to database.",
-      });
-    }
-
-    const fromEmail = "website@communitycommercemelissa.org";
     const toEmail = "info@communitycommercemelissa.org";
 
     // Format HTML content for clean reading in inbox
@@ -50,53 +40,19 @@ export async function POST(request: Request) {
           </table>
         </div>
         <div style="background-color: #f8fafc; padding: 12px 24px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0;">
-          Sent from website@communitycommercemelissa.org to info@communitycommercemelissa.org
+          Sent to info@communitycommercemelissa.org from website visitor
         </div>
       </div>
     `;
 
-    const sendgridPayload = {
-      personalizations: [
-        {
-          to: [{ email: toEmail }],
-        },
-      ],
-      from: {
-        email: fromEmail,
-        name: "Community Commerce Melissa Website",
-      },
-      reply_to: {
-        email: senderEmail && senderEmail.includes("@") ? senderEmail : fromEmail,
-        name: senderName || "Website Visitor",
-      },
+    const result = await sendEmail({
+      to: toEmail,
+      replyTo: senderEmail && senderEmail.includes("@") ? senderEmail : undefined,
       subject: subject || `New Submission: ${formType || "Website Form"}`,
-      content: [
-        {
-          type: "text/html",
-          value: htmlContent,
-        },
-      ],
-    };
-
-    const sgResponse = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(sendgridPayload),
+      html: htmlContent,
     });
 
-    if (!sgResponse.ok) {
-      const errorText = await sgResponse.text();
-      console.error("SendGrid API error:", sgResponse.status, errorText);
-      return NextResponse.json(
-        { error: "Failed to send email via SendGrid." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, result });
   } catch (error) {
     console.error("Error in /api/send-email route:", error);
     return NextResponse.json(
