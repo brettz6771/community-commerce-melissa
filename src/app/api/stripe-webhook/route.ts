@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { saveContactToDb } from "@/lib/db";
+import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
 
 export async function POST(request: Request) {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -86,10 +86,28 @@ export async function POST(request: Request) {
                 "Contact Name": metadata.contactName || "N/A",
                 "Phone": metadata.phone || "N/A",
                 "Category": metadata.category || "N/A",
+                "City": metadata.city || "Melissa",
+                "State": metadata.state || "TX",
                 "Website": metadata.website || "N/A",
                 "Notes": metadata.notes || "None",
               },
             });
+
+            // Auto-add new business to Directory table
+            if (metadata.businessName) {
+              await saveDirectoryMember({
+                businessName: metadata.businessName,
+                category: metadata.category || "General Business",
+                website: metadata.website || "",
+                city: metadata.city || "Melissa",
+                state: metadata.state || "TX",
+                phone: metadata.phone || "",
+                email: targetEmail as string,
+                ownerName: metadata.contactName || "",
+                tier: metadata.tier || "Community Partner",
+                isTest: metadata.isTest === "true",
+              });
+            }
           }
         }
         break;

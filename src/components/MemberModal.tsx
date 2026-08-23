@@ -24,6 +24,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     phone: "",
     category: "Real Estate",
     website: "",
+    city: "Melissa",
+    state: "TX",
     notes: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,6 +76,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               "Email Address": formData.email,
               "Phone Number": formData.phone || "N/A",
               "Business Category": formData.category,
+              "City": formData.city || "Melissa",
+              "State": formData.state || "TX",
               "Website": formData.website || "N/A",
               "Additional Notes": formData.notes || "None"
             }
@@ -97,6 +101,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           phone: formData.phone,
           category: formData.category,
           website: formData.website,
+          city: formData.city || "Melissa",
+          state: formData.state || "TX",
           notes: formData.notes,
           uiMode: stripePromise ? "embedded" : "hosted",
         }),
@@ -373,6 +379,33 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     value={formData.website}
                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     placeholder="https://yourwebsite.com"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              {/* City and State for Directory Listing */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">City (Directory Listing) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="Melissa"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">State *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                    placeholder="TX"
                     className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>

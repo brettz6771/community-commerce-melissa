@@ -160,8 +160,10 @@ export async function POST(request: Request) {
         contactName: ownerName || "N/A",
         email: email || "N/A",
         phone: phone || "N/A",
-        category: category || "N/A",
-        website: website || "N/A",
+        category: category || "General Business",
+        website: website || "",
+        city: body.city || "Melissa",
+        state: body.state || "TX",
         notes: notes || "None",
       },
     };

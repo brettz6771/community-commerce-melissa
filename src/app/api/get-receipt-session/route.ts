@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { saveDirectoryMember } from "@/lib/db";
 
 export async function GET(request: Request) {
   try {
@@ -53,6 +54,22 @@ export async function GET(request: Request) {
       month: "long",
       day: "numeric",
     });
+
+    // Auto-add to Directory if membership
+    if (!isDonation && businessName && businessName !== "N/A") {
+      await saveDirectoryMember({
+        businessName,
+        category: metadata.category || "General Business",
+        website: metadata.website || "",
+        city: metadata.city || "Melissa",
+        state: metadata.state || "TX",
+        phone: metadata.phone || "",
+        email: customerEmail,
+        ownerName: customerName,
+        tier,
+        isTest: metadata.isTest === "true",
+      }).catch((err) => console.warn("Directory auto-add notice:", err));
+    }
 
     return NextResponse.json({
       id: session.id,
