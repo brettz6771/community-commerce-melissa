@@ -58,27 +58,7 @@ function GiveDonateContent() {
     const numericAmount = getNumericAmount();
 
     try {
-      // 1. Send notification email & log to database
-      await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: `New Contribution Intent: $${numericAmount} from ${donorInfo.name || "Generous Supporter"}`,
-          formType: "Donation Form Submission",
-          senderEmail: donorInfo.email,
-          senderName: donorInfo.name || "Anonymous Supporter",
-          details: {
-            "Contribution Amount": `$${numericAmount}`,
-            "Donor Name": donorInfo.name,
-            "Email Address": donorInfo.email,
-            "Company": donorInfo.company || "N/A",
-            "Dedication / Message": donorInfo.message || "None",
-            "Is Test Mode": isTestMode ? "Yes" : "No"
-          }
-        })
-      }).catch((err) => console.warn("Email warning:", err));
-
-      // 2. Create Stripe Checkout Session (mode: "payment")
+      // Create Stripe Checkout Session (mode: "payment")
       const checkoutRes = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -57,69 +57,68 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     setErrorMessage("");
 
     try {
-      // 1. Send application info to database & email notification
-      await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: `New Member Application: ${formData.businessName || formData.ownerName} (${selectedTier})`,
-          formType: isTest ? "Live Test Member Application" : "Member Application Form",
-          senderEmail: formData.email,
-          senderName: formData.ownerName,
-          details: {
-            "Selected Tier": selectedTier,
-            "Is Test Mode": isTest ? "Yes ($1.00 Test)" : "No",
-            "Business Name": formData.businessName,
-            "Owner / Contact Name": formData.ownerName,
-            "Email Address": formData.email,
-            "Phone Number": formData.phone || "N/A",
-            "Business Category": formData.category,
-            "Website": formData.website || "N/A",
-            "Additional Notes": formData.notes || "None"
-          }
-        })
-      }).catch((err) => console.warn("Email notice warning:", err));
-
-      // 2. If paid tier (Community Member $350, Partner $390, or Live Test $1.00), initiate Stripe Checkout
-      if (!isCorporate) {
-        const checkoutRes = await fetch("/api/create-checkout-session", {
+      // 1. If corporate sponsorship: send inquiry email & show confirmation
+      if (isCorporate) {
+        await fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            tier: selectedTier,
-            isTest: isTest,
-            businessName: formData.businessName,
-            ownerName: formData.ownerName,
-            email: formData.email,
-            phone: formData.phone,
-            category: formData.category,
-            website: formData.website,
-            notes: formData.notes,
-            uiMode: stripePromise ? "embedded" : "hosted",
-          }),
+            subject: `Corporate Sponsorship Inquiry: ${formData.businessName || formData.ownerName}`,
+            formType: "Corporate Sponsorship Inquiry",
+            senderEmail: formData.email,
+            senderName: formData.ownerName,
+            details: {
+              "Selected Tier": selectedTier,
+              "Business Name": formData.businessName,
+              "Owner / Contact Name": formData.ownerName,
+              "Email Address": formData.email,
+              "Phone Number": formData.phone || "N/A",
+              "Business Category": formData.category,
+              "Website": formData.website || "N/A",
+              "Additional Notes": formData.notes || "None"
+            }
+          })
         });
 
-        const checkoutData = await checkoutRes.json();
-
-        // Case A: In-page embedded checkout available
-        if (checkoutRes.ok && checkoutData?.clientSecret && stripePromise) {
-          setClientSecret(checkoutData.clientSecret);
-          return;
-        }
-
-        // Case B: Fallback to hosted redirect
-        if (checkoutRes.ok && checkoutData?.url) {
-          window.location.href = checkoutData.url;
-          return;
-        }
-
-        if (checkoutData?.error) {
-          setErrorMessage(checkoutData.error);
-        }
+        setIsSubmitted(true);
+        return;
       }
 
-      // 3. For corporate sponsorship: show confirmation
-      setIsSubmitted(true);
+      // 2. For paid tiers (Member $350, Partner $390, Test $1.00): initiate Stripe Checkout
+      const checkoutRes = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tier: selectedTier,
+          isTest: isTest,
+          businessName: formData.businessName,
+          ownerName: formData.ownerName,
+          email: formData.email,
+          phone: formData.phone,
+          category: formData.category,
+          website: formData.website,
+          notes: formData.notes,
+          uiMode: stripePromise ? "embedded" : "hosted",
+        }),
+      });
+
+      const checkoutData = await checkoutRes.json();
+
+      // Case A: In-page embedded checkout available
+      if (checkoutRes.ok && checkoutData?.clientSecret && stripePromise) {
+        setClientSecret(checkoutData.clientSecret);
+        return;
+      }
+
+      // Case B: Fallback to hosted redirect
+      if (checkoutRes.ok && checkoutData?.url) {
+        window.location.href = checkoutData.url;
+        return;
+      }
+
+      if (checkoutData?.error) {
+        setErrorMessage(checkoutData.error);
+      }
     } catch (err: any) {
       console.error("Error submitting member application:", err);
       setErrorMessage(err?.message || "Failed to submit. Please try again.");
