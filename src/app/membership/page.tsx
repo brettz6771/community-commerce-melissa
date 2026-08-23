@@ -31,7 +31,7 @@ function MembershipContent() {
   const paidTier = searchParams.get("tier") || "Membership";
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [modalTier, setModalTier] = useState("Community Partner ($390/yr)");
+  const [modalTier, setModalTier] = useState("Community Partner ($390 1st Yr • Renews $490/yr)");
 
   const handleJoinClick = (tierName: string) => {
     setModalTier(tierName);
@@ -56,11 +56,11 @@ function MembershipContent() {
   const faqs = [
     { 
       q: "What is the difference between Community Member and Community Partner?", 
-      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($390/yr limited sale, regularly $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
+      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($390 for the first year, renews at $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
     },
     { 
-      q: "How does the limited-time Community Partner sale work?", 
-      a: "For a limited time, you can secure the Community Partner membership level for $390/year (saving $100 off the standard $490/year regular price). This includes all premium visibility perks, spotlight priority, local business discount access, and event recognition." 
+      q: "How does the limited-time Community Partner first-year deal work?", 
+      a: "For a limited time, you can secure the Community Partner membership level for $390 for your first year (saving $100 off the standard $490/year rate). After your first year, your subscription will renew automatically at the regular annual rate of $490/year." 
     },
     { 
       q: "What are the Special Discounts from local businesses?", 
@@ -82,7 +82,7 @@ function MembershipContent() {
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
-      <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($390/yr)")} />
+      <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")} />
 
       {/* Admin Test Mode Notification Banner */}
       {isTestMode && (
@@ -156,21 +156,21 @@ function MembershipContent() {
             <div>
               <div className="flex items-center gap-2 justify-center sm:justify-start">
                 <span className="bg-white text-red-950 font-black text-[10px] uppercase px-2 py-0.5 rounded shadow">
-                  LIMITED TIME OFFER
+                  INAUGURAL OFFER
                 </span>
-                <span className="text-xs font-bold text-slate-200">Save $100 Instantly</span>
+                <span className="text-xs font-bold text-slate-200">Save $100 First Year</span>
               </div>
               <h2 className="text-lg sm:text-xl font-extrabold font-outfit text-white mt-0.5">
-                Join as a Community Partner for $390/year <span className="line-through text-red-200 text-sm font-semibold ml-1">$490 Regular</span>
+                Join as a Community Partner for $390 1st Year <span className="text-red-200 text-xs font-semibold ml-1">(Renews at $490/yr)</span>
               </h2>
             </div>
           </div>
 
           <button
-            onClick={() => handleJoinClick("Community Partner ($390/yr)")}
+            onClick={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")}
             className="bg-white hover:bg-slate-100 text-red-950 font-black px-6 py-2.5 rounded-lg text-xs uppercase tracking-wider shrink-0 shadow-xl flex items-center gap-2 transition hover:scale-105"
           >
-            CLAIM $390 SPECIAL
+            CLAIM $390 1ST YR SPECIAL
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -282,12 +282,12 @@ function MembershipContent() {
                     <div className="inline-flex flex-col items-center bg-gradient-to-br from-red-950 via-[#A81C24] to-red-900 text-white px-7 py-3 rounded-2xl shadow-lg border-2 border-red-500/50 ring-2 ring-red-500/20">
                       <div className="flex items-baseline gap-2">
                         <span className="font-outfit font-black text-3.5xl sm:text-4xl text-white tracking-tight">$390</span>
-                        <span className="text-xs font-semibold text-red-200">/year</span>
+                        <span className="text-xs font-semibold text-red-200">/1st year</span>
                       </div>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <span className="line-through text-red-300 text-xs font-semibold">$490 Regular</span>
+                        <span className="text-red-200 text-xs font-semibold">Renews at $490/yr</span>
                         <span className="bg-white text-[#A81C24] text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
-                          SAVE $100 LIMITED TIME
+                          SAVE $100 YEAR 1
                         </span>
                       </div>
                     </div>
@@ -341,7 +341,7 @@ function MembershipContent() {
                 </div>
 
                 <button
-                  onClick={() => handleJoinClick("Community Partner ($390/yr)")}
+                  onClick={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")}
                   className="w-full btn-red py-3.5 px-4 rounded-xl transition shadow-2xl flex flex-col items-center justify-center gap-0.5 group hover:scale-[1.02] ring-2 ring-red-500/50"
                 >
                   <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-white font-outfit uppercase">
@@ -349,7 +349,7 @@ function MembershipContent() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                   <div className="text-[11px] font-bold text-red-100 uppercase tracking-wider">
-                    $390 / YEAR • SAVE $100 SALE
+                    $390 1ST YEAR • RENEWS AT $490/YR
                   </div>
                 </button>
               </div>
@@ -474,7 +474,7 @@ function MembershipContent() {
                         </th>
                         <th className="py-3 px-4 text-xs text-center border-l border-red-800/50 bg-[#A81C24] text-white font-extrabold">
                           COMMUNITY PARTNER<br/>
-                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$390 SALE <span className="line-through text-red-300 font-normal">$490</span></span>
+                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$390 1ST YR <span className="text-red-200 font-normal">• RENEWS $490/YR</span></span>
                         </th>
                       </tr>
                     </thead>

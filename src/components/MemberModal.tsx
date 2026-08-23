@@ -10,7 +10,7 @@ interface MemberModalProps {
   isTestMode?: boolean;
 }
 
-export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390/yr)", isTestMode = false }: MemberModalProps) {
+export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390 1st Yr • Renews $490/yr)", isTestMode = false }: MemberModalProps) {
   const [selectedTier, setSelectedTier] = useState(defaultTier);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -36,7 +36,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   const isTest = selectedTier.toLowerCase().includes("test");
   const isCorporate = !isTest && (selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship"));
   const isPartner = !isTest && selectedTier.toLowerCase().includes("partner");
-  const amountDisplay = isTest ? "$1.00/yr" : isCorporate ? "Custom" : isPartner ? "$390/yr" : "$350/yr";
+  const amountDisplay = isTest ? "$1.00/yr" : isCorporate ? "Custom" : isPartner ? "$390 1st Yr ($490 Renews)" : "$350/yr";
 
   const showTestOption = isTestMode || defaultTier.toLowerCase().includes("test") || isTest;
 
@@ -181,10 +181,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-slate-200 font-medium">
                 <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                <span>Community Partner Special: <strong>$390/yr</strong> <span className="line-through text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold">$490 Regular</span></span>
+                <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
               </div>
               <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                SAVE $100 LIMITED TIME
+                SAVE $100 YR 1
               </span>
             </div>
 
@@ -205,7 +205,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
               <button
                 type="button"
-                onClick={() => setSelectedTier("Community Partner ($390/yr)")}
+                onClick={() => setSelectedTier("Community Partner ($390 1st Yr • Renews $490/yr)")}
                 className={`p-3 rounded-lg border text-center transition relative ${
                   selectedTier.includes("Community Partner")
                     ? "bg-gradient-to-br from-red-950 to-red-900 border-[#A81C24] text-white font-bold shadow-lg ring-2 ring-red-500/50"
@@ -216,7 +216,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                   SAVE $100
                 </span>
                 <div className="text-[11px] font-bold text-slate-200 mt-1">2. Partner</div>
-                <div className="text-sm font-extrabold text-white">$390 <span className="line-through text-red-300 text-[10px] font-normal">$490</span></div>
+                <div className="text-sm font-extrabold text-white">$390 <span className="text-red-300 text-[10px] font-normal">1st yr</span></div>
+                <div className="text-[9px] text-red-200 font-semibold">renews $490/yr</div>
               </button>
 
               <button
