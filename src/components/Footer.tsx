@@ -105,9 +105,9 @@ export default function Footer() {
               QUICK LINKS
             </h4>
             <ul className="space-y-2 text-xs text-slate-300">
-              <li><Link href="/membership" className="text-white font-bold hover:text-red-400 transition">Membership Levels</Link></li>
               <li><Link href="/about" className="hover:text-white transition">About Community Commerce</Link></li>
               <li><Link href="/leadership" className="hover:text-white transition">Board of Directors</Link></li>
+              <li><Link href="/membership" className="text-white font-bold hover:text-red-400 transition">Membership Levels</Link></li>
               <li><Link href="/events" className="hover:text-white transition">Interactive Event Calendar</Link></li>
               <li><Link href="/news" className="hover:text-white transition">Latest News & Press</Link></li>
             </ul>

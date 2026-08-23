@@ -15,9 +15,9 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
   const pathname = usePathname();
 
   const navLinks = [
-    { name: "MEMBERSHIP", href: "/membership" },
     { name: "ABOUT", href: "/about" },
     { name: "LEADERSHIP", href: "/leadership" },
+    { name: "MEMBERSHIP", href: "/membership" },
     { name: "EVENTS", href: "/events" },
     { name: "NEWS", href: "/news" },
   ];
