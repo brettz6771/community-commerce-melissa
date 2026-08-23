@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/directory",
     "/events",
     "/give-donate",
+    "/donate",
     "/membership",
     "/volunteer",
     "/sponsorship",

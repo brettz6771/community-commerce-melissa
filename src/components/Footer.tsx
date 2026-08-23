@@ -110,6 +110,7 @@ export default function Footer() {
               <li><Link href="/membership" className="text-white font-bold hover:text-red-400 transition">Membership Levels</Link></li>
               <li><Link href="/events" className="hover:text-white transition">Interactive Event Calendar</Link></li>
               <li><Link href="/news" className="hover:text-white transition">Latest News & Press</Link></li>
+              <li><Link href="/give-donate" className="text-white font-bold hover:text-red-400 transition">Give / Donate</Link></li>
             </ul>
           </div>
 

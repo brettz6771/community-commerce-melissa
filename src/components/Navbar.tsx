@@ -20,6 +20,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
     { name: "MEMBERSHIP", href: "/membership" },
     { name: "EVENTS", href: "/events" },
     { name: "NEWS", href: "/news" },
+    { name: "DONATE", href: "/give-donate" },
   ];
 
   const contactSublinks = [

@@ -38,40 +38,59 @@ export async function POST(request: Request) {
       case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
         const metadata = session.metadata || {};
+        const isDonation = metadata.type === "donation";
 
         console.log("Stripe Checkout Completed:", {
           id: session.id,
+          type: isDonation ? "donation" : "subscription",
           subscriptionId: session.subscription,
           customerId: session.customer,
-          customerEmail: session.customer_email || metadata.email,
+          customerEmail: session.customer_email || metadata.donorEmail || metadata.email,
           amount: session.amount_total,
           tier: metadata.tier,
           isTest: metadata.isTest,
         });
 
         // Save to database
-        if (session.customer_email || metadata.email) {
-          await saveContactToDb({
-            email: (session.customer_email || metadata.email) as string,
-            formType: metadata.isTest === "true" ? "Live Test Membership (Stripe)" : "Paid Membership (Stripe)",
-            source: "Stripe Subscription Checkout",
-            details: {
-              "Payment Status": "Active Subscription",
-              "Stripe Session ID": session.id,
-              "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
-              "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
-              "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
-              "Billing Frequency": "Annual Recurring",
-              "Membership Tier": metadata.tier || "N/A",
-              "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
-              "Business Name": metadata.businessName || "N/A",
-              "Contact Name": metadata.contactName || "N/A",
-              "Phone": metadata.phone || "N/A",
-              "Category": metadata.category || "N/A",
-              "Website": metadata.website || "N/A",
-              "Notes": metadata.notes || "None",
-            },
-          });
+        const targetEmail = session.customer_email || metadata.donorEmail || metadata.email;
+        if (targetEmail) {
+          if (isDonation) {
+            await saveContactToDb({
+              email: targetEmail as string,
+              formType: "Donation Contribution (Stripe)",
+              source: "Stripe Online Donation",
+              details: {
+                "Payment Status": "Paid (One-Time Contribution)",
+                "Stripe Session ID": session.id,
+                "Amount Donated": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+                "Donor Name": metadata.donorName || "N/A",
+                "Company": metadata.company || "N/A",
+                "Message / Dedication": metadata.message || "None",
+              },
+            });
+          } else {
+            await saveContactToDb({
+              email: targetEmail as string,
+              formType: metadata.isTest === "true" ? "Live Test Membership (Stripe)" : "Paid Membership (Stripe)",
+              source: "Stripe Subscription Checkout",
+              details: {
+                "Payment Status": "Active Subscription",
+                "Stripe Session ID": session.id,
+                "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
+                "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
+                "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+                "Billing Frequency": "Annual Recurring",
+                "Membership Tier": metadata.tier || "N/A",
+                "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
+                "Business Name": metadata.businessName || "N/A",
+                "Contact Name": metadata.contactName || "N/A",
+                "Phone": metadata.phone || "N/A",
+                "Category": metadata.category || "N/A",
+                "Website": metadata.website || "N/A",
+                "Notes": metadata.notes || "None",
+              },
+            });
+          }
         }
         break;
       }

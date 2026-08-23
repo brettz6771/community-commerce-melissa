@@ -32,6 +32,56 @@ export async function POST(request: Request) {
       apiVersion: "2025-02-24.acacia" as any,
     });
 
+    const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
+    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
+
+    // ----------------------------------------------------
+    // Case 1: One-Time Donation / Contribution (mode: "payment")
+    // ----------------------------------------------------
+    if (isDonation) {
+      const donationAmountNum = Math.max(1, Number(body.amount) || 100);
+      const amountInCents = Math.round(donationAmountNum * 100);
+      const donorName = body.name || body.donorName || ownerName || "Generous Supporter";
+      const donorEmail = body.email || body.donorEmail || email;
+      const donationMessage = body.message || notes || "";
+      const company = body.company || businessName || "";
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: `Community Commerce Melissa — One-Time Contribution ($${donationAmountNum})`,
+                description: `501(c)(3) Non-Profit Contribution supporting Melissa community programs, youth scholarships, and local initiatives.`,
+                images: [`${origin}/ccm-logo-transparent.png`],
+              },
+              unit_amount: amountInCents,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+        customer_email: donorEmail && donorEmail.includes("@") ? donorEmail : undefined,
+        metadata: {
+          type: "donation",
+          donorName,
+          donorEmail: donorEmail || "N/A",
+          company: company || "N/A",
+          donationAmount: `$${donationAmountNum}`,
+          message: donationMessage || "None",
+        },
+        success_url: `${origin}/give-donate?success=true&amount=${encodeURIComponent(`$${donationAmountNum}`)}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/give-donate?canceled=true`,
+      });
+
+      return NextResponse.json({ url: session.url, sessionId: session.id });
+    }
+
+    // ----------------------------------------------------
+    // Case 2: Membership Subscriptions (mode: "subscription")
+    // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
     const isPartner = !isTest && tier.toLowerCase().includes("partner");
 
@@ -65,9 +115,6 @@ export async function POST(request: Request) {
         console.warn("Could not create dynamic Stripe coupon:", couponErr);
       }
     }
-
-    // Determine site base URL
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
