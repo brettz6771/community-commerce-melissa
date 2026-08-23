@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, Loader2, ArrowLeft } from "lucide-react";
+import { loadStripe } from "@stripe/stripe-js";
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+
+const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -23,11 +28,17 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (defaultTier) {
       setSelectedTier(defaultTier);
+    }
+    if (!isOpen) {
+      setClientSecret(null);
+      setIsSubmitted(false);
+      setErrorMessage("");
     }
   }, [defaultTier, isOpen]);
 
@@ -84,13 +95,20 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             category: formData.category,
             website: formData.website,
             notes: formData.notes,
+            uiMode: stripePromise ? "embedded" : "hosted",
           }),
         });
 
         const checkoutData = await checkoutRes.json();
 
+        // Case A: In-page embedded checkout available
+        if (checkoutRes.ok && checkoutData?.clientSecret && stripePromise) {
+          setClientSecret(checkoutData.clientSecret);
+          return;
+        }
+
+        // Case B: Fallback to hosted redirect
         if (checkoutRes.ok && checkoutData?.url) {
-          // Redirect directly to Stripe Checkout
           window.location.href = checkoutData.url;
           return;
         }
@@ -98,14 +116,9 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         if (checkoutData?.error) {
           setErrorMessage(checkoutData.error);
         }
-
-        // If Stripe is not yet configured with secret key, gracefully fallback to application submitted
-        if (checkoutData?.isConfigured === false) {
-          console.warn("Stripe key pending in environment. Application logged.");
-        }
       }
 
-      // 3. For corporate sponsorship or fallback: show confirmation
+      // 3. For corporate sponsorship: show confirmation
       setIsSubmitted(true);
     } catch (err: any) {
       console.error("Error submitting member application:", err);
@@ -127,6 +140,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           <X className="w-5 h-5" />
         </button>
 
+        {/* Case 1: Corporate Sponsorship Success Message */}
         {isSubmitted ? (
           <div className="text-center py-8 space-y-4">
             <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
@@ -160,7 +174,35 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               DONE
             </button>
           </div>
+        ) : clientSecret && stripePromise ? (
+          /* Case 2: In-Page Stripe Embedded Checkout Popup */
+          <div className="space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <button
+                type="button"
+                onClick={() => setClientSecret(null)}
+                className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Edit Application Details</span>
+              </button>
+
+              <div className="text-xs font-bold text-slate-300">
+                Level: <span className="text-white font-extrabold">{amountDisplay}</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-3 overflow-hidden shadow-inner min-h-[480px]">
+              <EmbeddedCheckoutProvider
+                stripe={stripePromise}
+                options={{ clientSecret }}
+              >
+                <EmbeddedCheckout className="w-full min-h-[460px]" />
+              </EmbeddedCheckoutProvider>
+            </div>
+          </div>
         ) : (
+          /* Case 3: Standard Member Application Form */
           <div className="space-y-6">
             
             {/* Header */}

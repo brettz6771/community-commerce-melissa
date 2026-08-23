@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/give-donate",
     "/donate",
     "/membership",
+    "/membership/receipt",
+    "/receipt",
     "/volunteer",
     "/sponsorship",
     "/spotlight",

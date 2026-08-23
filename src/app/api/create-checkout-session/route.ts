@@ -35,6 +35,8 @@ export async function POST(request: Request) {
     const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
     const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
 
+    const useEmbedded = body.uiMode === "embedded" || body.embedded === true;
+
     // ----------------------------------------------------
     // Case 1: One-Time Donation / Contribution (mode: "payment")
     // ----------------------------------------------------
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
       const donationMessage = body.message || notes || "";
       const company = body.company || businessName || "";
 
-      const session = await stripe.checkout.sessions.create({
+      const sessionParams: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ["card"],
         line_items: [
           {
@@ -72,11 +74,23 @@ export async function POST(request: Request) {
           donationAmount: `$${donationAmountNum}`,
           message: donationMessage || "None",
         },
-        success_url: `${origin}/give-donate?success=true&amount=${encodeURIComponent(`$${donationAmountNum}`)}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/give-donate?canceled=true`,
-      });
+      };
 
-      return NextResponse.json({ url: session.url, sessionId: session.id });
+      if (useEmbedded) {
+        sessionParams.ui_mode = "embedded";
+        sessionParams.return_url = `${origin}/give-donate?success=true&amount=${encodeURIComponent(`$${donationAmountNum}`)}&session_id={CHECKOUT_SESSION_ID}`;
+      } else {
+        sessionParams.success_url = `${origin}/give-donate?success=true&amount=${encodeURIComponent(`$${donationAmountNum}`)}&session_id={CHECKOUT_SESSION_ID}`;
+        sessionParams.cancel_url = `${origin}/give-donate?canceled=true`;
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionParams);
+
+      return NextResponse.json({ 
+        clientSecret: session.client_secret, 
+        url: session.url, 
+        sessionId: session.id 
+      });
     }
 
     // ----------------------------------------------------
@@ -116,7 +130,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -150,11 +164,23 @@ export async function POST(request: Request) {
         website: website || "N/A",
         notes: notes || "None",
       },
-      success_url: `${origin}/membership?success=true&tier=${encodeURIComponent(successTierParam)}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/membership?canceled=true`,
-    });
+    };
 
-    return NextResponse.json({ url: session.url, sessionId: session.id });
+    if (useEmbedded) {
+      sessionParams.ui_mode = "embedded";
+      sessionParams.return_url = `${origin}/membership/receipt?session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(successTierParam)}`;
+    } else {
+      sessionParams.success_url = `${origin}/membership/receipt?session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(successTierParam)}`;
+      sessionParams.cancel_url = `${origin}/membership?canceled=true`;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
+
+    return NextResponse.json({ 
+      clientSecret: session.client_secret, 
+      url: session.url, 
+      sessionId: session.id 
+    });
   } catch (error: any) {
     console.error("Error creating Stripe checkout session:", error);
     return NextResponse.json(
