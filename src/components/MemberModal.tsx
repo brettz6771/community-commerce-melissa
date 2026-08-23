@@ -36,7 +36,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   const isTest = selectedTier.toLowerCase().includes("test");
   const isCorporate = !isTest && (selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship"));
   const isPartner = !isTest && selectedTier.toLowerCase().includes("partner");
-  const amountDisplay = isTest ? "$1.00/yr" : isCorporate ? "Custom" : isPartner ? "$390 1st Yr ($490 Renews)" : "$350/yr";
+  const amountDisplay = isTest ? "$1.00" : isCorporate ? "Custom" : isPartner ? "$390" : "$350";
 
   const showTestOption = isTestMode || defaultTier.toLowerCase().includes("test") || isTest;
 

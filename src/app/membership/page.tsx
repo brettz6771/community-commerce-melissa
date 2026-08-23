@@ -349,7 +349,7 @@ function MembershipContent() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                   <div className="text-[11px] font-bold text-red-100 uppercase tracking-wider">
-                    $390 1ST YEAR • RENEWS AT $490/YR
+                    $390 / 1ST YEAR • SAVE $100
                   </div>
                 </button>
               </div>
