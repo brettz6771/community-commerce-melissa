@@ -201,26 +201,30 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-500/30 text-red-400 font-bold text-[10px] uppercase tracking-widest mb-2">
                 <Sparkles className="w-3 h-3" />
-                MEMBERSHIP APPLICATION
+                {isCorporate ? "CORPORATE SPONSORSHIP" : "MEMBERSHIP APPLICATION"}
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit uppercase tracking-tight text-white">
-                JOIN COMMUNITY COMMERCE
+                {isCorporate ? "PARTNER WITH COMMUNITY COMMERCE" : "JOIN COMMUNITY COMMERCE"}
               </h2>
               <p className="text-xs text-slate-300 mt-1">
-                Complete your details below to activate your member listing, digital badge, and local benefits.
+                {isCorporate
+                  ? "Submit your sponsorship inquiry below. Our executive team will tailor a custom partnership proposal aligning with your community vision."
+                  : "Complete your details below to activate your member listing, digital badge, and local benefits."}
               </p>
             </div>
 
-            {/* Special Promo Banner */}
-            <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 text-slate-200 font-medium">
-                <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+            {/* Special Promo Banner (Shown only for Community Membership & Partner, hidden for Corporate Sponsorship) */}
+            {!isCorporate && (
+              <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2 text-slate-200 font-medium">
+                  <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
+                  <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+                </div>
+                <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
+                  SAVE $100 YR 1
+                </span>
               </div>
-              <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                SAVE $100 YR 1
-              </span>
-            </div>
+            )}
 
             {/* Tier Selector Tabs */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
