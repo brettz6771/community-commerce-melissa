@@ -48,7 +48,7 @@ export default function QuoteSection({ onOpenJoinModal }: { onOpenJoinModal?: ()
   ];
 
   return (
-    <section className="py-16 bg-[#E5E9EE]">
+    <section className="pt-12 pb-10 sm:pt-16 sm:pb-12 bg-[#E5E9EE]">
       {/* Wide Container matching Header */}
       <div className="w-full max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
