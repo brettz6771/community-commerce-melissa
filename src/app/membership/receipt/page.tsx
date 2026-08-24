@@ -599,28 +599,28 @@ function ReceiptBadgeContent() {
                 <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-2 text-xs text-red-950">
                   <div className="font-bold flex items-center gap-1.5 uppercase text-[11px] text-red-800">
                     <Sparkles className="w-3.5 h-3.5" />
-                    NEXT STEPS FOR YOUR DIRECTORY PROFILE:
+                    NEXT STEPS & MEMBER WELCOME:
                   </div>
                   <p className="text-slate-700 leading-relaxed">
-                    Your business information is saved in our database. Check your email for your digital badge confirmation and calendar invites for upcoming member networking events.
+                    Your membership details and business information are securely saved in our database. Check your email for your digital badge confirmation and calendar invites for upcoming member networking events.
                   </p>
                 </div>
 
                 {/* Quick Link Navigation */}
                 <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2">
                   <Link
-                    href="/directory"
-                    className="w-full sm:w-auto btn-red px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
+                    href="/events"
+                    className="w-full sm:w-auto btn-red px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
                   >
-                    <span>View Member Directory</span>
+                    <span>Explore Events Calendar</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
 
                   <Link
-                    href="/events"
+                    href="/"
                     className="w-full sm:w-auto text-xs font-bold text-slate-700 hover:text-slate-900 py-2 text-center"
                   >
-                    Explore Events Calendar →
+                    Return to Homepage →
                   </Link>
                 </div>
 

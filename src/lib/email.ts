@@ -224,16 +224,13 @@ export async function sendMemberWelcomeAndAdminAlert({
 
                   <!-- CTAs -->
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
-                      View Digital Badge & Receipt →
-                    </a>
-                    <a href="${directoryUrl}" style="display: inline-block; background-color: #334155; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
-                      View Business Directory →
+                    <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
+                      View Digital Badge & Official Receipt →
                     </a>
                   </div>
 
-                  <p style="color: #94a3b8; font-size: 13px;">
-                    Your digital badge is now active. You can download the high-resolution badge image for your website footer and email signature, print your storefront certificate, or add it to Apple Wallet on your mobile device.
+                  <p style="color: #94a3b8; font-size: 13px; line-height: 1.6;">
+                    Your digital member badge is now active. You can download the high-resolution badge image for your website footer and email signature, or print your official storefront certificate.
                   </p>
                 </td>
               </tr>
