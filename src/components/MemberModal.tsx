@@ -53,6 +53,44 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   const showTestOption = isTestMode || defaultTier.toLowerCase().includes("test") || isTest;
 
+  const handleInstantSimulateTest = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/simulate-member-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName: formData.businessName || "Melissa Business Partner",
+          ownerName: formData.ownerName || "Member",
+          email: formData.email || "info@communitycommercemelissa.org",
+          phone: formData.phone || "(972) 837-1234",
+          category: formData.category || "Real Estate",
+          website: formData.website || "https://communitycommercemelissa.org",
+          city: formData.city || "Melissa",
+          state: formData.state || "TX",
+          tier: "Community Partner",
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data?.receiptUrl) {
+        window.location.href = data.receiptUrl;
+        return;
+      }
+
+      if (data?.error) {
+        setErrorMessage(data.error);
+      }
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Failed to simulate test signup.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -430,35 +468,54 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               )}
 
               {/* Submit CTA */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition ${
-                  isTest ? "bg-purple-600 hover:bg-purple-500 text-white" : "btn-red"
-                }`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>CONNECTING TO STRIPE SECURE CHECKOUT...</span>
-                  </>
-                ) : isCorporate ? (
-                  <>
-                    <span>SUBMIT CORPORATE SPONSORSHIP APPLICATION</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                ) : isTest ? (
-                  <>
-                    <span>PROCEED TO $1.00 TEST CHECKOUT (AUTO-RENEWING)</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>PROCEED TO SECURE CHECKOUT ({amountDisplay})</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
+              <div className="space-y-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition ${
+                    isTest ? "bg-purple-600 hover:bg-purple-500 text-white" : "btn-red"
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>PROCESSING...</span>
+                    </>
+                  ) : isCorporate ? (
+                    <>
+                      <span>SUBMIT CORPORATE SPONSORSHIP APPLICATION</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : isTest ? (
+                    <>
+                      <span>PROCEED TO $1.00 TEST CHECKOUT VIA STRIPE</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <span>PROCEED TO SECURE CHECKOUT ({amountDisplay})</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+
+                {/* Instant Zero-Dollar Test Button */}
+                {isTest && (
+                  <button
+                    type="button"
+                    onClick={handleInstantSimulateTest}
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-lg font-bold text-xs uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4 text-emerald-200" />
+                    )}
+                    <span>⚡ INSTANT TEST SIGNUP ($0 — NO CARD NEEDED)</span>
+                  </button>
                 )}
-              </button>
+              </div>
             </form>
           </div>
         )}

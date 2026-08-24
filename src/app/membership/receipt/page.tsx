@@ -43,19 +43,42 @@ function ReceiptBadgeContent() {
 
   useEffect(() => {
     async function fetchReceipt() {
+      // Handle instant simulated test mode without Stripe API roundtrip
+      if (sessionId.startsWith("cs_test_sim_") || searchParams.get("simulated") === "true") {
+        setReceiptData({
+          id: sessionId || `cs_test_sim_${Date.now()}`,
+          customerName: searchParams.get("owner_name") || "Valued Member",
+          customerEmail: searchParams.get("email") || "member@example.com",
+          businessName: searchParams.get("business_name") || "Melissa Business Leader",
+          tier: searchParams.get("tier") || "Community Partner ($390 1st Yr • Renews $490/yr)",
+          amount: parseFloat(searchParams.get("amount") || "390"),
+          memberId: searchParams.get("member_id") || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+          isSubscription: true,
+          status: "complete",
+          isTest: true,
+          city: searchParams.get("city") || "Melissa",
+          state: searchParams.get("state") || "TX",
+        });
+        setLoading(false);
+        setIsEmailSent(true);
+        return;
+      }
+
       if (!sessionId) {
         // Fallback default member data for demo/preview
         setReceiptData({
           id: "cs_live_sample_" + Math.random().toString(36).substring(2, 8),
-          customerName: "Valued Member",
-          customerEmail: "member@example.com",
-          businessName: "Melissa Business Leader",
+          customerName: searchParams.get("owner_name") || "Valued Member",
+          customerEmail: searchParams.get("email") || "member@example.com",
+          businessName: searchParams.get("business_name") || "Melissa Business Leader",
           tier: paramTier || "Community Partner ($390 1st Yr • Renews $490/yr)",
           amount: 390,
-          memberId: `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          memberId: searchParams.get("member_id") || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
           date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
           isSubscription: true,
           status: "complete",
+          isTest: true,
         });
         setLoading(false);
         return;

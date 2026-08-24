@@ -92,16 +92,25 @@ function MembershipContent() {
               ADMIN TEST MODE
             </span>
             <span className="font-medium">
-              Live Stripe Testing Active: Test complete registration flow with a <strong>$1.00 auto-renewing test subscription</strong>.
+              Testing Mode Active: Verify emails, directory addition & badge generation.
             </span>
           </div>
-          <button
-            onClick={() => handleJoinClick("Live Test Membership ($1.00/yr)")}
-            className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center gap-1.5"
-          >
-            <span>Run $1.00 Test Checkout</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleJoinClick("Live Test Membership ($1.00/yr)")}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center gap-1"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Instant Test ($0 No Card)</span>
+            </button>
+            <button
+              onClick={() => handleJoinClick("Live Test Membership ($1.00/yr)")}
+              className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center gap-1"
+            >
+              <span>$1.00 Stripe Test</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
