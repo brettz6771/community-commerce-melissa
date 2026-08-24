@@ -322,26 +322,61 @@ function ReceiptBadgeContent() {
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <PageTitle title={`Receipt & Official Member Badge — ${receiptData?.businessName || "Community Commerce Melissa"}`} />
-      <Navbar />
 
-      {/* Top Banner */}
-      <section className="bg-[#0B0E14] text-white py-12 border-b border-white/10 relative overflow-hidden print:hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold text-xs uppercase tracking-widest">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            PAYMENT CONFIRMED & VERIFIED
+      {/* Print CSS Stylesheet for Dedicated Landscape Certificate */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          @page {
+            size: letter landscape;
+            margin: 0.25in;
+          }
+          html, body {
+            background: #ffffff !important;
+            color: #000000 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .screen-only {
+            display: none !important;
+          }
+          #printable-certificate {
+            display: block !important;
+            visibility: visible !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 10.5in !important;
+            margin: 0 auto !important;
+            page-break-inside: avoid !important;
+          }
+        }
+      `}} />
+
+      {/* Screen Wrapper (Hidden during Print) */}
+      <div className="screen-only flex flex-col min-h-screen">
+        <Navbar />
+
+        {/* Top Banner */}
+        <section className="bg-[#0B0E14] text-white py-12 border-b border-white/10 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-bold text-xs uppercase tracking-widest">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              PAYMENT CONFIRMED & VERIFIED
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight text-white">
+              WELCOME TO <span className="text-red-500">COMMUNITY COMMERCE</span>
+            </h1>
+            <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+              Thank you for investing in Melissa. Your digital membership badge and official payment receipt are generated below.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight text-white">
-            WELCOME TO <span className="text-red-500">COMMUNITY COMMERCE</span>
-          </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Thank you for investing in Melissa. Your digital membership badge and official payment receipt are generated below.
-          </p>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Content Area */}
-      <main className="py-12 bg-[#E5E9EE] flex-1">
+        {/* Main Content Area */}
+        <main className="py-12 bg-[#E5E9EE] flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Action Toolbar */}
@@ -634,6 +669,289 @@ function ReceiptBadgeContent() {
 
       <Footer />
     </div>
+
+    {/* EXCLUSIVE PRINTABLE CERTIFICATE (ONLY VISIBLE ON PAPER / PRINT PREVIEW) */}
+    <div id="printable-certificate" className="hidden">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "10.2in",
+          margin: "0 auto",
+          padding: "30px 40px",
+          backgroundColor: "#ffffff",
+          color: "#0f172a",
+          fontFamily: "'Outfit', 'Georgia', serif",
+          boxSizing: "border-box",
+          position: "relative",
+          border: "10px solid #A81C24",
+          outline: "3px solid #D97706",
+          outlineOffset: "-7px",
+        }}
+      >
+        <div
+          style={{
+            border: "1.5px solid #B45309",
+            padding: "24px 32px",
+            textAlign: "center",
+            position: "relative",
+          }}
+        >
+          {/* Header & Logo */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "16px",
+              marginBottom: "12px",
+            }}
+          >
+            <img
+              src="/ccm-logo-transparent.png"
+              alt="CCM Logo"
+              style={{ height: "60px", width: "auto" }}
+            />
+            <div style={{ textAlign: "left" }}>
+              <div
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "900",
+                  letterSpacing: "1.5px",
+                  color: "#A81C24",
+                  textTransform: "uppercase",
+                }}
+              >
+                Community Commerce Melissa
+              </div>
+              <div
+                style={{
+                  fontSize: "10px",
+                  fontWeight: "700",
+                  letterSpacing: "1px",
+                  color: "#475569",
+                  textTransform: "uppercase",
+                }}
+              >
+                Melissa, Collin County, Texas • 501(c)(3) Non-Profit Organization
+              </div>
+            </div>
+          </div>
+
+          {/* Certificate Title */}
+          <div style={{ margin: "16px 0 10px 0" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "800",
+                letterSpacing: "3px",
+                color: "#D97706",
+                textTransform: "uppercase",
+                marginBottom: "4px",
+              }}
+            >
+              ★ OFFICIAL MEMBERSHIP CREDENTIAL ★
+            </div>
+            <h1
+              style={{
+                fontSize: "34px",
+                fontWeight: "900",
+                letterSpacing: "2px",
+                color: "#0f172a",
+                textTransform: "uppercase",
+                margin: 0,
+                fontFamily: "'Georgia', serif",
+              }}
+            >
+              Certificate of Membership
+            </h1>
+          </div>
+
+          {/* Recipient Presentation */}
+          <p
+            style={{
+              fontSize: "14px",
+              fontStyle: "italic",
+              color: "#64748b",
+              margin: "12px 0 6px 0",
+            }}
+          >
+            This official certificate is proudly presented to
+          </p>
+
+          <div
+            style={{
+              fontSize: "28px",
+              fontWeight: "900",
+              color: "#A81C24",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              margin: "8px 0",
+              borderBottom: "2px solid #CBD5E1",
+              paddingBottom: "8px",
+              display: "inline-block",
+              minWidth: "65%",
+            }}
+          >
+            {receiptData?.businessName || "Melissa Business Member"}
+          </div>
+
+          <p
+            style={{
+              fontSize: "14px",
+              color: "#334155",
+              maxWidth: "680px",
+              margin: "12px auto",
+              lineHeight: "1.5",
+            }}
+          >
+            in recognition of active investment and certified standing in{" "}
+            <strong>Community Commerce Melissa</strong> at the official membership level of
+          </p>
+
+          <div
+            style={{
+              display: "inline-block",
+              backgroundColor: "#FEF2F2",
+              border: "2px solid #F87171",
+              borderRadius: "9999px",
+              padding: "6px 24px",
+              margin: "6px 0 16px 0",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "16px",
+                fontWeight: "900",
+                color: "#991B1B",
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+              }}
+            >
+              {cleanTierDisplay}
+            </span>
+          </div>
+
+          <p
+            style={{
+              fontSize: "12px",
+              color: "#64748b",
+              maxWidth: "600px",
+              margin: "0 auto 20px auto",
+              fontStyle: "italic",
+            }}
+          >
+            Dedicated to promoting local commerce, economic development, community collaboration, and sustainable civic leadership in Melissa, Texas.
+          </p>
+
+          {/* Footer Credentials & Signatures */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              borderTop: "1px solid #E2E8F0",
+              paddingTop: "16px",
+              marginTop: "12px",
+              fontSize: "11px",
+            }}
+          >
+            <div style={{ textAlign: "left", width: "30%" }}>
+              <div
+                style={{
+                  fontWeight: "bold",
+                  color: "#64748b",
+                  fontSize: "9px",
+                  textTransform: "uppercase",
+                }}
+              >
+                MEMBER ID NUMBER
+              </div>
+              <div
+                style={{
+                  fontFamily: "monospace",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  color: "#0f172a",
+                  marginTop: "2px",
+                }}
+              >
+                {receiptData?.memberId}
+              </div>
+              <div
+                style={{
+                  color: "#16A34A",
+                  fontWeight: "bold",
+                  fontSize: "10px",
+                  marginTop: "2px",
+                }}
+              >
+                ✓ VERIFIED ACTIVE MEMBER
+              </div>
+            </div>
+
+            {/* Seal */}
+            <div style={{ textAlign: "center", width: "35%" }}>
+              <div
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  border: "2.5px dashed #D97706",
+                  backgroundColor: "#FFFBEB",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#B45309",
+                  fontWeight: "900",
+                  fontSize: "9px",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                  lineHeight: "1.2",
+                  margin: "0 auto",
+                }}
+              >
+                OFFICIAL<br />SEAL
+              </div>
+              <div
+                style={{
+                  fontSize: "9px",
+                  color: "#64748b",
+                  marginTop: "4px",
+                  fontWeight: "bold",
+                }}
+              >
+                TERM: 2026 – 2027
+              </div>
+            </div>
+
+            <div style={{ textAlign: "right", width: "30%" }}>
+              <div
+                style={{
+                  borderBottom: "1px solid #0f172a",
+                  width: "150px",
+                  marginLeft: "auto",
+                  marginBottom: "4px",
+                  height: "20px",
+                }}
+              />
+              <div
+                style={{
+                  fontWeight: "bold",
+                  color: "#0f172a",
+                  fontSize: "10px",
+                }}
+              >
+                Executive Board
+              </div>
+              <div style={{ color: "#64748b", fontSize: "9px" }}>
+                Community Commerce Melissa
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   );
 }
 
