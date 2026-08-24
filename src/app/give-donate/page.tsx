@@ -26,7 +26,6 @@ function GiveDonateContent() {
   const isSuccess = searchParams.get("success") === "true";
   const isCanceled = searchParams.get("canceled") === "true";
   const paidAmount = searchParams.get("amount") || "Contribution";
-  const isTestMode = searchParams.get("test") === "true";
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState("$100");
@@ -36,7 +35,6 @@ function GiveDonateContent() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const donationTiers = [
-    ...(isTestMode ? [{ amount: "$1", title: "🧪 Live Test Contribution", desc: "Admin test mode: test full live Stripe one-time donation flow with $1.00." }] : []),
     { amount: "$50", title: "Community Supporter", desc: "Sponsors local business networking refreshments & educational workshop materials." },
     { amount: "$100", title: "Youth Scholarship Patron", desc: "Funds student entrepreneur grants & Melissa High School Cardinal student scholarships." },
     { amount: "$250", title: "Economic Catalyst", desc: "Powers local merchant directory spotlights, business features & community mixers." },
@@ -69,7 +67,6 @@ function GiveDonateContent() {
           donorEmail: donorInfo.email,
           company: donorInfo.company,
           message: donorInfo.message,
-          isTest: isTestMode,
         }),
       });
 
@@ -100,20 +97,6 @@ function GiveDonateContent() {
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <PageTitle title="Give & Donate — Support Melissa, TX" />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
-
-      {/* Admin Test Mode Banner */}
-      {isTestMode && (
-        <div className="bg-purple-950 text-purple-200 text-xs py-2.5 px-4 border-b border-purple-800 text-center flex flex-wrap items-center justify-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="bg-purple-600 text-white font-black text-[9px] uppercase px-2 py-0.5 rounded shadow">
-              ADMIN TEST MODE
-            </span>
-            <span className="font-medium">
-              Live Stripe Testing Active: Test one-time contribution flow with a <strong>$1.00 one-time donation</strong>.
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Success Notification Banner */}
       {isSuccess && (

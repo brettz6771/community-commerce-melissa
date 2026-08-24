@@ -12,10 +12,9 @@ interface MemberModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultTier?: string;
-  isTestMode?: boolean;
 }
 
-export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390 1st Yr • Renews $490/yr)", isTestMode = false }: MemberModalProps) {
+export default function MemberModal({ isOpen, onClose, defaultTier = "Community Partner ($390 1st Yr • Renews $490/yr)" }: MemberModalProps) {
   const [selectedTier, setSelectedTier] = useState(defaultTier);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -47,51 +46,9 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   if (!isOpen) return null;
 
-  const isTest = selectedTier.toLowerCase().includes("test");
-  const isCorporate = !isTest && (selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship"));
-  const isPartner = !isTest && selectedTier.toLowerCase().includes("partner");
-  const amountDisplay = isTest ? "$1.00" : isCorporate ? "Custom" : isPartner ? "$390" : "$350";
-
-  const showTestOption = isTestMode || defaultTier.toLowerCase().includes("test") || isTest;
-
-  const handleInstantSimulateTest = async (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    setIsSubmitting(true);
-    setErrorMessage("");
-
-    try {
-      const res = await fetch("/api/simulate-member-signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessName: formData.businessName || "Melissa Business Partner",
-          ownerName: formData.ownerName || "Member",
-          email: formData.email || "info@communitycommercemelissa.org",
-          phone: formData.phone || "(972) 837-1234",
-          category: formData.category || "Real Estate",
-          description: formData.description || "Dedicated commercial leader providing trusted services in Melissa, Texas.",
-          website: formData.website || "https://communitycommercemelissa.org",
-          city: formData.city || "Melissa",
-          state: formData.state || "TX",
-          tier: "Community Partner",
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data?.receiptUrl) {
-        window.location.href = data.receiptUrl;
-        return;
-      }
-
-      if (data?.error) {
-        setErrorMessage(data.error);
-      }
-    } catch (err: any) {
-      setErrorMessage(err?.message || "Failed to simulate test signup.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
+  const isPartner = selectedTier.toLowerCase().includes("partner");
+  const amountDisplay = isCorporate ? "Custom" : isPartner ? "$390" : "$350";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,13 +86,12 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         return;
       }
 
-      // 2. For paid tiers (Member $350, Partner $390, Test $1.00): initiate Stripe Checkout
+      // 2. For paid tiers (Member $350, Partner $390): initiate Stripe Checkout
       const checkoutRes = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tier: selectedTier,
-          isTest: isTest,
           businessName: formData.businessName,
           ownerName: formData.ownerName,
           email: formData.email,
@@ -182,91 +138,80 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition"
+          className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Case 1: Corporate Sponsorship Success Message */}
         {isSubmitted ? (
           <div className="text-center py-8 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-10 h-10" />
+            <div className="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto border border-red-500/30">
+              <CheckCircle2 className="w-8 h-8 text-red-500" />
             </div>
-
-            <h3 className="text-2xl font-extrabold font-outfit text-white">
-              Welcome to Community Commerce Melissa!
-            </h3>
-
+            <h3 className="text-2xl font-extrabold font-outfit uppercase tracking-tight">Application Received</h3>
             <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
-              Thank you for registering <strong className="text-slate-200">{formData.businessName || "your business"}</strong> for <span className="text-white font-bold">{selectedTier}</span>.
+              Thank you for supporting <strong>Community Commerce Melissa</strong>. Our team has received your application for <strong>{selectedTier}</strong> and will follow up with your onboarding packet and invoice shortly.
             </p>
-
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-xs text-left max-w-md mx-auto space-y-2">
-              <div className="font-bold text-slate-200">Next Steps:</div>
-              <ul className="list-disc list-inside space-y-1 text-slate-300">
-                <li>Check your email inbox for your Welcome Packet & Member Toolkit.</li>
-                <li>Our team will verify and activate your business directory profile.</li>
-                <li>You will receive calendar invites for upcoming member networking events.</li>
-              </ul>
-            </div>
-
             <button
-              onClick={() => {
-                setIsSubmitted(false);
-                onClose();
-              }}
-              className="btn-red px-6 py-2.5 rounded font-bold text-xs uppercase tracking-wider inline-block mt-4"
+              onClick={onClose}
+              className="btn-red px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider mt-4"
             >
-              DONE
+              Done
             </button>
           </div>
-        ) : clientSecret && stripePromise ? (
-          /* Case 2: In-Page Stripe Embedded Checkout Popup */
+        ) : clientSecret ? (
+          /* Embedded Stripe Checkout Flow */
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <button
-                type="button"
                 onClick={() => setClientSecret(null)}
-                className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition"
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Edit Application Details</span>
+                <span>Edit Information</span>
               </button>
-
-              <div className="text-xs font-bold text-slate-300">
-                Level: <span className="text-white font-extrabold">{amountDisplay}</span>
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>256-Bit SSL Encrypted</span>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-3 overflow-hidden shadow-inner min-h-[480px]">
+            <div className="bg-[#151922] p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs">
+              <div>
+                <span className="text-slate-400">Membership: </span>
+                <strong className="text-white">{selectedTier}</strong>
+              </div>
+              <div className="text-sm font-black text-red-400">
+                {amountDisplay}/yr
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl overflow-hidden min-h-[420px] p-2">
               <EmbeddedCheckoutProvider
                 stripe={stripePromise}
                 options={{ clientSecret }}
               >
-                <EmbeddedCheckout className="w-full min-h-[460px]" />
+                <EmbeddedCheckout className="w-full" />
               </EmbeddedCheckoutProvider>
             </div>
           </div>
         ) : (
-          /* Case 3: Standard Member Application Form */
+          /* Application Form Flow */
           <div className="space-y-6">
-            
-            {/* Header */}
             <div>
-              <div className="inline-flex items-center gap-2 text-slate-300 text-xs font-bold uppercase tracking-widest mb-1">
-                <Sparkles className="w-4 h-4" />
-                JOIN COMMUNITY COMMERCE MELISSA
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-500/30 text-red-400 font-bold text-[10px] uppercase tracking-widest mb-2">
+                <Sparkles className="w-3 h-3" />
+                MEMBERSHIP APPLICATION
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit text-white">
-                Member Application & Registration
+              <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit uppercase tracking-tight text-white">
+                JOIN COMMUNITY COMMERCE
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
-                Select your membership tier and connect your business to Melissa&apos;s commerce network.
+              <p className="text-xs text-slate-300 mt-1">
+                Complete your details below to activate your member listing, digital badge, and local benefits.
               </p>
             </div>
 
-            {/* Promo Alert inside modal */}
+            {/* Special Promo Banner */}
             <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 text-slate-200 font-medium">
                 <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
@@ -278,7 +223,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             </div>
 
             {/* Tier Selector Tabs */}
-            <div className={`grid gap-2 ${showTestOption ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-1 sm:grid-cols-3"}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setSelectedTier("Community Member ($350/yr)")}
@@ -321,24 +266,6 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <div className="text-[11px] font-bold">3. Sponsorship</div>
                 <div className="text-xs font-extrabold text-slate-200 mt-1">Custom / Inquire</div>
               </button>
-
-              {showTestOption && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedTier("Live Test Membership ($1.00/yr)")}
-                  className={`p-3 rounded-lg border text-center transition relative ${
-                    isTest
-                      ? "bg-purple-900/80 border-purple-400 text-white font-bold shadow-lg ring-2 ring-purple-500/50"
-                      : "bg-purple-950/30 border-purple-800/40 text-purple-300 hover:text-white"
-                  }`}
-                >
-                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-purple-400 text-purple-950 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase shadow">
-                    ADMIN TEST
-                  </span>
-                  <div className="text-[11px] font-bold text-purple-200 mt-1">🧪 Live Test</div>
-                  <div className="text-sm font-extrabold text-purple-100">$1.00/yr</div>
-                </button>
-              )}
             </div>
 
             {/* Form */}
@@ -351,13 +278,13 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    placeholder="e.g. Melissa Family Dentistry"
+                    placeholder="e.g. Melissa Family Dental"
                     className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Contact Name *</label>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Primary Contact Name *</label>
                   <input
                     type="text"
                     required
@@ -410,6 +337,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     <option value="Legal & Financial">Legal & Financial</option>
                     <option value="Daycare & Retail">Daycare & Retail</option>
                     <option value="Professional Services">Professional Services</option>
+                    <option value="General Business">General Business</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
@@ -502,9 +430,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition ${
-                    isTest ? "bg-purple-600 hover:bg-purple-500 text-white" : "btn-red"
-                  }`}
+                  className="w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition btn-red"
                 >
                   {isSubmitting ? (
                     <>
@@ -516,11 +442,6 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                       <span>SUBMIT CORPORATE SPONSORSHIP APPLICATION</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
-                  ) : isTest ? (
-                    <>
-                      <span>PROCEED TO $1.00 TEST CHECKOUT VIA STRIPE</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
                   ) : (
                     <>
                       <span>PROCEED TO SECURE CHECKOUT ({amountDisplay})</span>
@@ -528,23 +449,6 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     </>
                   )}
                 </button>
-
-                {/* Instant Zero-Dollar Test Button */}
-                {isTest && (
-                  <button
-                    type="button"
-                    onClick={handleInstantSimulateTest}
-                    disabled={isSubmitting}
-                    className="w-full py-3 rounded-lg font-bold text-xs uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.01]"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-4 h-4 text-emerald-200" />
-                    )}
-                    <span>⚡ INSTANT TEST SIGNUP ($0 — NO CARD NEEDED)</span>
-                  </button>
-                )}
               </div>
             </form>
           </div>
@@ -554,4 +458,3 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     </div>
   );
 }
-

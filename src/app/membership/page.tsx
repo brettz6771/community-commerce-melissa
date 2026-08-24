@@ -27,7 +27,6 @@ function MembershipContent() {
   const searchParams = useSearchParams();
   const isSuccess = searchParams.get("success") === "true";
   const isCanceled = searchParams.get("canceled") === "true";
-  const isTestMode = searchParams.get("test") === "true" || searchParams.get("test") === "1" || searchParams.get("mode") === "test";
   const paidTier = searchParams.get("tier") || "Membership";
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -83,36 +82,6 @@ function MembershipContent() {
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")} />
-
-      {/* Admin Test Mode Notification Banner */}
-      {isTestMode && (
-        <div className="bg-purple-950 text-purple-200 text-xs py-2.5 px-4 border-b border-purple-800 text-center flex flex-wrap items-center justify-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="bg-purple-600 text-white font-black text-[9px] uppercase px-2 py-0.5 rounded shadow">
-              ADMIN TEST MODE
-            </span>
-            <span className="font-medium">
-              Testing Mode Active: Verify emails, directory addition & badge generation.
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleJoinClick("Live Test Membership ($1.00/yr)")}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center gap-1"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Instant Test ($0 No Card)</span>
-            </button>
-            <button
-              onClick={() => handleJoinClick("Live Test Membership ($1.00/yr)")}
-              className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider transition shadow flex items-center gap-1"
-            >
-              <span>$1.00 Stripe Test</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Stripe Payment Success Notification Banner */}
       {isSuccess && (
@@ -634,7 +603,6 @@ function MembershipContent() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
         defaultTier={modalTier}
-        isTestMode={isTestMode}
       />
     </div>
   );
