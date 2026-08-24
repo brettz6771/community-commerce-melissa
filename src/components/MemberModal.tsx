@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, Loader2, ArrowLeft } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import { BUSINESS_CATEGORIES } from "@/data/mockData";
 
 const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
@@ -21,7 +22,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     ownerName: "",
     email: "",
     phone: "",
-    category: "Real Estate",
+    category: "Real Estate & Property Management",
     description: "",
     website: "",
     city: "Melissa",
@@ -328,21 +329,17 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Business Category *</label>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Business Category / Industry *</label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
                   >
-                    <option value="Health & Wellness">Health & Wellness</option>
-                    <option value="Home Services">Home Services</option>
-                    <option value="Real Estate">Real Estate</option>
-                    <option value="Hospitality & Dining">Hospitality & Dining</option>
-                    <option value="Legal & Financial">Legal & Financial</option>
-                    <option value="Daycare & Retail">Daycare & Retail</option>
-                    <option value="Professional Services">Professional Services</option>
-                    <option value="General Business">General Business</option>
-                    <option value="Other">Other</option>
+                    {BUSINESS_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

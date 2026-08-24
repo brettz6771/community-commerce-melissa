@@ -8,7 +8,7 @@ import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import PageTitle from "@/components/PageTitle";
 import Link from "next/link";
-import { MOCK_BUSINESSES } from "@/data/mockData";
+import { MOCK_BUSINESSES, BUSINESS_CATEGORIES } from "@/data/mockData";
 import { 
   Building2, 
   Search, 
@@ -58,7 +58,7 @@ function DirectoryContent() {
           const mappedDb: DirectoryItem[] = data.members.map((m: any) => ({
             id: m.id || m.businessName,
             name: m.businessName,
-            category: m.category || "General Business",
+            category: m.category || "General Business / Other",
             description: m.description || "Active community business partner in Melissa, Texas.",
             city: m.city || "Melissa",
             state: m.state || "TX",
@@ -103,20 +103,15 @@ function DirectoryContent() {
     ...mockFormatted.filter((m) => !dbNames.has(m.name.trim().toLowerCase())),
   ];
 
-  const categories = [
-    "All",
-    "Health & Wellness",
-    "Hospitality & Dining",
-    "Home Services",
-    "Real Estate",
-    "Daycare & Retail",
-    "Legal & Financial",
-    "Professional Services",
-    "General Business",
-  ];
+  const categories = ["All", ...BUSINESS_CATEGORIES];
 
   const filteredBusinesses = combinedBusinesses.filter((biz) => {
-    const matchesCat = selectedCategory === "All" || biz.category?.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesCat = 
+      selectedCategory === "All" || 
+      biz.category?.toLowerCase() === selectedCategory.toLowerCase() ||
+      (biz.category && selectedCategory.toLowerCase().includes(biz.category.toLowerCase())) ||
+      (biz.category && biz.category.toLowerCase().includes(selectedCategory.toLowerCase()));
+
     const query = searchQuery.toLowerCase().trim();
     if (!query) return matchesCat;
 
@@ -169,15 +164,34 @@ function DirectoryContent() {
           
           {/* Search Bar & Category Filter Bar */}
           <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-300 shadow-sm space-y-4">
-            <div className="relative">
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by business name, keyword, city, or specialty..."
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 transition"
-              />
+            
+            {/* Search Input + Category Select Dropdown */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+              <div className="relative md:col-span-8">
+                <Search className="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by business name, keyword, city, or specialty..."
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500 transition"
+                />
+              </div>
+
+              <div className="relative md:col-span-4">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-red-500 transition"
+                >
+                  <option value="All">All Categories & Industries ({combinedBusinesses.length})</option>
+                  {BUSINESS_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Category Filter Pills */}

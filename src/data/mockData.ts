@@ -75,6 +75,34 @@ export interface NewsArticle {
 }
 
 // ----------------------------------------------------
+// Comprehensive Business & Industry Categories
+// ----------------------------------------------------
+export const BUSINESS_CATEGORIES: string[] = [
+  "Advertising, Marketing & PR",
+  "Automotive & Transportation",
+  "Banking, Accounting & Finance",
+  "Construction, Roofing & Contractors",
+  "Education, Childcare & Tutoring",
+  "Event Planning, Photography & Entertainment",
+  "Government, Civic & Non-Profit",
+  "Health, Medical & Wellness",
+  "Home Services, HVAC & Landscaping",
+  "Hospitality, Dining & Catering",
+  "Insurance Services",
+  "IT, Web Design & Technology",
+  "Legal, Law Practice & Title",
+  "Manufacturing & Industrial",
+  "Personal Care, Salons & Spas",
+  "Pet Care & Veterinary Services",
+  "Professional & Business Consulting",
+  "Real Estate & Property Management",
+  "Retail, Boutiques & Shopping",
+  "Security & Smart Home Systems",
+  "Sports, Fitness & Recreation",
+  "General Business / Other"
+];
+
+// ----------------------------------------------------
 // Mock Data for Community Commerce Melissa
 // ----------------------------------------------------
 
@@ -130,7 +158,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-1",
     name: "Melissa Family Dental & Orthodontics",
-    category: "Health & Wellness",
+    category: "Health, Medical & Wellness",
     description: "Comprehensive family dental care, cosmetic dentistry, and clear aligner orthodontics in a state-of-the-art Melissa facility.",
     address: "2100 Fannin Rd, Suite 100, Melissa, TX",
     phone: "(972) 837-5500",
@@ -145,7 +173,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-2",
     name: "The Red Feather",
-    category: "Hospitality & Dining",
+    category: "Hospitality, Dining & Catering",
     description: "Premier private golf club and event lawn offering world-class dining, corporate events, and networking spaces.",
     address: "3400 Red Feather Way, Melissa, TX",
     phone: "(972) 837-1234",
@@ -160,7 +188,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-3",
     name: "North Texas Appliance Repair & Services",
-    category: "Home Services",
+    category: "Home Services, HVAC & Landscaping",
     description: "Trusted local residential and commercial appliance repair, HVAC maintenance, and emergency service technicians.",
     address: "1405 Central Expy, Melissa, TX",
     phone: "(972) 837-9911",
@@ -175,7 +203,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-4",
     name: "Heartland Real Estate Group",
-    category: "Real Estate",
+    category: "Real Estate & Property Management",
     description: "Specializing in Melissa residential homes, land development, and commercial leasing throughout Collin County.",
     address: "1800 Sam Rayburn Hwy, Melissa, TX",
     phone: "(972) 837-4400",
@@ -190,7 +218,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-5",
     name: "Melissa Little Explorers Academy",
-    category: "Daycare & Retail",
+    category: "Education, Childcare & Tutoring",
     description: "Premier early childhood education, infant care, and after-school STEM enrichment programs in Melissa.",
     address: "2901 Cooper St, Melissa, TX",
     phone: "(972) 837-3322",
@@ -205,7 +233,7 @@ export const MOCK_BUSINESSES: BusinessItem[] = [
   {
     id: "biz-6",
     name: "Landmark Title & Escrow Melissa",
-    category: "Legal & Financial",
+    category: "Legal, Law Practice & Title",
     description: "Local title closing services, escrow solutions, and real estate legal support for Melissa buyers and commercial developers.",
     address: "1902 Fannin Rd, Melissa, TX",
     phone: "(972) 837-7788",
