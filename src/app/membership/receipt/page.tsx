@@ -328,13 +328,17 @@ function ReceiptBadgeContent() {
         @media print {
           @page {
             size: letter landscape;
-            margin: 0.25in;
+            margin: 0.2in !important;
           }
           html, body {
             background: #ffffff !important;
             color: #000000 !important;
             margin: 0 !important;
             padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 8in !important;
+            overflow: hidden !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
@@ -347,10 +351,16 @@ function ReceiptBadgeContent() {
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
-            width: 100% !important;
-            max-width: 10.5in !important;
+            width: 10.4in !important;
+            max-height: 7.7in !important;
             margin: 0 auto !important;
+            overflow: hidden !important;
+            page-break-after: avoid !important;
+            page-break-before: avoid !important;
             page-break-inside: avoid !important;
+            break-after: avoid !important;
+            break-before: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}} />
@@ -677,21 +687,21 @@ function ReceiptBadgeContent() {
           width: "100%",
           maxWidth: "10.2in",
           margin: "0 auto",
-          padding: "30px 40px",
+          padding: "20px 30px",
           backgroundColor: "#ffffff",
           color: "#0f172a",
           fontFamily: "'Outfit', 'Georgia', serif",
           boxSizing: "border-box",
           position: "relative",
-          border: "10px solid #A81C24",
-          outline: "3px solid #D97706",
-          outlineOffset: "-7px",
+          border: "8px solid #A81C24",
+          outline: "2.5px solid #D97706",
+          outlineOffset: "-6px",
         }}
       >
         <div
           style={{
-            border: "1.5px solid #B45309",
-            padding: "24px 32px",
+            border: "1px solid #B45309",
+            padding: "16px 24px",
             textAlign: "center",
             position: "relative",
           }}
@@ -702,19 +712,19 @@ function ReceiptBadgeContent() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: "16px",
-              marginBottom: "12px",
+              gap: "14px",
+              marginBottom: "8px",
             }}
           >
             <img
               src="/ccm-logo-transparent.png"
               alt="CCM Logo"
-              style={{ height: "60px", width: "auto" }}
+              style={{ height: "48px", width: "auto" }}
             />
             <div style={{ textAlign: "left" }}>
               <div
                 style={{
-                  fontSize: "22px",
+                  fontSize: "20px",
                   fontWeight: "900",
                   letterSpacing: "1.5px",
                   color: "#A81C24",
@@ -725,7 +735,7 @@ function ReceiptBadgeContent() {
               </div>
               <div
                 style={{
-                  fontSize: "10px",
+                  fontSize: "9.5px",
                   fontWeight: "700",
                   letterSpacing: "1px",
                   color: "#475569",
@@ -738,24 +748,24 @@ function ReceiptBadgeContent() {
           </div>
 
           {/* Certificate Title */}
-          <div style={{ margin: "16px 0 10px 0" }}>
+          <div style={{ margin: "10px 0 8px 0" }}>
             <div
               style={{
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: "800",
                 letterSpacing: "3px",
                 color: "#D97706",
                 textTransform: "uppercase",
-                marginBottom: "4px",
+                marginBottom: "2px",
               }}
             >
               ★ OFFICIAL MEMBERSHIP CREDENTIAL ★
             </div>
             <h1
               style={{
-                fontSize: "34px",
+                fontSize: "30px",
                 fontWeight: "900",
-                letterSpacing: "2px",
+                letterSpacing: "1.5px",
                 color: "#0f172a",
                 textTransform: "uppercase",
                 margin: 0,
@@ -769,10 +779,10 @@ function ReceiptBadgeContent() {
           {/* Recipient Presentation */}
           <p
             style={{
-              fontSize: "14px",
+              fontSize: "13px",
               fontStyle: "italic",
               color: "#64748b",
-              margin: "12px 0 6px 0",
+              margin: "8px 0 4px 0",
             }}
           >
             This official certificate is proudly presented to
@@ -780,16 +790,16 @@ function ReceiptBadgeContent() {
 
           <div
             style={{
-              fontSize: "28px",
+              fontSize: "26px",
               fontWeight: "900",
               color: "#A81C24",
               textTransform: "uppercase",
               letterSpacing: "1px",
-              margin: "8px 0",
+              margin: "6px 0",
               borderBottom: "2px solid #CBD5E1",
-              paddingBottom: "8px",
+              paddingBottom: "4px",
               display: "inline-block",
-              minWidth: "65%",
+              minWidth: "60%",
             }}
           >
             {receiptData?.businessName || "Melissa Business Member"}
@@ -797,11 +807,11 @@ function ReceiptBadgeContent() {
 
           <p
             style={{
-              fontSize: "14px",
+              fontSize: "13px",
               color: "#334155",
-              maxWidth: "680px",
-              margin: "12px auto",
-              lineHeight: "1.5",
+              maxWidth: "640px",
+              margin: "8px auto",
+              lineHeight: "1.4",
             }}
           >
             in recognition of active investment and certified standing in{" "}
@@ -812,15 +822,15 @@ function ReceiptBadgeContent() {
             style={{
               display: "inline-block",
               backgroundColor: "#FEF2F2",
-              border: "2px solid #F87171",
+              border: "1.5px solid #F87171",
               borderRadius: "9999px",
-              padding: "6px 24px",
-              margin: "6px 0 16px 0",
+              padding: "4px 20px",
+              margin: "4px 0 10px 0",
             }}
           >
             <span
               style={{
-                fontSize: "16px",
+                fontSize: "15px",
                 fontWeight: "900",
                 color: "#991B1B",
                 textTransform: "uppercase",
@@ -833,10 +843,10 @@ function ReceiptBadgeContent() {
 
           <p
             style={{
-              fontSize: "12px",
+              fontSize: "11px",
               color: "#64748b",
-              maxWidth: "600px",
-              margin: "0 auto 20px auto",
+              maxWidth: "580px",
+              margin: "0 auto 12px auto",
               fontStyle: "italic",
             }}
           >
@@ -850,9 +860,9 @@ function ReceiptBadgeContent() {
               alignItems: "flex-end",
               justifyContent: "space-between",
               borderTop: "1px solid #E2E8F0",
-              paddingTop: "16px",
-              marginTop: "12px",
-              fontSize: "11px",
+              paddingTop: "12px",
+              marginTop: "8px",
+              fontSize: "10.5px",
             }}
           >
             <div style={{ textAlign: "left", width: "30%" }}>
@@ -860,7 +870,7 @@ function ReceiptBadgeContent() {
                 style={{
                   fontWeight: "bold",
                   color: "#64748b",
-                  fontSize: "9px",
+                  fontSize: "8.5px",
                   textTransform: "uppercase",
                 }}
               >
@@ -870,9 +880,9 @@ function ReceiptBadgeContent() {
                 style={{
                   fontFamily: "monospace",
                   fontWeight: "bold",
-                  fontSize: "14px",
+                  fontSize: "13px",
                   color: "#0f172a",
-                  marginTop: "2px",
+                  marginTop: "1px",
                 }}
               >
                 {receiptData?.memberId}
@@ -881,8 +891,8 @@ function ReceiptBadgeContent() {
                 style={{
                   color: "#16A34A",
                   fontWeight: "bold",
-                  fontSize: "10px",
-                  marginTop: "2px",
+                  fontSize: "9.5px",
+                  marginTop: "1px",
                 }}
               >
                 ✓ VERIFIED ACTIVE MEMBER
@@ -893,20 +903,20 @@ function ReceiptBadgeContent() {
             <div style={{ textAlign: "center", width: "35%" }}>
               <div
                 style={{
-                  width: "60px",
-                  height: "60px",
+                  width: "52px",
+                  height: "52px",
                   borderRadius: "50%",
-                  border: "2.5px dashed #D97706",
+                  border: "2px dashed #D97706",
                   backgroundColor: "#FFFBEB",
                   display: "inline-flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#B45309",
                   fontWeight: "900",
-                  fontSize: "9px",
+                  fontSize: "8.5px",
                   textTransform: "uppercase",
                   letterSpacing: "1px",
-                  lineHeight: "1.2",
+                  lineHeight: "1.1",
                   margin: "0 auto",
                 }}
               >
@@ -914,9 +924,9 @@ function ReceiptBadgeContent() {
               </div>
               <div
                 style={{
-                  fontSize: "9px",
+                  fontSize: "8.5px",
                   color: "#64748b",
-                  marginTop: "4px",
+                  marginTop: "2px",
                   fontWeight: "bold",
                 }}
               >
@@ -928,22 +938,22 @@ function ReceiptBadgeContent() {
               <div
                 style={{
                   borderBottom: "1px solid #0f172a",
-                  width: "150px",
+                  width: "140px",
                   marginLeft: "auto",
-                  marginBottom: "4px",
-                  height: "20px",
+                  marginBottom: "3px",
+                  height: "16px",
                 }}
               />
               <div
                 style={{
                   fontWeight: "bold",
                   color: "#0f172a",
-                  fontSize: "10px",
+                  fontSize: "9.5px",
                 }}
               >
                 Executive Board
               </div>
-              <div style={{ color: "#64748b", fontSize: "9px" }}>
+              <div style={{ color: "#64748b", fontSize: "8.5px" }}>
                 Community Commerce Melissa
               </div>
             </div>
