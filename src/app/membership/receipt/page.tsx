@@ -440,7 +440,7 @@ function ReceiptBadgeContent() {
                 ) : (
                   <Mail className="w-4 h-4 text-slate-600" />
                 )}
-                <span>{isEmailSent ? "Badge Emailed ✓" : "Email Badge"}</span>
+                <span>{isEmailSent ? "Badge Emailed" : "Email Badge"}</span>
               </button>
             </div>
           </div>
