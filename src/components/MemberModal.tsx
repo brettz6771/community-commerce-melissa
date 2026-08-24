@@ -381,43 +381,73 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 </div>
               </div>
 
-              {/* 1-2 Sentences Company Bio / Description for Directory */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-slate-300 uppercase">
-                    Company Bio for Business Directory (1–2 Sentences) *
-                  </label>
-                  <span className={`text-[10px] font-mono font-bold ${
-                    formData.description.length > 220 ? "text-amber-400" : "text-slate-400"
-                  }`}>
-                    {formData.description.length}/250 chars
-                  </span>
+              {/* 1-2 Sentences Company Bio / Description for Directory (Shown for Members & Partners, Hidden for Corporate Sponsorship) */}
+              {!isCorporate && (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-300 uppercase">
+                      Company Bio for Business Directory (1–2 Sentences) *
+                    </label>
+                    <span className={`text-[10px] font-mono font-bold ${
+                      formData.description.length > 220 ? "text-amber-400" : "text-slate-400"
+                    }`}>
+                      {formData.description.length}/250 chars
+                    </span>
+                  </div>
+                  <textarea
+                    rows={2}
+                    required
+                    maxLength={250}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
+                    placeholder="Tell customers what your business provides (e.g. 'Premier residential roofing, repairs, and storm restoration serving Melissa families since 2019.')"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Brief 1–2 sentence summary displayed on your official directory card (max 250 characters).
+                  </p>
                 </div>
-                <textarea
-                  rows={2}
-                  required
-                  maxLength={250}
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
-                  placeholder="Tell customers what your business provides (e.g. 'Premier residential roofing, repairs, and storm restoration serving Melissa families since 2019.')"
-                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
-                />
-                <p className="text-[10px] text-slate-400 mt-1">
-                  Brief 1–2 sentence summary displayed on your official directory card (max 250 characters).
-                </p>
-              </div>
+              )}
 
-              {/* Payment simulation info */}
-              <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-slate-300" />
-                  <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+              {/* Sponsorship Goals & Notes (Shown for Corporate Sponsorship) */}
+              {isCorporate && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                    Sponsorship Goals / Community Vision (Optional)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    placeholder="Tell us about your organization's community engagement goals, preferred event initiatives, or desired partnership scope..."
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
                 </div>
-                <div className="flex items-center gap-1 text-[11px]">
-                  <Lock className="w-3 h-3 text-emerald-400" />
-                  <span>Annual Auto-Renewing Subscription</span>
+              )}
+
+              {/* Payment & Sponsorship Tier Info */}
+              {!isCorporate ? (
+                <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-slate-300" />
+                    <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <Lock className="w-3 h-3 text-emerald-400" />
+                    <span>Annual Auto-Renewing Subscription</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Selected Tier: <strong className="text-white">Corporate & Community Sponsorship</strong></span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 font-bold">
+                    Custom Partnership Inquiry
+                  </div>
+                </div>
+              )}
 
               {errorMessage && (
                 <div className="bg-red-950/80 border border-red-500/50 rounded-lg p-3 text-xs text-red-200">
