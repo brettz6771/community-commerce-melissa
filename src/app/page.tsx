@@ -5,6 +5,7 @@ import LaunchBanner from "@/components/LaunchBanner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import QuoteSection from "@/components/QuoteSection";
+import MembershipCTASection from "@/components/MembershipCTASection";
 import HomeCardsGrid from "@/components/HomeCardsGrid";
 import MobileLogoBanner from "@/components/MobileLogoBanner";
 import FoundingMembersWall from "@/components/FoundingMembersWall";
@@ -17,10 +18,16 @@ import Link from "next/link";
 
 export default function HomePage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState("Community Partner ($390 1st Yr • Renews $490/yr)");
   const [isRSVPModalOpen, setIsRSVPModalOpen] = useState(false);
   const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string } | null>(null);
+
+  const handleOpenJoinWithTier = (tier?: string) => {
+    setSelectedTier(tier || "Community Partner ($390 1st Yr • Renews $490/yr)");
+    setIsJoinModalOpen(true);
+  };
 
   const handleOpenRSVP = (title: string) => {
     setSelectedEventTitle(title);
@@ -31,17 +38,17 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       
       {/* Launch Promotion Banner */}
-      <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
+      <LaunchBanner onOpenJoinModal={() => handleOpenJoinWithTier()} />
 
       {/* Main Navigation Bar */}
-      <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
+      <Navbar onOpenJoinModal={() => handleOpenJoinWithTier()} />
 
       {/* Mobile-Only Animated Logo Banner at the top above Hero */}
       <MobileLogoBanner />
 
       {/* Hero Section with Overlapping Stats */}
       <HeroSection
-        onOpenJoinModal={() => setIsJoinModalOpen(true)}
+        onOpenJoinModal={() => handleOpenJoinWithTier()}
         onOpenVideoModal={() => setIsVideoModalOpen(true)}
       />
 
@@ -163,16 +170,17 @@ export default function HomePage() {
       </section>
 
       {/* Quote & Value Proposition Section */}
-      <QuoteSection />
+      <QuoteSection onOpenJoinModal={() => handleOpenJoinWithTier("Community Partner ($390 1st Yr • Renews $490/yr)")} />
+
+      {/* High-Converting Membership Call to Action Section */}
+      <MembershipCTASection onOpenJoinModal={handleOpenJoinWithTier} />
 
       {/* Feature Cards Grid (Events, Directory, Get Involved) */}
       <HomeCardsGrid
-        onOpenJoinModal={() => setIsJoinModalOpen(true)}
+        onOpenJoinModal={() => handleOpenJoinWithTier()}
         onOpenRSVPModal={handleOpenRSVP}
-        onOpenSponsorModal={() => setIsJoinModalOpen(true)}
+        onOpenSponsorModal={() => handleOpenJoinWithTier("Corporate & Community Sponsorship")}
       />
-
-
 
       {/* Main Footer */}
       <Footer />
@@ -181,6 +189,7 @@ export default function HomePage() {
       <MemberModal
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
+        defaultTier={selectedTier}
       />
 
       <RSVPModal

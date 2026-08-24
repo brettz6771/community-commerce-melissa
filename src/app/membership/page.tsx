@@ -3,6 +3,7 @@
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import LaunchBanner from "@/components/LaunchBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import Link from "next/link";
@@ -81,6 +82,7 @@ function MembershipContent() {
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
+      <LaunchBanner onOpenJoinModal={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")} />
       <Navbar onOpenJoinModal={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")} />
 
       {/* Stripe Payment Success Notification Banner */}

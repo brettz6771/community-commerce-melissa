@@ -14,7 +14,7 @@ const LEADERS = [
   { name: "Jax Edwards", headshot: "/ccm-leaders/jax.jpg" }
 ];
 
-export default function QuoteSection() {
+export default function QuoteSection({ onOpenJoinModal }: { onOpenJoinModal?: () => void }) {
   const [hasPlayed, setHasPlayed] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoCardRef = useRef<HTMLDivElement | null>(null);
@@ -177,8 +177,24 @@ export default function QuoteSection() {
               </ul>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-500 font-medium">
-              Championing Melissa businesses since 2026.
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+              {onOpenJoinModal ? (
+                <button
+                  onClick={onOpenJoinModal}
+                  className="w-full btn-red py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition"
+                >
+                  <span>Join Community Commerce</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <Link
+                  href="/membership"
+                  className="w-full btn-red py-3 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] transition text-center"
+                >
+                  <span>Join Community Commerce</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
           </div>
 

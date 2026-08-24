@@ -3,6 +3,7 @@
 import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import LaunchBanner from "@/components/LaunchBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import PageTitle from "@/components/PageTitle";
@@ -96,6 +97,7 @@ function GiveDonateContent() {
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
       <PageTitle title="Give & Donate — Support Melissa, TX" />
+      <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
       {/* Success Notification Banner */}
