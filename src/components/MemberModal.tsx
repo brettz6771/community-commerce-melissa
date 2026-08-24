@@ -455,17 +455,28 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
               {/* 1-2 Sentences Company Bio / Description for Directory */}
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
-                  Company Bio for Business Directory (1–2 Sentences) *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-300 uppercase">
+                    Company Bio for Business Directory (1–2 Sentences) *
+                  </label>
+                  <span className={`text-[10px] font-mono font-bold ${
+                    formData.description.length > 220 ? "text-amber-400" : "text-slate-400"
+                  }`}>
+                    {formData.description.length}/250 chars
+                  </span>
+                </div>
                 <textarea
                   rows={2}
                   required
+                  maxLength={250}
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value.slice(0, 250) })}
                   placeholder="Tell customers what your business provides (e.g. 'Premier residential roofing, repairs, and storm restoration serving Melissa families since 2019.')"
                   className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                 />
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Brief 1–2 sentence summary displayed on your official directory card (max 250 characters).
+                </p>
               </div>
 
               {/* Payment simulation info */}

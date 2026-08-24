@@ -173,7 +173,7 @@ export async function saveDirectoryMember({
       [
         businessName.trim(),
         category.trim(),
-        description.trim(),
+        description.trim().slice(0, 250),
         website.trim(),
         city.trim() || "Melissa",
         state.trim() || "TX",
