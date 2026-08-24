@@ -161,6 +161,7 @@ export async function POST(request: Request) {
         email: email || "N/A",
         phone: phone || "N/A",
         category: category || "General Business",
+        description: body.description || "",
         website: website || "",
         city: body.city || "Melissa",
         state: body.state || "TX",

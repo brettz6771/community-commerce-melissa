@@ -124,6 +124,7 @@ export async function sendMemberWelcomeAndAdminAlert({
   state = "TX",
   phone = "",
   category = "General Business",
+  description = "",
   website = "",
   sessionId = "",
 }: {
@@ -137,6 +138,7 @@ export async function sendMemberWelcomeAndAdminAlert({
   state?: string;
   phone?: string;
   category?: string;
+  description?: string;
   website?: string;
   sessionId?: string;
 }) {
@@ -200,37 +202,40 @@ export async function sendMemberWelcomeAndAdminAlert({
                   <div style="background-color: #0b0e14; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin: 24px 0;">
                     <table width="100%" cellpadding="6" cellspacing="0" style="font-size: 13px;">
                       <tr>
-                        <td style="color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 11px;">MEMBER ID NUMBER:</td>
-                        <td style="color: #ffffff; font-weight: bold; font-family: monospace; font-size: 15px;">${memberId}</td>
-                      </tr>
-                      <tr>
-                        <td style="color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 11px;">REGISTERED BUSINESS:</td>
+                        <td style="color: #94a3b8; width: 40%;">Business Name:</td>
                         <td style="color: #ffffff; font-weight: bold;">${businessName}</td>
                       </tr>
                       <tr>
-                        <td style="color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 11px;">MEMBERSHIP LEVEL:</td>
-                        <td style="color: #ef4444; font-weight: bold;">${cleanTier}</td>
+                        <td style="color: #94a3b8;">Member ID:</td>
+                        <td style="color: #ef4444; font-family: monospace; font-weight: bold;">${memberId}</td>
                       </tr>
                       <tr>
-                        <td style="color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 11px;">LOCATION:</td>
-                        <td style="color: #ffffff;">${city}, ${state}</td>
+                        <td style="color: #94a3b8;">Membership Level:</td>
+                        <td style="color: #ffffff; font-weight: bold;">${cleanTier}</td>
                       </tr>
                       <tr>
-                        <td style="color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 11px;">VALID THROUGH:</td>
-                        <td style="color: #ffffff;">2026 – 2027</td>
+                        <td style="color: #94a3b8;">Location:</td>
+                        <td style="color: #ffffff;">${city || "Melissa"}, ${state || "TX"}</td>
+                      </tr>
+                      <tr>
+                        <td style="color: #94a3b8;">Status:</td>
+                        <td style="color: #22c55e; font-weight: bold;">Active Verified (2026–2027)</td>
                       </tr>
                     </table>
                   </div>
 
                   <!-- CTAs -->
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
+                    <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 24px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
                       View Digital Badge & Official Receipt →
+                    </a>
+                    <a href="${directoryUrl}" style="display: inline-block; background-color: #334155; color: #ffffff; font-weight: bold; text-decoration: none; padding: 14px 24px; border-radius: 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin: 6px;">
+                      View Business Directory →
                     </a>
                   </div>
 
                   <p style="color: #94a3b8; font-size: 13px; line-height: 1.6;">
-                    Your digital member badge is now active. You can download the high-resolution badge image for your website footer and email signature, or print your official storefront certificate.
+                    Your digital member badge is now active and your profile is live in the Melissa Business Directory. You can download the high-resolution badge image for your website footer and email signature, or print your official storefront certificate.
                   </p>
                 </td>
               </tr>
@@ -287,6 +292,14 @@ export async function sendMemberWelcomeAndAdminAlert({
               <td style="border-bottom: 1px solid #e2e8f0;">${phone || "N/A"}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
+              <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Business Category:</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${category || "General Business"}</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Company Bio / Description:</td>
+              <td style="border-bottom: 1px solid #e2e8f0; color: #334155;">${description || "N/A"}</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Membership Level:</td>
               <td style="color: #a81c24; font-weight: bold; border-bottom: 1px solid #e2e8f0;">${cleanTier}</td>
             </tr>
@@ -300,13 +313,9 @@ export async function sendMemberWelcomeAndAdminAlert({
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">City & State:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${city}, ${state}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${city || "Melissa"}, ${state || "TX"}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
-              <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Business Category:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${category}</td>
-            </tr>
-            <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Website URL:</td>
               <td style="border-bottom: 1px solid #e2e8f0;">${website ? `<a href="${website}">${website}</a>` : "N/A"}</td>
             </tr>

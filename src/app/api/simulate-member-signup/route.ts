@@ -11,6 +11,7 @@ export async function POST(request: Request) {
       email,
       phone = "(972) 837-1234",
       category = "Real Estate",
+      description = "Dedicated commercial development and investment firm serving Melissa, Texas.",
       website = "https://communitycommercemelissa.org",
       city = "Melissa",
       state = "TX",
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     await saveDirectoryMember({
       businessName,
       category,
+      description,
       website,
       city,
       state,

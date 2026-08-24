@@ -61,6 +61,7 @@ export async function GET(request: Request) {
       await saveDirectoryMember({
         businessName,
         category: metadata.category || "General Business",
+        description: metadata.description || "",
         website: metadata.website || "",
         city: metadata.city || "Melissa",
         state: metadata.state || "TX",

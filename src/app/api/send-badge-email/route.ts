@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       state,
       phone,
       category,
+      description,
       website,
       sessionId
     } = body;
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
       state: state || "TX",
       phone: phone || "",
       category: category || "General Business",
+      description: description || "",
       website: website || "",
       sessionId: sessionId || "",
     });

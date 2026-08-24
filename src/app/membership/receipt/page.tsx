@@ -654,18 +654,18 @@ function ReceiptBadgeContent() {
                 {/* Quick Link Navigation */}
                 <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2">
                   <Link
-                    href="/events"
+                    href="/directory"
                     className="w-full sm:w-auto btn-red px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-1.5"
                   >
-                    <span>Explore Events Calendar</span>
+                    <span>View Business Directory</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
 
                   <Link
-                    href="/"
+                    href="/events"
                     className="w-full sm:w-auto text-xs font-bold text-slate-700 hover:text-slate-900 py-2 text-center"
                   >
-                    Return to Homepage →
+                    Explore Events Calendar →
                   </Link>
                 </div>
 

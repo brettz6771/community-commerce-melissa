@@ -23,6 +23,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     email: "",
     phone: "",
     category: "Real Estate",
+    description: "",
     website: "",
     city: "Melissa",
     state: "TX",
@@ -68,6 +69,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           email: formData.email || "info@communitycommercemelissa.org",
           phone: formData.phone || "(972) 837-1234",
           category: formData.category || "Real Estate",
+          description: formData.description || "Dedicated commercial leader providing trusted services in Melissa, Texas.",
           website: formData.website || "https://communitycommercemelissa.org",
           city: formData.city || "Melissa",
           state: formData.state || "TX",
@@ -114,6 +116,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               "Email Address": formData.email,
               "Phone Number": formData.phone || "N/A",
               "Business Category": formData.category,
+              "Company Bio / Description": formData.description || "N/A",
               "City": formData.city || "Melissa",
               "State": formData.state || "TX",
               "Website": formData.website || "N/A",
@@ -138,6 +141,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           email: formData.email,
           phone: formData.phone,
           category: formData.category,
+          description: formData.description,
           website: formData.website,
           city: formData.city || "Melissa",
           state: formData.state || "TX",
@@ -447,6 +451,21 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                 </div>
+              </div>
+
+              {/* 1-2 Sentences Company Bio / Description for Directory */}
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                  Company Bio for Business Directory (1–2 Sentences) *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Tell customers what your business provides (e.g. 'Premier residential roofing, repairs, and storm restoration serving Melissa families since 2019.')"
+                  className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                />
               </div>
 
               {/* Payment simulation info */}

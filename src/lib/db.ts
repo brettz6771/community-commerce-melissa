@@ -82,6 +82,7 @@ export interface DirectoryMemberRecord {
   id?: number;
   businessName: string;
   category: string;
+  description?: string;
   website?: string;
   city?: string;
   state?: string;
@@ -98,6 +99,7 @@ export interface DirectoryMemberRecord {
 export async function saveDirectoryMember({
   businessName,
   category = "General Business",
+  description = "",
   website = "",
   city = "Melissa",
   state = "TX",
@@ -109,6 +111,7 @@ export async function saveDirectoryMember({
 }: {
   businessName: string;
   category?: string;
+  description?: string;
   website?: string;
   city?: string;
   state?: string;
@@ -135,6 +138,7 @@ export async function saveDirectoryMember({
         id SERIAL PRIMARY KEY,
         business_name VARCHAR(255) NOT NULL,
         category VARCHAR(100) NOT NULL,
+        description TEXT,
         website VARCHAR(500),
         city VARCHAR(100) DEFAULT 'Melissa',
         state VARCHAR(50) DEFAULT 'TX',
@@ -147,6 +151,7 @@ export async function saveDirectoryMember({
         is_test BOOLEAN DEFAULT false,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;
     `);
 
     // Determine badge name
@@ -160,14 +165,15 @@ export async function saveDirectoryMember({
     await dbPool.query(
       `
       INSERT INTO directory_members (
-        business_name, category, website, city, state, phone, email, owner_name, tier, badge, is_active, is_test
+        business_name, category, description, website, city, state, phone, email, owner_name, tier, badge, is_active, is_test
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true, $11)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true, $12)
       ON CONFLICT DO NOTHING;
       `,
       [
         businessName.trim(),
         category.trim(),
+        description.trim(),
         website.trim(),
         city.trim() || "Melissa",
         state.trim() || "TX",
@@ -200,6 +206,7 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
         id SERIAL PRIMARY KEY,
         business_name VARCHAR(255) NOT NULL,
         category VARCHAR(100) NOT NULL,
+        description TEXT,
         website VARCHAR(500),
         city VARCHAR(100) DEFAULT 'Melissa',
         state VARCHAR(50) DEFAULT 'TX',
@@ -212,6 +219,7 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
         is_test BOOLEAN DEFAULT false,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
+      ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;
     `);
 
     const res = await dbPool.query(`
@@ -219,6 +227,7 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
         id, 
         business_name AS "businessName", 
         category, 
+        description,
         website, 
         city, 
         state, 

@@ -99,6 +99,7 @@ export async function POST(request: Request) {
               await saveDirectoryMember({
                 businessName: metadata.businessName,
                 category: metadata.category || "General Business",
+                description: metadata.description || "",
                 website: metadata.website || "",
                 city: metadata.city || "Melissa",
                 state: metadata.state || "TX",
