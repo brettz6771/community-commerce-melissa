@@ -298,20 +298,6 @@ function ReceiptBadgeContent() {
     }
   };
 
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-
-  const handleAppleWalletClick = () => {
-    setIsWalletModalOpen(true);
-  };
-
-  const handleRawPkpassDownload = () => {
-    const memberId = receiptData?.memberId || "CCM-2026-MEMBER";
-    const tier = encodeURIComponent(receiptData?.tier || "Community Partner");
-    const businessName = encodeURIComponent(receiptData?.businessName || "Member");
-    const name = encodeURIComponent(receiptData?.customerName || "Member");
-    window.open(`/api/apple-wallet-pass?memberId=${memberId}&tier=${tier}&businessName=${businessName}&name=${name}&download=true`, "_blank");
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
@@ -391,14 +377,6 @@ function ReceiptBadgeContent() {
               >
                 <Printer className="w-4 h-4 text-slate-600" />
                 <span>Print Certificate</span>
-              </button>
-
-              <button
-                onClick={handleAppleWalletClick}
-                className="bg-black hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-md transition hover:scale-105 border border-white/20"
-              >
-                <Smartphone className="w-4 h-4 text-slate-300" />
-                <span>Add to Apple Wallet / Pass</span>
               </button>
 
               <button
@@ -653,101 +631,6 @@ function ReceiptBadgeContent() {
           </div>
         </div>
       </main>
-
-      {/* Apple Wallet / Digital Pass Card Modal */}
-      {isWalletModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-[#0B0E14] border-2 border-red-600/50 rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto text-white shadow-2xl relative p-6 space-y-6">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setIsWalletModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition"
-            >
-              ✕
-            </button>
-
-            <div className="text-center space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-wider">
-                <Smartphone className="w-3.5 h-3.5 text-slate-300" />
-                <span>MOBILE DIGITAL MEMBERSHIP CARD</span>
-              </div>
-              <h3 className="text-xl font-black font-outfit uppercase">
-                Digital Wallet Card
-              </h3>
-              <p className="text-xs text-slate-400">
-                Save your verified card directly to your mobile device.
-              </p>
-            </div>
-
-            {/* Apple Wallet Pass Card UI */}
-            <div className="bg-[#151922] border border-white/15 rounded-2xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
-              <div className="h-1.5 bg-[#A81C24] -mx-5 -mt-5 mb-4" />
-
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <img src="/ccm-logo-transparent.png" alt="CCM" className="h-7 w-auto" />
-                  <div className="text-xs font-black uppercase text-white">COMMUNITY COMMERCE</div>
-                </div>
-                <span className="text-[10px] font-black uppercase text-red-400 bg-red-950/80 px-2 py-0.5 rounded border border-red-600/40">
-                  {cleanTierDisplay}
-                </span>
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-[9px] font-bold text-slate-400 uppercase">BUSINESS MEMBER</div>
-                <div className="text-lg font-black text-white uppercase">{receiptData?.businessName}</div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs border-t border-white/10 pt-3">
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase">MEMBER ID</div>
-                  <div className="font-mono font-bold text-white text-xs">{receiptData?.memberId}</div>
-                </div>
-                <div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase">EXPIRES</div>
-                  <div className="font-bold text-white text-xs">MARCH 2027</div>
-                </div>
-              </div>
-
-              {/* Barcode Simulation */}
-              <div className="bg-white rounded-xl p-3 text-center space-y-1">
-                <div className="font-mono font-black tracking-widest text-slate-900 text-xs">
-                  ||| | | |||| || ||| | ||| |||| | | |||
-                </div>
-                <div className="text-[9px] font-bold text-slate-500 font-mono">
-                  {receiptData?.memberId} • ACTIVE VERIFIED
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Actions */}
-            <div className="space-y-2 pt-2">
-              <button
-                onClick={handleDownloadBadge}
-                className="w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition hover:scale-[1.02]"
-              >
-                <Download className="w-4 h-4" />
-                <span>Save Badge Image to Photos (Camera Roll)</span>
-              </button>
-
-              <button
-                onClick={handleRawPkpassDownload}
-                className="w-full bg-white/10 hover:bg-white/20 text-white py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition"
-              >
-                <Smartphone className="w-3.5 h-3.5 text-slate-300" />
-                <span>Download Pass File (.pkpass)</span>
-              </button>
-            </div>
-
-            {/* Instruction Tip */}
-            <p className="text-[11px] text-slate-400 text-center leading-relaxed">
-              💡 <strong>Tip for iPhone users:</strong> Tap <em>Save Badge Image to Photos</em> to keep your official member badge in your Photos library or set as a widget!
-            </p>
-
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>
