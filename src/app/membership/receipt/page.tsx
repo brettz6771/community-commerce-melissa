@@ -41,6 +41,22 @@ function ReceiptBadgeContent() {
 
   const badgeRef = useRef<HTMLDivElement>(null);
 
+  const getValidThrough = (dateStr?: string) => {
+    try {
+      const baseDate = dateStr ? new Date(dateStr) : new Date();
+      if (isNaN(baseDate.getTime())) {
+        const fallback = new Date();
+        fallback.setFullYear(fallback.getFullYear() + 1);
+        return fallback.toLocaleDateString("en-US", { month: "long", year: "numeric" }).toUpperCase();
+      }
+      const renewalDate = new Date(baseDate);
+      renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+      return renewalDate.toLocaleDateString("en-US", { month: "long", year: "numeric" }).toUpperCase();
+    } catch {
+      return "AUGUST 2027";
+    }
+  };
+
   useEffect(() => {
     async function fetchReceipt() {
       // Handle instant simulated test mode without Stripe API roundtrip
@@ -504,7 +520,7 @@ function ReceiptBadgeContent() {
 
                   <div>
                     <div className="text-[10px] font-bold text-slate-400 uppercase">VALID THROUGH</div>
-                    <div className="font-bold text-white text-sm mt-0.5">MARCH 2027</div>
+                    <div className="font-bold text-white text-sm mt-0.5">{getValidThrough(receiptData?.date)}</div>
                   </div>
 
                   <div className="col-span-2 sm:col-span-1 flex items-center justify-start sm:justify-end gap-2 text-emerald-400 font-bold">

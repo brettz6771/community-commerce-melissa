@@ -96,12 +96,16 @@ function DirectoryContent() {
     tier: b.badge || "Founding Member",
   }));
 
-  // Combine DB members and default founding businesses (avoid duplicate names)
-  const dbNames = new Set(dbMembers.map((m) => m.name.trim().toLowerCase()));
-  const combinedBusinesses: DirectoryItem[] = [
-    ...dbMembers,
-    ...mockFormatted.filter((m) => !dbNames.has(m.name.trim().toLowerCase())),
-  ];
+  // Combine DB members and default founding businesses with strict 1-listing deduplication
+  const seenCombined = new Set<string>();
+  const combinedBusinesses: DirectoryItem[] = [];
+
+  for (const item of [...dbMembers, ...mockFormatted]) {
+    const key = (item.name || "").trim().toLowerCase();
+    if (!key || seenCombined.has(key)) continue;
+    seenCombined.add(key);
+    combinedBusinesses.push(item);
+  }
 
   const categories = ["All", ...BUSINESS_CATEGORIES];
 

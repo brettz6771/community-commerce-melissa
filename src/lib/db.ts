@@ -161,32 +161,84 @@ export async function saveDirectoryMember({
       ? "Community Member"
       : "Community Supporter";
 
-    // Insert or update if already exists with same business name & email
-    await dbPool.query(
+    // Check if business already exists by name or email to prevent duplicates
+    const cleanBizName = businessName.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    const existingCheck = await dbPool.query(
       `
-      INSERT INTO directory_members (
-        business_name, category, description, website, city, state, phone, email, owner_name, tier, badge, is_active, is_test
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true, $12)
-      ON CONFLICT DO NOTHING;
+      SELECT id FROM directory_members 
+      WHERE LOWER(TRIM(business_name)) = LOWER($1) 
+         OR ($2 != '' AND LOWER(TRIM(email)) = $2)
+      LIMIT 1;
       `,
-      [
-        businessName.trim(),
-        category.trim(),
-        description.trim().slice(0, 250),
-        website.trim(),
-        city.trim() || "Melissa",
-        state.trim() || "TX",
-        phone.trim(),
-        email.trim(),
-        ownerName.trim(),
-        tier,
-        badge,
-        isTest,
-      ]
+      [cleanBizName, cleanEmail]
     );
 
-    console.log(`Successfully added ${businessName} to Directory Members table.`);
+    if (existingCheck.rowCount && existingCheck.rowCount > 0) {
+      const existingId = existingCheck.rows[0].id;
+      await dbPool.query(
+        `
+        UPDATE directory_members 
+        SET 
+          business_name = $1,
+          category = $2,
+          description = COALESCE(NULLIF($3, ''), description),
+          website = COALESCE(NULLIF($4, ''), website),
+          city = $5,
+          state = $6,
+          phone = COALESCE(NULLIF($7, ''), phone),
+          email = COALESCE(NULLIF($8, ''), email),
+          owner_name = COALESCE(NULLIF($9, ''), owner_name),
+          tier = $10,
+          badge = $11,
+          is_active = true,
+          is_test = $12
+        WHERE id = $13;
+        `,
+        [
+          cleanBizName,
+          category.trim(),
+          description.trim().slice(0, 250),
+          website.trim(),
+          city.trim() || "Melissa",
+          state.trim() || "TX",
+          phone.trim(),
+          cleanEmail,
+          ownerName.trim(),
+          tier,
+          badge,
+          isTest,
+          existingId,
+        ]
+      );
+      console.log(`Successfully updated existing directory member ${cleanBizName} (ID: ${existingId}).`);
+    } else {
+      await dbPool.query(
+        `
+        INSERT INTO directory_members (
+          business_name, category, description, website, city, state, phone, email, owner_name, tier, badge, is_active, is_test
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true, $12);
+        `,
+        [
+          cleanBizName,
+          category.trim(),
+          description.trim().slice(0, 250),
+          website.trim(),
+          city.trim() || "Melissa",
+          state.trim() || "TX",
+          phone.trim(),
+          cleanEmail,
+          ownerName.trim(),
+          tier,
+          badge,
+          isTest,
+        ]
+      );
+      console.log(`Successfully added new directory member ${cleanBizName}.`);
+    }
+
     return true;
   } catch (error) {
     console.error("Error saving directory member to Postgres:", error);
@@ -222,6 +274,12 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
       ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;
     `);
 
+    // Clean up any historical duplicate entries in the database
+    await dbPool.query(`
+      DELETE FROM directory_members a USING directory_members b
+      WHERE a.id < b.id AND LOWER(TRIM(a.business_name)) = LOWER(TRIM(b.business_name));
+    `).catch(() => {});
+
     const res = await dbPool.query(`
       SELECT 
         id, 
@@ -246,7 +304,18 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
         created_at DESC;
     `);
 
-    return res.rows;
+    // Guarantee unique businesses by lowercase name
+    const seenNames = new Set<string>();
+    const uniqueMembers: DirectoryMemberRecord[] = [];
+
+    for (const row of res.rows) {
+      const key = (row.businessName || "").toLowerCase().trim();
+      if (!key || seenNames.has(key)) continue;
+      seenNames.add(key);
+      uniqueMembers.push(row);
+    }
+
+    return uniqueMembers;
   } catch (error) {
     console.error("Error fetching directory members from Postgres:", error);
     return [];
