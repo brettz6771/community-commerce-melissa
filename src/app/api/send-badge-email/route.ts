@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
+import { sendMemberBadgeOnlyEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -24,8 +24,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Valid email address required" }, { status: 400 });
     }
 
-    // Dispatch welcome email to member and alert email to info@communitycommercemelissa.org
-    await sendMemberWelcomeAndAdminAlert({
+    // Dispatch badge copy directly to the member
+    await sendMemberBadgeOnlyEmail({
       memberEmail: email,
       businessName: businessName || "Melissa Community Member",
       ownerName: ownerName || "",
@@ -36,7 +36,6 @@ export async function POST(request: Request) {
       state: state || "TX",
       phone: phone || "",
       category: category || "General Business",
-      description: description || "",
       website: website || "",
       sessionId: sessionId || "",
     });

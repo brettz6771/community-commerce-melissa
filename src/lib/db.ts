@@ -252,3 +252,62 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
     return [];
   }
 }
+
+export async function hasDispatchedEmailForSession(sessionId: string): Promise<boolean> {
+  if (!sessionId || sessionId.startsWith("cs_test_sim_")) return false;
+  const dbPool = getDbPool();
+  if (!dbPool) return false;
+
+  try {
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS email_dispatches (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        dispatched_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    const res = await dbPool.query(
+      `SELECT id FROM email_dispatches WHERE session_id = $1 LIMIT 1;`,
+      [sessionId]
+    );
+
+    return (res.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error("Error checking email dispatch status:", error);
+    return false;
+  }
+}
+
+export async function markEmailDispatchedForSession(sessionId: string, email: string): Promise<boolean> {
+  if (!sessionId || sessionId.startsWith("cs_test_sim_")) return true;
+  const dbPool = getDbPool();
+  if (!dbPool) return false;
+
+  try {
+    await dbPool.query(`
+      CREATE TABLE IF NOT EXISTS email_dispatches (
+        id SERIAL PRIMARY KEY,
+        session_id VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        dispatched_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await dbPool.query(
+      `
+      INSERT INTO email_dispatches (session_id, email)
+      VALUES ($1, $2)
+      ON CONFLICT (session_id) DO NOTHING;
+      `,
+      [sessionId, email]
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Error recording email dispatch status:", error);
+    return false;
+  }
+}
+

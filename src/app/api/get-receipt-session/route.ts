@@ -56,7 +56,7 @@ export async function GET(request: Request) {
       day: "numeric",
     });
 
-    // Auto-add to Directory if membership & dispatch emails
+    // Ensure business is saved in Directory table
     if (!isDonation && businessName && businessName !== "N/A") {
       await saveDirectoryMember({
         businessName,
@@ -71,23 +71,6 @@ export async function GET(request: Request) {
         tier,
         isTest: metadata.isTest === "true",
       }).catch((err) => console.warn("Directory auto-add notice:", err));
-
-      if (customerEmail) {
-        await sendMemberWelcomeAndAdminAlert({
-          memberEmail: customerEmail,
-          businessName,
-          ownerName: customerName,
-          tier,
-          memberId,
-          amount,
-          city: metadata.city || "Melissa",
-          state: metadata.state || "TX",
-          phone: metadata.phone || "",
-          category: metadata.category || "General Business",
-          website: metadata.website || "",
-          sessionId: session.id,
-        }).catch((err) => console.warn("Receipt email dispatch notice:", err));
-      }
     }
 
     return NextResponse.json({

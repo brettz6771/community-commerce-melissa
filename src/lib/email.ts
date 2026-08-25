@@ -1,4 +1,7 @@
-import { saveContactToDb } from "@/lib/db";
+import { saveContactToDb, hasDispatchedEmailForSession, markEmailDispatchedForSession } from "@/lib/db";
+
+// In-memory runtime cache for serverless deduplication across warm executions
+const dispatchedCache = new Set<string>();
 
 interface SendEmailParams {
   to: string | string[];
@@ -142,6 +145,25 @@ export async function sendMemberWelcomeAndAdminAlert({
   website?: string;
   sessionId?: string;
 }) {
+  // Idempotency check: Ensure only ONE welcome + admin notification email is ever sent per Stripe session
+  if (sessionId && !sessionId.startsWith("cs_test_sim_")) {
+    if (dispatchedCache.has(sessionId)) {
+      console.log(`[Email Deduplication] Skipping duplicate email dispatch for session: ${sessionId}`);
+      return { skipped: true, reason: "already_dispatched" };
+    }
+
+    const alreadyDispatched = await hasDispatchedEmailForSession(sessionId);
+    if (alreadyDispatched) {
+      console.log(`[Email Deduplication] DB confirms email already dispatched for session: ${sessionId}. Skipping duplicate.`);
+      dispatchedCache.add(sessionId);
+      return { skipped: true, reason: "already_dispatched" };
+    }
+
+    // Mark as dispatched immediately in memory and database
+    dispatchedCache.add(sessionId);
+    await markEmailDispatchedForSession(sessionId, memberEmail);
+  }
+
   const adminEmail = "info@communitycommercemelissa.org";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
   const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
@@ -378,3 +400,99 @@ export async function sendMemberWelcomeAndAdminAlert({
 
   return { memberResult, adminResult };
 }
+
+/**
+ * Dispatches ONLY the member welcome & digital badge email directly to the member
+ * (Used for manual "Email Badge" clicks so admin is not re-alerted on manual resends)
+ */
+export async function sendMemberBadgeOnlyEmail({
+  memberEmail,
+  businessName,
+  ownerName,
+  tier,
+  memberId,
+  amount,
+  city = "Melissa",
+  state = "TX",
+  phone = "",
+  category = "General Business",
+  website = "",
+  sessionId = "",
+}: {
+  memberEmail: string;
+  businessName: string;
+  ownerName?: string;
+  tier: string;
+  memberId: string;
+  amount: number | string;
+  city?: string;
+  state?: string;
+  phone?: string;
+  category?: string;
+  website?: string;
+  sessionId?: string;
+}) {
+  const adminEmail = "info@communitycommercemelissa.org";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
+  const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
+  const directoryUrl = `${siteUrl}/directory`;
+
+  const cleanTier = tier.toLowerCase().includes("partner")
+    ? "2026 Community Partner"
+    : "2026 Community Member";
+
+  const memberHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"><title>Your Community Commerce Member Badge</title></head>
+    <body style="margin: 0; padding: 0; background-color: #0b0e14; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #ffffff;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0b0e14; padding: 40px 10px;">
+        <tr>
+          <td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #121620; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+              <tr>
+                <td style="background: linear-gradient(135deg, #1c222e 0%, #0b0e14 100%); padding: 32px 24px; text-align: center; border-bottom: 2px solid #a81c24;">
+                  <img src="${siteUrl}/ccm-logo-transparent.png" alt="Community Commerce Melissa Logo" style="height: 64px; margin-bottom: 16px;" />
+                  <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                    Official Member Badge Copy
+                  </h1>
+                  <p style="color: #ef4444; margin: 6px 0 0 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">
+                    ${cleanTier} • 2026–2027
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 28px 24px;">
+                  <p style="font-size: 14px; color: #cbd5e1; margin-top: 0;">
+                    Hello <strong>${ownerName || businessName}</strong>,
+                  </p>
+                  <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">
+                    Here is a copy of your verified digital membership badge and credential toolkit for <strong>${businessName}</strong>.
+                  </p>
+                  <div style="background-color: #1a202c; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin: 20px 0;">
+                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Member Verification ID</div>
+                    <div style="font-size: 18px; color: #ffffff; font-family: monospace; font-weight: bold; margin-top: 4px;">${memberId}</div>
+                  </div>
+                  <div style="text-align: center; margin-top: 24px;">
+                    <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; text-decoration: none; padding: 12px 28px; font-weight: bold; font-size: 13px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                      View Digital Badge & Certificate →
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: memberEmail,
+    replyTo: adminEmail,
+    subject: `Digital Membership Badge Copy — ${businessName} (${memberId})`,
+    html: memberHtml,
+  });
+}
+

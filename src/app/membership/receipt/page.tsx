@@ -89,30 +89,8 @@ function ReceiptBadgeContent() {
         const data = await res.json();
         if (res.ok && data) {
           setReceiptData(data);
-          
-          // Automatically trigger badge email confirmation
-          if (data.customerEmail) {
-            fetch("/api/send-badge-email", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: data.customerEmail,
-                businessName: data.businessName,
-                ownerName: data.customerName,
-                tier: data.tier,
-                memberId: data.memberId,
-                amount: data.amount,
-                city: data.city,
-                state: data.state,
-                phone: data.phone,
-                category: data.category,
-                website: data.website,
-                sessionId: data.id,
-              }),
-            })
-              .then(() => setIsEmailSent(true))
-              .catch((err) => console.warn("Auto-email warning:", err));
-          }
+          // Email was already dispatched upon Stripe payment completion
+          setIsEmailSent(true);
         }
       } catch (err) {
         console.error("Error fetching receipt session:", err);
