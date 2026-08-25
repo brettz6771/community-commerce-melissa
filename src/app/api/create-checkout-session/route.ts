@@ -103,31 +103,12 @@ export async function POST(request: Request) {
     let productName = "Community Member — Annual Membership";
     let productDesc = "Community Commerce Melissa — Community Member Level (1 Year Recurring Membership)";
     let successTierParam = "Community Member";
-    let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined = undefined;
 
-    if (isTest) {
-      amountInCents = 100; // $1.00 for testing
-      productName = "Community Partner — Live Test ($1.00/yr)";
-      productDesc = "Live Stripe testing checkout for Community Partner Level (Annual Recurring Subscription)";
-      successTierParam = "Community Partner";
-    } else if (isPartner) {
-      amountInCents = 49000; // Base rate is $490/yr
+    if (isPartner) {
+      amountInCents = 39000; // $390.00 for First Year Special ($100 Savings)
       productName = "Community Partner — Annual Membership";
       productDesc = "Community Commerce Melissa — Enhanced Partner Membership ($390 First Year Introductory Deal • Renews at $490/yr)";
       successTierParam = "Community Partner";
-
-      // Create a $100 off coupon for the first invoice only (duration: 'once')
-      try {
-        const coupon = await stripe.coupons.create({
-          amount_off: 10000, // $100.00 off
-          currency: "usd",
-          duration: "once", // Applies only to the first billing cycle
-          name: "Inaugural Partner Discount ($100 Off First Year)",
-        });
-        discounts = [{ coupon: coupon.id }];
-      } catch (couponErr) {
-        console.warn("Could not create dynamic Stripe coupon:", couponErr);
-      }
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -150,7 +131,6 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      discounts,
       mode: "subscription",
       customer_email: email && email.includes("@") ? email : undefined,
       metadata: {
