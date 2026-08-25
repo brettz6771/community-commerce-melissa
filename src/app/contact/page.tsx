@@ -206,7 +206,12 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                     <div>
                       <strong className="text-white block">Email:</strong>
-                      contact@communitycommercemelissa.org
+                      <a 
+                        href="mailto:info@communitycommercemelissa.org" 
+                        className="text-slate-300 hover:text-red-400 transition-colors"
+                      >
+                        info@communitycommercemelissa.org
+                      </a>
                     </div>
                   </div>
 
