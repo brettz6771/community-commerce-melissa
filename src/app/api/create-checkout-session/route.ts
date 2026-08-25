@@ -106,31 +106,29 @@ export async function POST(request: Request) {
     let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined = undefined;
 
     if (isPartner) {
-      amountInCents = 49000; // Base annual recurring rate is $490/yr
+      amountInCents = 49000; // Base annual recurring rate is $490.00/yr
       productName = "Community Partner — Annual Membership";
-      productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Deal • Renews at $490/yr)";
+      productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
       successTierParam = "Community Partner";
 
       const COUPON_ID = "CCM_PARTNER_100_OFF";
       try {
-        try {
-          await stripe.coupons.retrieve(COUPON_ID);
-        } catch {
-          await stripe.coupons.create({
-            id: COUPON_ID,
-            amount_off: 10000, // $100.00 off
-            currency: "usd",
-            duration: "once", // One-time coupon: applies ONLY to the first invoice cycle, then renews at full $490/yr
-            name: "$100 Off First Year — Inaugural Partner Special",
-          });
-        }
-        discounts = [{ coupon: COUPON_ID }];
-      } catch (couponErr) {
-        console.error("Could not retrieve/create static coupon CCM_PARTNER_100_OFF:", couponErr);
-        // Fail-safe fallback: charge $390 directly if coupon API permission is restricted
-        amountInCents = 39000;
-        discounts = undefined;
+        // Attempt to auto-create coupon if permissions allow
+        await stripe.coupons.create({
+          id: COUPON_ID,
+          amount_off: 10000, // $100.00 off
+          currency: "usd",
+          duration: "once", // One-time coupon: strictly applies to Invoice #1, then expires so renewal is $490/yr
+          name: "Inaugural Partner Discount ($100 Off 1st Year)",
+        }).catch(() => {
+          // If already exists or restricted, proceed to attach
+        });
+      } catch (e) {
+        // Continue
       }
+
+      // Attach the one-time coupon to the $490/yr recurring checkout session
+      discounts = [{ coupon: COUPON_ID }];
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
