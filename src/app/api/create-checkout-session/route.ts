@@ -1,6 +1,72 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+/**
+ * Helper to safely resolve or create a valid $100-off once coupon for Community Partner.
+ * Returns a valid coupon ID or null if coupons cannot be retrieved/created.
+ */
+async function resolvePartnerCoupon(stripe: Stripe): Promise<string | null> {
+  const CANDIDATE_IDS = ["CCM_PARTNER_100_OFF_V2", "CCM_PARTNER_100_OFF"];
+
+  // 1. Try candidate IDs
+  for (const cid of CANDIDATE_IDS) {
+    try {
+      const existing = await stripe.coupons.retrieve(cid);
+      if (existing && !existing.deleted && existing.valid) {
+        return existing.id;
+      }
+    } catch {
+      // Not found or deleted; continue
+    }
+  }
+
+  // 2. Search existing coupons for a matching $100 off once discount
+  try {
+    const list = await stripe.coupons.list({ limit: 25 });
+    const match = list.data.find(
+      (c) => !c.deleted && c.valid && c.amount_off === 10000 && c.duration === "once" && c.currency === "usd"
+    );
+    if (match) {
+      return match.id;
+    }
+  } catch {
+    // List permission may be restricted
+  }
+
+  // 3. Try to create with versioned ID
+  try {
+    const created = await stripe.coupons.create({
+      id: "CCM_PARTNER_100_OFF_V2",
+      amount_off: 10000,
+      currency: "usd",
+      duration: "once",
+      name: "Inaugural Partner Discount ($100 Off 1st Year)",
+    });
+    if (created?.id) {
+      return created.id;
+    }
+  } catch {
+    // ID might be taken or deleted; continue
+  }
+
+  // 4. Try to create without custom ID (let Stripe auto-assign ID)
+  try {
+    const created = await stripe.coupons.create({
+      amount_off: 10000,
+      currency: "usd",
+      duration: "once",
+      name: "Inaugural Partner Discount ($100 Off 1st Year)",
+    });
+    if (created?.id) {
+      return created.id;
+    }
+  } catch (e) {
+    console.warn("Could not auto-create Stripe discount coupon:", e);
+  }
+
+  return null;
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -106,29 +172,19 @@ export async function POST(request: Request) {
     let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined = undefined;
 
     if (isPartner) {
-      amountInCents = 49000; // Base annual recurring rate is $490.00/yr
       productName = "Community Partner — Annual Membership";
       productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
       successTierParam = "Community Partner";
 
-      const COUPON_ID = "CCM_PARTNER_100_OFF";
-      try {
-        // Attempt to auto-create coupon if permissions allow
-        await stripe.coupons.create({
-          id: COUPON_ID,
-          amount_off: 10000, // $100.00 off
-          currency: "usd",
-          duration: "once", // One-time coupon: strictly applies to Invoice #1, then expires so renewal is $490/yr
-          name: "Inaugural Partner Discount ($100 Off 1st Year)",
-        }).catch(() => {
-          // If already exists or restricted, proceed to attach
-        });
-      } catch (e) {
-        // Continue
+      const partnerCouponId = await resolvePartnerCoupon(stripe);
+      if (partnerCouponId) {
+        amountInCents = 49000; // Base annual rate $490.00/yr with $100 off 1st year coupon
+        discounts = [{ coupon: partnerCouponId }];
+      } else {
+        // Fallback if coupons cannot be created/retrieved: charge $390 directly without coupon requirement
+        amountInCents = 39000;
+        discounts = undefined;
       }
-
-      // Attach the one-time coupon to the $490/yr recurring checkout session
-      discounts = [{ coupon: COUPON_ID }];
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
@@ -178,7 +234,23 @@ export async function POST(request: Request) {
       sessionParams.cancel_url = `${origin}/membership?canceled=true`;
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    } catch (createErr: any) {
+      const errMsg = (createErr?.message || "").toLowerCase();
+      // If Stripe rejected due to a coupon/discount issue, retry cleanly without discounts and charge $390 directly
+      if (discounts && (errMsg.includes("coupon") || errMsg.includes("discount") || errMsg.includes("no such"))) {
+        console.warn("Retrying Stripe checkout session creation without coupon discount due to:", createErr.message);
+        sessionParams.discounts = undefined;
+        if (sessionParams.line_items?.[0]?.price_data) {
+          sessionParams.line_items[0].price_data.unit_amount = 39000;
+        }
+        session = await stripe.checkout.sessions.create(sessionParams);
+      } else {
+        throw createErr;
+      }
+    }
 
     return NextResponse.json({ 
       clientSecret: session.client_secret, 
@@ -193,3 +265,4 @@ export async function POST(request: Request) {
     );
   }
 }
+
