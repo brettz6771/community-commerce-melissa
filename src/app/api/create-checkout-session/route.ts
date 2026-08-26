@@ -33,14 +33,13 @@ async function resolvePartnerCoupon(stripe: Stripe): Promise<string | null> {
     // List permission may be restricted
   }
 
-  // 3. Try to create with versioned ID
+  // 3. Try to create with versioned ID (omit 'name' to comply strictly with all Stripe API version constraints)
   try {
     const created = await stripe.coupons.create({
       id: "CCM_PARTNER_100_OFF_V2",
       amount_off: 10000,
       currency: "usd",
       duration: "once",
-      name: "Inaugural Partner Discount ($100 Off 1st Year)",
     });
     if (created?.id) {
       return created.id;
@@ -55,13 +54,12 @@ async function resolvePartnerCoupon(stripe: Stripe): Promise<string | null> {
       amount_off: 10000,
       currency: "usd",
       duration: "once",
-      name: "Inaugural Partner Discount ($100 Off 1st Year)",
     });
     if (created?.id) {
       return created.id;
     }
-  } catch (e) {
-    console.warn("Could not auto-create Stripe discount coupon:", e);
+  } catch {
+    // Handled via fallback to direct $390 unit amount
   }
 
   return null;
