@@ -207,10 +207,10 @@ function ReceiptBadgeContent() {
       ctx.textAlign = "center";
       ctx.fillText("COMMUNITY COMMERCE MELISSA, TX", 600, 125);
 
-      // 4. Subtitle / 501(c)(3)
+      // 4. Subtitle
       ctx.fillStyle = "#94A3B8";
       ctx.font = "bold 18px sans-serif";
-      ctx.fillText("OFFICIAL 501(c)(3) NON-PROFIT BUSINESS MEMBER", 600, 205);
+      ctx.fillText("OFFICIAL VERIFIED BUSINESS MEMBER", 600, 205);
 
       // 5. Tier Name Banner
       ctx.fillStyle = "#FFFFFF";
@@ -464,7 +464,7 @@ function ReceiptBadgeContent() {
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                         <span>MELISSA, TEXAS</span>
                         <span className="w-1 h-1 rounded-full bg-red-500" />
-                        <span className="text-red-400">501(c)(3) MEMBER</span>
+                        <span className="text-red-400">BUSINESS MEMBER</span>
                       </div>
                     </div>
                   </div>
@@ -605,7 +605,7 @@ function ReceiptBadgeContent() {
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between mt-4">
                     <div>
                       <div className="text-[10px] font-black text-slate-500 uppercase">AMOUNT PAID TODAY</div>
-                      <div className="text-xs text-slate-600">Tax-Deductible 501(c)(3)</div>
+                      <div className="text-xs text-slate-600">Annual Membership</div>
                     </div>
                     <div className="text-2xl font-black font-outfit text-slate-900">
                       ${receiptData?.amount?.toFixed(2) || "390.00"}
@@ -732,7 +732,7 @@ function ReceiptBadgeContent() {
                   textTransform: "uppercase",
                 }}
               >
-                Melissa, Collin County, Texas • 501(c)(3) Non-Profit Organization
+                Melissa, Collin County, Texas • Official Business Membership
               </div>
             </div>
           </div>

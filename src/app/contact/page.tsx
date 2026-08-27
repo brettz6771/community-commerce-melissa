@@ -224,8 +224,9 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/10 text-xs text-slate-400">
-                  Domain: <strong className="text-slate-200">CommunityCommerceMelissa.org</strong>
+                <div className="pt-4 border-t border-white/10 text-xs text-slate-400 space-y-1">
+                  <div>Status: <strong className="text-slate-200">Official 501(c)(3) Non-Profit</strong></div>
+                  <div>Domain: <strong className="text-slate-200">CommunityCommerceMelissa.org</strong></div>
                 </div>
               </div>
 

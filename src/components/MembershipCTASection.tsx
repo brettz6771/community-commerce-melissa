@@ -191,7 +191,7 @@ export default function MembershipCTASection({ onOpenJoinModal }: MembershipCTAS
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 text-center sm:text-left">
           <div className="flex items-center gap-1.5 justify-center sm:justify-start">
             <ShieldCheck className="w-3.5 h-3.5 text-red-400 shrink-0" />
-            <span>Official 501(c)(3) Non-Profit • Tax-Deductible Dues</span>
+            <span>Dedicated Community Support • Local Business Growth</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs">

@@ -87,8 +87,8 @@ function MembershipContent() {
       a: "Corporate sponsorships are tailored for larger organizations, regional employers, healthcare providers, and developers wanting substantial community impact. Sponsorship packages can include presenting sponsorships, annual program underwriting, premium logo placement, and speaking opportunities." 
     },
     { 
-      q: "Is Community Commerce Melissa a non-profit?", 
-      a: "Yes, Community Commerce Melissa is an official 501(c)(3) non-profit organization dedicated to fostering community connection, economic strength, and local non-profit support throughout Melissa, Texas." 
+      q: "What type of organization is Community Commerce Melissa?", 
+      a: "Community Commerce Melissa is a community-focused non-profit organization dedicated to fostering local business connection, economic strength, and community support throughout Melissa, Texas." 
     },
     { 
       q: "How quickly is my business directory listing activated?", 

@@ -20,7 +20,7 @@ export default function AboutPage() {
     { title: "Connection", desc: "Fostering genuine relationships, business collaboration, and active peer networking across Melissa." },
     { title: "Promotion & Visibility", desc: "Equipping local businesses with live directory rankings, member badge credentials, and high-impact spotlight reach." },
     { title: "Education & Growth", desc: "Providing practical workshops, leadership panels, and actionable development resources for entrepreneurs." },
-    { title: "Community Stewardship", desc: "501(c)(3) non-profit leadership reinvesting dues and event proceeds directly into Melissa schools and community causes." }
+    { title: "Community Stewardship", desc: "Reinvesting dues and event proceeds directly into Melissa schools, local youth programs, and community causes." }
   ];
 
   return (
@@ -41,7 +41,7 @@ export default function AboutPage() {
               &ldquo;Not a Chamber. <span className="text-slate-200">A Community.&rdquo;</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              We are an official 501(c)(3) non-profit organization dedicated to serving Melissa, giving back to local causes, and championing local business growth.
+              Dedicated to serving Melissa, giving back to local causes, and championing local business growth.
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function AboutPage() {
               </p>
 
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                <strong>Community Commerce Melissa</strong> was founded as an official 501(c)(3) non-profit organization to provide a nimble, relationship-driven platform focused on giving back, community stewardship, and active local promotion.
+                <strong>Community Commerce Melissa</strong> was founded as a 501(c)(3) non-profit organization to provide a nimble, relationship-driven platform focused on giving back, community stewardship, and active local promotion.
               </p>
 
               <div className="bg-slate-50 border-l-4 border-slate-400 p-4 rounded-r-lg">
@@ -105,7 +105,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR MISSION</h3>
               <p className="text-slate-600 text-sm leading-relaxed">
-                To serve Melissa, Texas as a dedicated 501(c)(3) non-profit organization — connecting local entrepreneurs, giving back to community causes, and building a supportive, thriving economic ecosystem.
+                To serve Melissa, Texas — connecting local entrepreneurs, giving back to community causes, and building a supportive, thriving economic ecosystem.
               </p>
             </div>
 

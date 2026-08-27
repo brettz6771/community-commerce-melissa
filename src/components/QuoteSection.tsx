@@ -41,7 +41,7 @@ export default function QuoteSection({ onOpenJoinModal }: { onOpenJoinModal?: ()
   }, [hasPlayed]);
 
   const checkItems = [
-    "Official 501(c)(3) non-profit organization",
+    "Community-driven organization built for Melissa",
     "Dedicated to community stewardship & giving back",
     "Fostering local business growth & relationships",
     "Accessible membership & collaborative events"
@@ -141,7 +141,7 @@ export default function QuoteSection({ onOpenJoinModal }: { onOpenJoinModal?: ()
               </h2>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal pt-1">
-                &ldquo;We&apos;re here to champion local business, give back through non-profit stewardship, and create opportunities that fuel our community forward.&rdquo;
+                &ldquo;We&apos;re here to champion local business, give back through local stewardship, and create opportunities that fuel our community forward.&rdquo;
               </p>
             </div>
 

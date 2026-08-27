@@ -26,8 +26,8 @@ export default function Footer() {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">501(c)(3) NON-PROFIT</h4>
-              <p className="text-xs text-slate-400 mt-1">Official non-profit organization focused entirely on community service.</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white">COMMUNITY FIRST</h4>
+              <p className="text-xs text-slate-400 mt-1">Built by local leaders focused on community service and meaningful impact.</p>
             </div>
           </div>
 

@@ -306,7 +306,7 @@ export default function FeedbackPage() {
                     Why Your Voice Matters
                   </h3>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Community Commerce Melissa is a grassroots 501(c)(3) organization built to serve local businesses and families.
+                    Community Commerce Melissa is a grassroots organization built to serve local businesses and families.
                   </p>
                 </div>
 
