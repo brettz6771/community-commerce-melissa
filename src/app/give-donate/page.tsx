@@ -49,7 +49,7 @@ function GiveDonateContent() {
     setIsSubmitting(true);
     setErrorMessage("");
 
-    const numericAmount = getNumericAmount();
+    const numericAmount = Math.min(10000, Math.max(1, getNumericAmount()));
 
     try {
       // Create Stripe Checkout Session (mode: "payment")

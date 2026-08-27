@@ -8,6 +8,7 @@ import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { MOCK_NEWS } from "@/data/mockData";
+import { notFound } from "next/navigation";
 import { 
   Calendar, 
   User, 
@@ -27,7 +28,11 @@ export default function NewsArticlePage({ params }: NewsArticlePageProps) {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; title: string } | null>(null);
 
-  const article = MOCK_NEWS.find((n) => n.id === resolvedParams.id) || MOCK_NEWS[0];
+  const article = MOCK_NEWS.find((n) => n.id === resolvedParams.id);
+
+  if (!article) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">

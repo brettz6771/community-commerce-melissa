@@ -59,43 +59,15 @@ function ReceiptBadgeContent() {
 
   useEffect(() => {
     async function fetchReceipt() {
-      // Handle instant simulated test mode without Stripe API roundtrip
+      // Simulated checkout sessions are not treated as paid receipts.
       if (sessionId.startsWith("cs_test_sim_") || searchParams.get("simulated") === "true") {
-        setReceiptData({
-          id: sessionId || `cs_test_sim_${Date.now()}`,
-          customerName: searchParams.get("owner_name") || "Valued Member",
-          customerEmail: searchParams.get("email") || "member@example.com",
-          businessName: searchParams.get("business_name") || "Melissa Business Leader",
-          tier: searchParams.get("tier") || "Community Partner ($390 1st Yr • Renews $490/yr)",
-          amount: parseFloat(searchParams.get("amount") || "390"),
-          memberId: searchParams.get("member_id") || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-          date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
-          isSubscription: true,
-          status: "complete",
-          isTest: true,
-          city: searchParams.get("city") || "Melissa",
-          state: searchParams.get("state") || "TX",
-        });
+        setReceiptData(null);
         setLoading(false);
-        setIsEmailSent(true);
         return;
       }
 
       if (!sessionId) {
-        // Fallback default member data for demo/preview
-        setReceiptData({
-          id: "cs_live_sample_" + Math.random().toString(36).substring(2, 8),
-          customerName: searchParams.get("owner_name") || "Valued Member",
-          customerEmail: searchParams.get("email") || "member@example.com",
-          businessName: searchParams.get("business_name") || "Melissa Business Leader",
-          tier: paramTier || "Community Partner ($390 1st Yr • Renews $490/yr)",
-          amount: 390,
-          memberId: searchParams.get("member_id") || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-          date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
-          isSubscription: true,
-          status: "complete",
-          isTest: true,
-        });
+        setReceiptData(null);
         setLoading(false);
         return;
       }
@@ -103,13 +75,15 @@ function ReceiptBadgeContent() {
       try {
         const res = await fetch(`/api/get-receipt-session?session_id=${encodeURIComponent(sessionId)}`);
         const data = await res.json();
-        if (res.ok && data) {
+        if (res.ok && data && !data.error) {
           setReceiptData(data);
-          // Email was already dispatched upon Stripe payment completion
           setIsEmailSent(true);
+        } else {
+          setReceiptData(null);
         }
       } catch (err) {
         console.error("Error fetching receipt session:", err);
+        setReceiptData(null);
       } finally {
         setLoading(false);
       }
@@ -126,17 +100,6 @@ function ReceiptBadgeContent() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: receiptData.customerEmail,
-          businessName: receiptData.businessName,
-          ownerName: receiptData.customerName,
-          tier: receiptData.tier,
-          memberId: receiptData.memberId,
-          amount: receiptData.amount,
-          city: receiptData.city,
-          state: receiptData.state,
-          phone: receiptData.phone,
-          category: receiptData.category,
-          website: receiptData.website,
           sessionId: receiptData.id,
         }),
       });
@@ -298,6 +261,30 @@ function ReceiptBadgeContent() {
           <div className="text-center space-y-3">
             <Loader2 className="w-10 h-10 animate-spin text-red-600 mx-auto" />
             <h2 className="text-lg font-bold text-slate-800">Generating Your Verified Member Receipt & Badge...</h2>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!receiptData) {
+    return (
+      <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center space-y-3 max-w-md">
+            <h2 className="text-lg font-bold text-slate-800">Receipt not found</h2>
+            <p className="text-sm text-slate-600">
+              We could not verify this membership receipt. Please use the link from your Stripe confirmation email, or contact{" "}
+              <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
+                info@communitycommercemelissa.org
+              </a>
+              .
+            </p>
+            <Link href="/membership" className="inline-block text-sm font-bold text-red-700">
+              Return to Membership →
+            </Link>
           </div>
         </div>
         <Footer />

@@ -317,7 +317,7 @@ function DirectoryContent() {
 
                     {/* Action Bar */}
                     <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
-                      {biz.website ? (
+                      {biz.website && !biz.website.includes("example.com") ? (
                         <a
                           href={biz.website.startsWith("http") ? biz.website : `https://${biz.website}`}
                           target="_blank"

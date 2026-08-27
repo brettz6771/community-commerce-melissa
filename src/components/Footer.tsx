@@ -144,7 +144,7 @@ export default function Footer() {
                 const emailVal = formData.get("email") as string || "";
                 
                 try {
-                  await fetch("/api/send-email", {
+                  const res = await fetch("/api/send-email", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -159,12 +159,15 @@ export default function Footer() {
                       }
                     })
                   });
+                  if (!res.ok) {
+                    throw new Error("Subscribe request failed");
+                  }
+                  alert("Thank you for subscribing to Community Commerce Melissa!");
+                  formEl.reset();
                 } catch (err) {
                   console.error("Error subscribing:", err);
+                  alert("Sorry, we could not complete your subscription. Please try again or email info@communitycommercemelissa.org.");
                 }
-                
-                alert("Thank you for subscribing to Community Commerce Melissa!"); 
-                formEl.reset();
               }} 
               className="space-y-2"
             >

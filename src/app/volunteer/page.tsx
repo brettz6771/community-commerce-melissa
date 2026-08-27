@@ -35,7 +35,7 @@ export default function VolunteerPage() {
     setIsSubmitting(true);
 
     try {
-      await fetch("/api/send-email", {
+      const res = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -53,11 +53,15 @@ export default function VolunteerPage() {
           }
         })
       });
+      if (!res.ok) {
+        throw new Error("Submit failed");
+      }
+      setIsSubmitted(true);
     } catch (err) {
       console.error("Error submitting volunteer form:", err);
+      alert("Sorry, we could not send your application. Please try again or email info@communitycommercemelissa.org.");
     } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
     }
   };
 

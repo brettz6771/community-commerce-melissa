@@ -35,9 +35,6 @@ export const metadata: Metadata = {
     shortcut: "/cardinal.png",
     apple: "/cardinal.png",
   },
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     title: "Community Commerce Melissa | Local Business & Stewardship",
     description: "Connecting, promoting, and empowering local Melissa businesses, entrepreneurs, and community leaders. Fostering economic momentum and non-profit stewardship in Collin County.",

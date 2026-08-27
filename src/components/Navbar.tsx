@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronRight, UserPlus, PhoneCall } from "lucide-react";
+import { Menu, X, ChevronRight, PhoneCall } from "lucide-react";
 
 interface NavbarProps {
   onOpenJoinModal?: () => void;
 }
 
-export default function Navbar({ onOpenJoinModal }: NavbarProps) {
+export default function Navbar(_props: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactDropdownOpen, setContactDropdownOpen] = useState(false);
   const pathname = usePathname();
@@ -81,7 +81,7 @@ export default function Navbar({ onOpenJoinModal }: NavbarProps) {
             <Link
               href="/contact"
               className={`text-xs font-semibold tracking-wider uppercase transition-colors py-2 border-b-2 flex items-center gap-1 ${
-                pathname.includes("contact") || pathname.includes("volunteer") || pathname.includes("give-donate")
+                pathname.includes("contact") || pathname.includes("volunteer")
                   ? "text-slate-100 border-slate-200 font-bold"
                   : "text-slate-300 border-transparent hover:text-white hover:border-red-500"
               }`}
