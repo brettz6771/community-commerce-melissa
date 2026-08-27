@@ -2,8 +2,22 @@ import { NextResponse } from "next/server";
 import { saveDirectoryMember } from "@/lib/db";
 import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 
+function isAuthorized(request: Request): boolean {
+  const secret = process.env.INTERNAL_API_SECRET;
+  if (!secret) {
+    return process.env.NODE_ENV !== "production";
+  }
+  const header = request.headers.get("authorization") || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : request.headers.get("x-internal-api-secret");
+  return token === secret;
+}
+
 export async function POST(request: Request) {
   try {
+    if (!isAuthorized(request)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const {
       businessName = "Melissa Innovation Partners",
@@ -15,7 +29,6 @@ export async function POST(request: Request) {
       website = "https://communitycommercemelissa.org",
       city = "Melissa",
       state = "TX",
-      tier = "Community Partner ($390 1st Yr • Renews $490/yr)",
     } = body;
 
     const targetEmail = email && email.includes("@") ? email : "info@communitycommercemelissa.org";
@@ -23,7 +36,6 @@ export async function POST(request: Request) {
     const memberId = `CCM-2026-${shortRandom}`;
     const simSessionId = `cs_test_sim_${Date.now()}_${shortRandom}`;
 
-    // 1. Auto-Add Business to Directory
     await saveDirectoryMember({
       businessName,
       category,
@@ -38,7 +50,6 @@ export async function POST(request: Request) {
       isTest: true,
     }).catch((err) => console.warn("Directory save notice:", err));
 
-    // 2. Dispatch Both SendGrid Emails (To Member & To info@communitycommercemelissa.org)
     const emailResults = await sendMemberWelcomeAndAdminAlert({
       memberEmail: targetEmail,
       businessName,

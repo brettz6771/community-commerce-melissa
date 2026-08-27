@@ -1,41 +1,39 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { saveDirectoryMember } from "@/lib/db";
-import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
+import { getStripe } from "@/lib/stripe";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get("session_id");
 
-    if (!sessionId) {
-      return NextResponse.json({ error: "Missing session_id parameter" }, { status: 400 });
+    if (!sessionId || !sessionId.startsWith("cs_")) {
+      return NextResponse.json({ error: "Missing or invalid session_id parameter" }, { status: 400 });
     }
 
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-    if (!stripeSecretKey) {
-      // Return simulated receipt data if in development without key
-      return NextResponse.json({
-        id: sessionId,
-        customerName: "Community Partner",
-        customerEmail: "member@example.com",
-        businessName: "Melissa Local Business",
-        tier: "Community Partner",
-        amount: 390,
-        memberId: `CCM-2026-${sessionId.slice(-6).toUpperCase()}`,
-        status: "complete",
-        isSubscription: true,
-        date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
-      });
+    if (sessionId.startsWith("cs_test_sim_")) {
+      return NextResponse.json({ error: "Simulated sessions are not available." }, { status: 404 });
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2025-02-24.acacia" as any,
-    });
+    let stripe;
+    try {
+      stripe = getStripe();
+    } catch {
+      return NextResponse.json(
+        { error: "Receipt lookup is unavailable because Stripe is not configured." },
+        { status: 503 }
+      );
+    }
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["line_items", "customer", "subscription"],
     });
+
+    if (session.payment_status !== "paid" && session.status !== "complete") {
+      return NextResponse.json(
+        { error: "Checkout session is not paid." },
+        { status: 402 }
+      );
+    }
 
     const metadata = session.metadata || {};
     const customerDetails = session.customer_details;
@@ -56,22 +54,8 @@ export async function GET(request: Request) {
       day: "numeric",
     });
 
-    // Ensure business is saved in Directory table
-    if (!isDonation && businessName && businessName !== "N/A") {
-      await saveDirectoryMember({
-        businessName,
-        category: metadata.category || "General Business",
-        description: metadata.description || "",
-        website: metadata.website || "",
-        city: metadata.city || "Melissa",
-        state: metadata.state || "TX",
-        phone: metadata.phone || "",
-        email: customerEmail,
-        ownerName: customerName,
-        tier,
-        isTest: metadata.isTest === "true",
-      }).catch((err) => console.warn("Directory auto-add notice:", err));
-    }
+    // Directory writes happen in the Stripe webhook after verified payment.
+    // This GET endpoint is read-only so loading a receipt cannot mutate memberships.
 
     return NextResponse.json({
       id: session.id,
@@ -84,7 +68,7 @@ export async function GET(request: Request) {
       status: session.status,
       paymentStatus: session.payment_status,
       isSubscription: session.mode === "subscription",
-      subscriptionId: typeof session.subscription === "string" ? session.subscription : (session.subscription as any)?.id,
+      subscriptionId: typeof session.subscription === "string" ? session.subscription : (session.subscription as { id?: string } | null)?.id,
       date,
       isTest: metadata.isTest === "true",
       category: metadata.category || "General Business",

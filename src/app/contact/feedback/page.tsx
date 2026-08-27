@@ -38,7 +38,7 @@ export default function FeedbackPage() {
     setIsSubmitting(true);
 
     try {
-      await fetch("/api/send-email", {
+      const res = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -58,11 +58,15 @@ export default function FeedbackPage() {
           }
         })
       });
+      if (!res.ok) {
+        throw new Error("Submit failed");
+      }
+      setIsSent(true);
     } catch (err) {
       console.error("Error submitting feedback form:", err);
+      alert("Sorry, we could not send your feedback. Please try again or email info@communitycommercemelissa.org.");
     } finally {
       setIsSubmitting(false);
-      setIsSent(true);
     }
   };
 

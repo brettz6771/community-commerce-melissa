@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getStripe } from "@/lib/stripe";
+import { clampDonationAmountUsd, getCheckoutOrigin, truncateMeta } from "@/lib/site";
+import { isValidEmail } from "@/lib/html";
 
 /**
  * Helper to safely resolve or create a valid $100-off once coupon for Community Partner.
@@ -79,9 +82,10 @@ export async function POST(request: Request) {
       notes 
     } = body;
 
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-    if (!stripeSecretKey) {
+    let stripe: Stripe;
+    try {
+      stripe = getStripe();
+    } catch {
       console.error("STRIPE_SECRET_KEY is not set in environment variables.");
       return NextResponse.json(
         { 
@@ -92,12 +96,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2025-02-24.acacia" as any,
-    });
-
     const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
+    const origin = getCheckoutOrigin(request);
 
     const useEmbedded = body.uiMode === "embedded" || body.embedded === true;
 
@@ -105,12 +105,12 @@ export async function POST(request: Request) {
     // Case 1: One-Time Donation / Contribution (mode: "payment")
     // ----------------------------------------------------
     if (isDonation) {
-      const donationAmountNum = Math.max(1, Number(body.amount) || 100);
+      const donationAmountNum = clampDonationAmountUsd(body.amount);
       const amountInCents = Math.round(donationAmountNum * 100);
-      const donorName = body.name || body.donorName || ownerName || "Generous Supporter";
+      const donorName = truncateMeta(body.name || body.donorName || ownerName || "Generous Supporter", 200);
       const donorEmail = body.email || body.donorEmail || email;
-      const donationMessage = body.message || notes || "";
-      const company = body.company || businessName || "";
+      const donationMessage = truncateMeta(body.message || notes || "", 450);
+      const company = truncateMeta(body.company || businessName || "", 200);
 
       const sessionParams: Stripe.Checkout.SessionCreateParams = {
         payment_method_types: ["card"],
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
           },
         ],
         mode: "payment",
-        customer_email: donorEmail && donorEmail.includes("@") ? donorEmail : undefined,
+        customer_email: isValidEmail(donorEmail) ? donorEmail.trim() : undefined,
         metadata: {
           type: "donation",
           donorName,
@@ -201,20 +201,20 @@ export async function POST(request: Request) {
       ],
       discounts,
       mode: "subscription",
-      customer_email: email && email.includes("@") ? email : undefined,
+      customer_email: isValidEmail(email) ? email.trim() : undefined,
       metadata: {
-        tier: isTest ? "Community Partner ($390 1st Yr • Renews $490/yr)" : tier,
+        tier: isTest ? "Community Partner ($390 1st Yr • Renews $490/yr)" : truncateMeta(tier, 200),
         isTest: isTest ? "true" : "false",
-        businessName: businessName || "N/A",
-        contactName: ownerName || "N/A",
-        email: email || "N/A",
-        phone: phone || "N/A",
-        category: category || "General Business",
-        description: body.description || "",
-        website: website || "",
-        city: body.city || "Melissa",
-        state: body.state || "TX",
-        notes: notes || "None",
+        businessName: truncateMeta(businessName || "N/A"),
+        contactName: truncateMeta(ownerName || "N/A"),
+        email: truncateMeta(email || "N/A"),
+        phone: truncateMeta(phone || "N/A", 50),
+        category: truncateMeta(category || "General Business", 100),
+        description: truncateMeta(body.description || ""),
+        website: truncateMeta(website || ""),
+        city: truncateMeta(body.city || "Melissa", 80),
+        state: truncateMeta(body.state || "TX", 40),
+        notes: truncateMeta(notes || "None"),
       },
     };
 

@@ -58,7 +58,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     try {
       // 1. If corporate sponsorship: send inquiry email & show confirmation
       if (isCorporate) {
-        await fetch("/api/send-email", {
+        const inquiryRes = await fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -81,6 +81,12 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             }
           })
         });
+
+        if (!inquiryRes.ok) {
+          const inquiryData = await inquiryRes.json().catch(() => ({}));
+          setErrorMessage(inquiryData.error || "Failed to submit. Please try again.");
+          return;
+        }
 
         setIsSubmitted(true);
         return;

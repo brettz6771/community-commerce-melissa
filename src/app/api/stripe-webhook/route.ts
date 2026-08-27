@@ -2,18 +2,23 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
 import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const isProd = process.env.NODE_ENV === "production";
 
-  if (!stripeSecretKey) {
-    return NextResponse.json({ error: "Stripe is not configured." }, { status: 500 });
+  if (isProd && !webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET is required in production.");
+    return NextResponse.json({ error: "Webhook is not configured." }, { status: 500 });
   }
 
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2025-02-24.acacia" as any,
-  });
+  let stripe: Stripe;
+  try {
+    stripe = getStripe();
+  } catch {
+    return NextResponse.json({ error: "Stripe is not configured." }, { status: 500 });
+  }
 
   const signature = request.headers.get("stripe-signature");
 
@@ -22,11 +27,16 @@ export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
 
-    if (webhookSecret && signature) {
+    if (webhookSecret) {
+      if (!signature) {
+        return NextResponse.json({ error: "Missing Stripe signature." }, { status: 400 });
+      }
       event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
-    } else {
-      // If webhook secret is not set, parse body directly (development / testing)
+    } else if (!isProd) {
+      // Local development only: allow unsigned payloads when no webhook secret is set
       event = JSON.parse(rawBody);
+    } else {
+      return NextResponse.json({ error: "Webhook is not configured." }, { status: 500 });
     }
   } catch (err: any) {
     console.error("Webhook signature verification failed:", err.message);
@@ -94,8 +104,8 @@ export async function POST(request: Request) {
               },
             });
 
-            // Auto-add new business to Directory table
-            if (metadata.businessName) {
+            // Auto-add new business to Directory table after a paid checkout
+            if (session.payment_status === "paid" && metadata.businessName && metadata.businessName !== "N/A") {
               await saveDirectoryMember({
                 businessName: metadata.businessName,
                 category: metadata.category || "General Business",

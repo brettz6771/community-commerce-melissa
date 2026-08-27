@@ -1,4 +1,5 @@
 import { saveContactToDb, hasDispatchedEmailForSession, markEmailDispatchedForSession } from "@/lib/db";
+import { escapeHtml, sanitizeHttpUrl } from "@/lib/html";
 
 // In-memory runtime cache for serverless deduplication across warm executions
 const dispatchedCache = new Set<string>();
@@ -166,12 +167,28 @@ export async function sendMemberWelcomeAndAdminAlert({
 
   const adminEmail = "info@communitycommercemelissa.org";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
-  const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
+  const receiptUrl = `${siteUrl}/membership/receipt?session_id=${encodeURIComponent(sessionId || "")}&tier=${encodeURIComponent(tier)}`;
   const directoryUrl = `${siteUrl}/directory`;
 
   const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
     ? "2026 Corporate Partner"
     : "2026 Community Partner";
+
+  const safeOwner = escapeHtml(ownerName || businessName);
+  const safeBusiness = escapeHtml(businessName);
+  const safeMemberId = escapeHtml(memberId);
+  const safeAmount = escapeHtml(amount);
+  const safeCity = escapeHtml(city || "Melissa");
+  const safeState = escapeHtml(state || "TX");
+  const safePhone = escapeHtml(phone || "N/A");
+  const safeCategory = escapeHtml(category || "General Business");
+  const safeDescription = escapeHtml(description || "N/A");
+  const safeEmail = escapeHtml(memberEmail);
+  const safeSessionId = escapeHtml(sessionId || "N/A");
+  const websiteHref = sanitizeHttpUrl(website);
+  const websiteHtml = websiteHref
+    ? `<a href="${escapeHtml(websiteHref)}">${escapeHtml(websiteHref)}</a>`
+    : "N/A";
 
   // --- 1. MEMBER WELCOME & DIGITAL BADGE EMAIL ---
   const memberHtml = `
@@ -212,10 +229,10 @@ export async function sendMemberWelcomeAndAdminAlert({
               <tr>
                 <td style="padding: 30px; color: #e2e8f0; font-size: 14px; line-height: 1.6;">
                   <p style="font-size: 16px; color: #ffffff; margin-top: 0;">
-                    Hello <strong>${ownerName || businessName}</strong>,
+                    Hello <strong>${safeOwner}</strong>,
                   </p>
                   <p>
-                    Congratulations and welcome to <strong>Community Commerce Melissa</strong>! We are honored to have <strong>${businessName}</strong> as an official member strengthening our local business community.
+                    Congratulations and welcome to <strong>Community Commerce Melissa</strong>! We are honored to have <strong>${safeBusiness}</strong> as an official member strengthening our local business community.
                   </p>
 
                   <!-- Member Details Box -->
@@ -223,11 +240,11 @@ export async function sendMemberWelcomeAndAdminAlert({
                     <table width="100%" cellpadding="6" cellspacing="0" style="font-size: 13px;">
                       <tr>
                         <td style="color: #94a3b8; width: 40%;">Business Name:</td>
-                        <td style="color: #ffffff; font-weight: bold;">${businessName}</td>
+                        <td style="color: #ffffff; font-weight: bold;">${safeBusiness}</td>
                       </tr>
                       <tr>
                         <td style="color: #94a3b8;">Member ID:</td>
-                        <td style="color: #ef4444; font-family: monospace; font-weight: bold;">${memberId}</td>
+                        <td style="color: #ef4444; font-family: monospace; font-weight: bold;">${safeMemberId}</td>
                       </tr>
                       <tr>
                         <td style="color: #94a3b8;">Membership Level:</td>
@@ -235,7 +252,7 @@ export async function sendMemberWelcomeAndAdminAlert({
                       </tr>
                       <tr>
                         <td style="color: #94a3b8;">Location:</td>
-                        <td style="color: #ffffff;">${city || "Melissa"}, ${state || "TX"}</td>
+                        <td style="color: #ffffff;">${safeCity}, ${safeState}</td>
                       </tr>
                       <tr>
                         <td style="color: #94a3b8;">Status:</td>
@@ -297,27 +314,27 @@ export async function sendMemberWelcomeAndAdminAlert({
           <table width="100%" cellpadding="8" cellspacing="0" style="font-size: 13px; border-collapse: collapse;">
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; width: 40%; border-bottom: 1px solid #e2e8f0;">Business Name:</td>
-              <td style="font-weight: bold; color: #0f172a; border-bottom: 1px solid #e2e8f0;">${businessName}</td>
+              <td style="font-weight: bold; color: #0f172a; border-bottom: 1px solid #e2e8f0;">${safeBusiness}</td>
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Primary Contact:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${ownerName || "N/A"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${safeOwner}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Email Address:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;"><a href="mailto:${memberEmail}">${memberEmail}</a></td>
+              <td style="border-bottom: 1px solid #e2e8f0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Phone Number:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${phone || "N/A"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${safePhone}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Business Category:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${category || "General Business"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${safeCategory}</td>
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Company Bio / Description:</td>
-              <td style="border-bottom: 1px solid #e2e8f0; color: #334155;">${description || "N/A"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0; color: #334155;">${safeDescription}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Membership Level:</td>
@@ -325,19 +342,19 @@ export async function sendMemberWelcomeAndAdminAlert({
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Amount Paid:</td>
-              <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">$${amount}</td>
+              <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">$${safeAmount}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Member ID:</td>
-              <td style="font-family: monospace; font-weight: bold; border-bottom: 1px solid #e2e8f0;">${memberId}</td>
+              <td style="font-family: monospace; font-weight: bold; border-bottom: 1px solid #e2e8f0;">${safeMemberId}</td>
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">City & State:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${city || "Melissa"}, ${state || "TX"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${safeCity}, ${safeState}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Website URL:</td>
-              <td style="border-bottom: 1px solid #e2e8f0;">${website ? `<a href="${website}">${website}</a>` : "N/A"}</td>
+              <td style="border-bottom: 1px solid #e2e8f0;">${websiteHtml}</td>
             </tr>
             <tr style="background-color: #f8fafc;">
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Directory Status:</td>
@@ -345,7 +362,7 @@ export async function sendMemberWelcomeAndAdminAlert({
             </tr>
             <tr>
               <td style="font-weight: bold; border-bottom: 1px solid #e2e8f0;">Stripe Session ID:</td>
-              <td style="font-family: monospace; font-size: 11px; border-bottom: 1px solid #e2e8f0;">${sessionId || "N/A"}</td>
+              <td style="font-family: monospace; font-size: 11px; border-bottom: 1px solid #e2e8f0;">${safeSessionId}</td>
             </tr>
           </table>
         </div>
@@ -409,12 +426,12 @@ export async function sendMemberBadgeOnlyEmail({
   ownerName,
   tier,
   memberId,
-  amount,
-  city = "Melissa",
-  state = "TX",
-  phone = "",
-  category = "General Business",
-  website = "",
+  amount: _amount,
+  city: _city = "Melissa",
+  state: _state = "TX",
+  phone: _phone = "",
+  category: _category = "General Business",
+  website: _website = "",
   sessionId = "",
 }: {
   memberEmail: string;
@@ -432,12 +449,15 @@ export async function sendMemberBadgeOnlyEmail({
 }) {
   const adminEmail = "info@communitycommercemelissa.org";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://communitycommercemelissa.org";
-  const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
-  const directoryUrl = `${siteUrl}/directory`;
+  const receiptUrl = `${siteUrl}/membership/receipt?session_id=${encodeURIComponent(sessionId || "")}&tier=${encodeURIComponent(tier)}`;
 
   const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
     ? "2026 Corporate Partner"
     : "2026 Community Partner";
+
+  const safeOwner = escapeHtml(ownerName || businessName);
+  const safeBusiness = escapeHtml(businessName);
+  const safeMemberId = escapeHtml(memberId);
 
   const memberHtml = `
     <!DOCTYPE html>
@@ -462,14 +482,14 @@ export async function sendMemberBadgeOnlyEmail({
               <tr>
                 <td style="padding: 28px 24px;">
                   <p style="font-size: 14px; color: #cbd5e1; margin-top: 0;">
-                    Hello <strong>${ownerName || businessName}</strong>,
+                    Hello <strong>${safeOwner}</strong>,
                   </p>
                   <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">
-                    Here is a copy of your verified digital membership badge and credential toolkit for <strong>${businessName}</strong>.
+                    Here is a copy of your verified digital membership badge and credential toolkit for <strong>${safeBusiness}</strong>.
                   </p>
                   <div style="background-color: #1a202c; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin: 20px 0;">
                     <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Member Verification ID</div>
-                    <div style="font-size: 18px; color: #ffffff; font-family: monospace; font-weight: bold; margin-top: 4px;">${memberId}</div>
+                    <div style="font-size: 18px; color: #ffffff; font-family: monospace; font-weight: bold; margin-top: 4px;">${safeMemberId}</div>
                   </div>
                   <div style="text-align: center; margin-top: 24px;">
                     <a href="${receiptUrl}" style="display: inline-block; background-color: #a81c24; color: #ffffff; text-decoration: none; padding: 12px 28px; font-weight: bold; font-size: 13px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px;">
