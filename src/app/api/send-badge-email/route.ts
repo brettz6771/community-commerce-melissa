@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // Dispatch badge copy directly to the member
     await sendMemberBadgeOnlyEmail({
       memberEmail: email,
-      businessName: businessName || "Melissa Community Member",
+      businessName: businessName || "Melissa Community Partner",
       ownerName: ownerName || "",
       tier: tier || "Community Partner",
       memberId: memberId || `CCM-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,

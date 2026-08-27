@@ -155,11 +155,9 @@ export async function saveDirectoryMember({
     `);
 
     // Determine badge name
-    const badge = tier.toLowerCase().includes("partner")
-      ? "Community Partner"
-      : tier.toLowerCase().includes("member")
-      ? "Community Member"
-      : "Community Supporter";
+    const badge = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
+      ? "Corporate Partner"
+      : "Community Partner";
 
     // Check if business already exists by name or email to prevent duplicates
     const cleanBizName = businessName.trim();

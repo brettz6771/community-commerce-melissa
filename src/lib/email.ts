@@ -169,11 +169,9 @@ export async function sendMemberWelcomeAndAdminAlert({
   const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
   const directoryUrl = `${siteUrl}/directory`;
 
-  const cleanTier = tier.toLowerCase().includes("partner")
-    ? "2026 Community Partner"
-    : tier.toLowerCase().includes("member")
-    ? "2026 Community Member"
-    : "2026 Community Member";
+  const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
+    ? "2026 Corporate Partner"
+    : "2026 Community Partner";
 
   // --- 1. MEMBER WELCOME & DIGITAL BADGE EMAIL ---
   const memberHtml = `
@@ -437,9 +435,9 @@ export async function sendMemberBadgeOnlyEmail({
   const receiptUrl = `${siteUrl}/membership/receipt?session_id=${sessionId || ""}&tier=${encodeURIComponent(tier)}`;
   const directoryUrl = `${siteUrl}/directory`;
 
-  const cleanTier = tier.toLowerCase().includes("partner")
-    ? "2026 Community Partner"
-    : "2026 Community Member";
+  const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
+    ? "2026 Corporate Partner"
+    : "2026 Community Partner";
 
   const memberHtml = `
     <!DOCTYPE html>

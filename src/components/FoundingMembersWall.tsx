@@ -102,7 +102,7 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
                 YOUR LOGO HERE
               </span>
               <span className="text-[11px] text-slate-200 font-semibold block mt-0.5">
-                Join for $200 Launch Rate <span className="line-through text-red-300 font-bold bg-black/50 px-1.5 py-0.5 rounded border border-red-500/40">$350</span>
+                Join for $390 1st Yr <span className="line-through text-red-300 font-bold bg-black/50 px-1.5 py-0.5 rounded border border-red-500/40">$490</span>
               </span>
             </div>
           </div>
@@ -113,11 +113,11 @@ export default function FoundingMembersWall({ onOpenJoinModal }: FoundingMembers
           <div className="flex items-center gap-3">
             <Sparkles className="w-6 h-6 text-slate-300 shrink-0" />
             <div>
-              <div className="text-sm font-bold text-white">Only 8 Founding Partner Slots Remaining!</div>
+              <div className="text-sm font-bold text-white">Join Community Commerce Melissa Today!</div>
               <div className="text-xs text-slate-300 flex items-center gap-1.5 flex-wrap mt-0.5">
-                <span>Lock in your $200 launch rate</span>
-                <span className="line-through text-red-200 bg-red-950/90 border border-red-500/40 px-1.5 py-0.5 rounded font-bold text-[11px]">$350 Regular</span>
-                <span className="bg-emerald-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase">SAVE $150 INSTANTLY</span>
+                <span>Lock in your $390 first year rate</span>
+                <span className="line-through text-red-200 bg-red-950/90 border border-red-500/40 px-1.5 py-0.5 rounded font-bold text-[11px]">$490 Regular</span>
+                <span className="bg-emerald-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase">SAVE $100 INSTANTLY</span>
               </div>
             </div>
           </div>

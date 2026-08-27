@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import Link from "next/link";
 import { 
-  Users, 
   Star, 
   Handshake, 
   CheckCircle2, 
@@ -16,10 +15,6 @@ import {
   HelpCircle, 
   ArrowRight, 
   Mail, 
-  Globe, 
-  Check, 
-  Minus,
-  Lock,
   PartyPopper,
   AlertCircle
 } from "lucide-react";
@@ -38,25 +33,46 @@ function MembershipContent() {
     setIsJoinModalOpen(true);
   };
 
-  const comparisonRows = [
-    { benefit: "Business Directory Listing", member: "Standard", partner: "Enhanced" },
-    { benefit: "Networking Events", member: "Standard", partner: "Enhanced" },
-    { benefit: "Educational Opportunities", member: "Standard", partner: "Enhanced" },
-    { benefit: "Member Badge", member: "check", partner: "check" },
-    { benefit: "Community Participation", member: "check", partner: "check" },
-    { benefit: "Special Discounts from Local Businesses", member: "dash", partner: "check" },
-    { benefit: "Business Spotlight Opportunities", member: "Standard", partner: "Priority" },
-    { benefit: "Social/Digital Promotion", member: "Limited", partner: "Enhanced" },
-    { benefit: "Event Recognition", member: "dash", partner: "check" },
-    { benefit: "Host/Participate in Educational Programs", member: "dash", partner: "check" },
-    { benefit: "Collaborative Campaign Opportunities", member: "dash", partner: "Priority" },
-    { benefit: "Overall Visibility", member: "Standard", partner: "Enhanced" },
+  const partnerPerks = [
+    {
+      title: "Enhanced Business Directory Listing",
+      desc: "Priority positioning in our official online business directory with direct website link, phone, category tags, and business description."
+    },
+    {
+      title: "Official Digital Member Badge & Framed Certificate",
+      desc: "High-resolution verified 2026 digital badge for your website footer, email signature, and storefront certificate display."
+    },
+    {
+      title: "Priority Business Spotlights & Social Features",
+      desc: "Featured spotlight opportunities across Community Commerce Melissa social media channels, newsletters, and digital announcements."
+    },
+    {
+      title: "Exclusive Local Business Discounts & B2B Savings",
+      desc: "Access member-exclusive promotions, special discounts, and collaborative deals offered across participating Melissa businesses."
+    },
+    {
+      title: "Access to Networking Mixers & Programs",
+      desc: "Monthly networking mixers, educational workshops, guest speaker panels, and business development roundtables."
+    },
+    {
+      title: "Event Recognition & Community Collaboration",
+      desc: "Recognition at select community events, opportunities to host educational sessions, and priority participation in local campaigns."
+    }
+  ];
+
+  const corporatePerks = [
+    "Presenting & annual program underwriting sponsorships",
+    "Major event underwriting & executive speaking opportunities",
+    "Prominent website, directory & digital logo placement",
+    "On-site event signage, stage recognition & marketing materials",
+    "Community-impact initiatives & employee volunteer engagement",
+    "Customized partnership scope built around your organization's goals"
   ];
 
   const faqs = [
     { 
-      q: "What is the difference between Community Member and Community Partner?", 
-      a: "Community Member ($350/yr) is perfect for small businesses looking to connect, attend events, and have an active directory listing. Community Partner ($390 for the first year, renews at $490/yr) includes everything in Community Member plus enhanced directory ranking, priority business spotlights, special discounts offered by other local businesses, social media features, collaborative campaigns, and event recognition for maximum visibility." 
+      q: "What does the Community Partner membership include?", 
+      a: "Community Partner ($390 for your first year, renews at $490/yr) is our all-inclusive business membership level. It includes an enhanced directory listing, official digital badge & certificate, priority business spotlights, exclusive discounts from other local businesses, monthly networking mixers, event recognition, and collaborative community campaigns." 
     },
     { 
       q: "How does the limited-time Community Partner first-year deal work?", 
@@ -118,10 +134,10 @@ function MembershipContent() {
             COMMUNITY COMMERCE MELISSA, TX
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight text-white">
-            MEMBERSHIP <span className="text-red-500">LEVELS</span>
+            MEMBERSHIP & <span className="text-red-500">PARTNERSHIPS</span>
           </h1>
           <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Choose the membership tier designed to help your business connect, participate, and gain exposure in the growing Melissa community.
+            Join as a Community Partner or Corporate Sponsor to connect, participate, and gain premier exposure throughout the growing Melissa community.
           </p>
         </div>
       </section>
@@ -156,112 +172,35 @@ function MembershipContent() {
         </div>
       </section>
 
-      {/* Main 3 Tiers Cards Section */}
+      {/* Main 2 Tiers Section: Community Partner (Membership) & Corporate Sponsorship */}
       <section className="py-14 bg-[#E5E9EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             
-            {/* TIER 1: COMMUNITY MEMBER (STANDARD / NEUTRAL SLATE) */}
-            <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
-              <div>
-                {/* Standard Dark Slate Header Bar */}
-                <div className="bg-[#151922] text-white py-4 px-6 text-center border-b border-slate-700">
-                  <h3 className="font-outfit font-bold text-base sm:text-lg tracking-wider uppercase text-slate-200">
-                    1. COMMUNITY MEMBER
-                  </h3>
-                </div>
-
-                <div className="p-6 space-y-6">
-                  {/* Pricing */}
-                  <div className="text-center pb-4 border-b border-slate-100">
-                    <div className="inline-block bg-slate-100 border border-slate-200 text-slate-900 font-outfit font-extrabold text-2xl px-6 py-2 rounded-xl shadow-xs">
-                      $350<span className="text-xs font-medium text-slate-500">/year</span>
-                    </div>
-                    <p className="text-xs text-slate-600 mt-4 leading-relaxed font-medium text-left">
-                      Designed for small businesses, entrepreneurs, independent professionals, and organizations that want to connect, participate, and become more involved in the Melissa business community.
-                    </p>
-                  </div>
-
-                  {/* Included Perks */}
-                  <div className="space-y-3">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      MEMBERSHIP INCLUDES:
-                    </h4>
-                    <ul className="space-y-2.5">
-                      {[
-                        "Official Community Commerce Melissa membership",
-                        "Business listing in the online member directory",
-                        "Access to member networking events",
-                        "Member pricing or priority registration for select events and programs",
-                        "Educational workshops and business-development opportunities",
-                        "Opportunities to participate in Community Commerce Melissa initiatives",
-                        "Ability to submit business news, announcements, and community updates for consideration",
-                        "Community Commerce Melissa member badge for website and marketing use",
-                        "Opportunities to connect and collaborate with other local businesses"
-                      ].map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              {/* Best For Box & Button */}
-              <div className="p-6 pt-0 space-y-4">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
-                    <Users className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">BEST FOR:</div>
-                    <p className="text-xs text-slate-600 mt-0.5 leading-snug">
-                      Businesses that primarily want networking, education, community involvement, and greater connections throughout Melissa.
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleJoinClick("Community Member ($350/yr)")}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-4 rounded-xl transition shadow-sm flex flex-col items-center justify-center gap-0.5 group"
-                >
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-slate-100 font-outfit uppercase">
-                    <span>JOIN AS COMMUNITY MEMBER</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
-                  </div>
-                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    $350 / YEAR
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* TIER 2: COMMUNITY PARTNER (STANDOUT HERO RED TIER) */}
-            <div className="bg-gradient-to-b from-white to-red-50/40 rounded-2xl border-2 border-[#A81C24] shadow-2xl flex flex-col justify-between overflow-hidden relative transform lg:-translate-y-3 ring-4 ring-red-500/20">
+            {/* TIER 1: COMMUNITY PARTNER (STANDOUT HERO RED TIER - 7 COLUMNS) */}
+            <div className="lg:col-span-7 bg-gradient-to-b from-white to-red-50/30 rounded-2xl border-2 border-[#A81C24] shadow-2xl flex flex-col justify-between overflow-hidden relative ring-4 ring-red-500/20">
               
               <div>
-                {/* Top Dark "Most Popular" Strip with ample room and zero overlap */}
+                {/* Top Dark "Official Business Membership" Strip */}
                 <div className="bg-slate-950 text-slate-200 py-2.5 px-4 text-center border-b border-white/10 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest shadow-inner">
                   <Star className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-                  <span>MOST POPULAR • BEST VALUE</span>
+                  <span>OFFICIAL BUSINESS MEMBERSHIP • SAVE $100</span>
                 </div>
 
                 {/* Vibrant Brand Red Header Bar */}
                 <div className="bg-[#A81C24] text-white py-4 px-6 text-center shadow-md">
                   <h3 className="font-outfit font-black text-lg sm:text-xl tracking-wider uppercase flex items-center justify-center gap-2">
-                    2. COMMUNITY PARTNER
+                    COMMUNITY PARTNER
                   </h3>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="p-6 sm:p-8 space-y-6">
                   {/* Pricing Box with Sale Highlight */}
                   <div className="text-center pb-4 border-b border-red-100">
-                    <div className="inline-flex flex-col items-center bg-gradient-to-br from-red-950 via-[#A81C24] to-red-900 text-white px-7 py-3 rounded-2xl shadow-lg border-2 border-red-500/50 ring-2 ring-red-500/20">
+                    <div className="inline-flex flex-col items-center bg-gradient-to-br from-red-950 via-[#A81C24] to-red-900 text-white px-8 py-3.5 rounded-2xl shadow-lg border-2 border-red-500/50 ring-2 ring-red-500/20">
                       <div className="flex items-baseline gap-2">
-                        <span className="font-outfit font-black text-3.5xl sm:text-4xl text-white tracking-tight">$390</span>
+                        <span className="font-outfit font-black text-4xl sm:text-5xl text-white tracking-tight">$390</span>
                         <span className="text-xs font-semibold text-red-200">/1st year</span>
                       </div>
                       <div className="flex items-center gap-1.5 mt-1">
@@ -272,8 +211,8 @@ function MembershipContent() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-700 mt-4 leading-relaxed font-semibold text-left">
-                      Designed for businesses that want everything included in membership plus greater visibility, promotion, exclusive partner discounts, and opportunities to engage with the community.
+                    <p className="text-xs sm:text-sm text-slate-700 mt-4 leading-relaxed font-semibold text-left">
+                      Our premier all-inclusive business membership designed for local businesses and entrepreneurs looking to connect, participate, gain maximum exposure, access exclusive local discounts, and build lasting community partnerships.
                     </p>
                   </div>
 
@@ -281,22 +220,22 @@ function MembershipContent() {
                   <div className="space-y-3">
                     <h4 className="text-xs font-black text-[#A81C24] uppercase tracking-wider flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5" />
-                      INCLUDES EVERYTHING IN COMMUNITY MEMBER, PLUS:
+                      MEMBERSHIP BENEFITS INCLUDE:
                     </h4>
-                    <ul className="space-y-2.5">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       {[
-                        "Enhanced business directory listing",
+                        "Official Community Commerce Melissa membership",
+                        "Enhanced business directory listing with direct web links",
                         "Priority consideration for business spotlights",
-                        "Opportunities to be featured through Community Commerce Melissa social media and digital channels",
-                        "Special discounts and exclusive offers provided by other local businesses",
-                        "Priority access to select networking and community opportunities",
-                        "Opportunities to host or participate in educational sessions, panels, or business discussions",
-                        "Additional recognition at select Community Commerce Melissa events",
-                        "Priority consideration for collaborative community campaigns",
-                        "Opportunities to provide member-exclusive promotions or offers to the community",
-                        "Greater visibility across Community Commerce Melissa programs and communications"
+                        "Social media & digital channel promotions",
+                        "Special discounts & exclusive offers from local businesses",
+                        "Monthly networking mixers & program access",
+                        "Official digital badge & framed certificate",
+                        "Host or participate in educational sessions & panels",
+                        "Recognition at select Community Commerce events",
+                        "Priority consideration for collaborative community campaigns"
                       ].map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-900 font-bold">
+                        <li key={idx} className="flex items-start gap-2 text-xs text-slate-900 font-bold">
                           <CheckCircle2 className="w-4 h-4 text-[#A81C24] shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
@@ -307,7 +246,7 @@ function MembershipContent() {
               </div>
 
               {/* Best For Box & Button */}
-              <div className="p-6 pt-0 space-y-4">
+              <div className="p-6 sm:p-8 pt-0 space-y-4">
                 <div className="bg-red-100/80 border border-red-200 rounded-xl p-3.5 flex items-start gap-3 shadow-xs">
                   <div className="w-8 h-8 rounded-lg bg-[#A81C24] text-white flex items-center justify-center shrink-0 shadow-xs">
                     <Star className="w-4 h-4 fill-current" />
@@ -315,16 +254,16 @@ function MembershipContent() {
                   <div>
                     <div className="text-[11px] font-black text-[#A81C24] uppercase tracking-wider">BEST FOR:</div>
                     <p className="text-xs text-slate-700 mt-0.5 leading-snug font-medium">
-                      Established local businesses that want networking, special business discounts, and increased exposure throughout the Melissa community.
+                      Local businesses, founders, and entrepreneurs that want networking, special business discounts, and increased visibility throughout the Melissa community.
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")}
-                  className="w-full btn-red py-3.5 px-4 rounded-xl transition shadow-2xl flex flex-col items-center justify-center gap-0.5 group hover:scale-[1.02] ring-2 ring-red-500/50"
+                  className="w-full btn-red py-4 px-4 rounded-xl transition shadow-2xl flex flex-col items-center justify-center gap-0.5 group hover:scale-[1.01] ring-2 ring-red-500/50"
                 >
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-white font-outfit uppercase">
+                  <div className="flex items-center gap-1.5 text-sm sm:text-base font-black tracking-wide text-white font-outfit uppercase">
                     <span>JOIN AS COMMUNITY PARTNER</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
@@ -335,27 +274,27 @@ function MembershipContent() {
               </div>
             </div>
 
-            {/* TIER 3: CORPORATE & COMMUNITY SPONSORSHIPS (STANDARD / NEUTRAL SLATE) */}
-            <div className="bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
+            {/* TIER 2: CORPORATE & COMMUNITY SPONSORSHIPS (5 COLUMNS) */}
+            <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden relative transition hover:shadow-md">
               <div>
                 {/* Standard Dark Slate Header Bar */}
                 <div className="bg-[#151922] text-white py-4 px-6 text-center border-b border-slate-700">
-                  <h3 className="font-outfit font-bold text-sm sm:text-base tracking-wider uppercase text-slate-200">
-                    3. CORPORATE & COMMUNITY SPONSORSHIPS
+                  <h3 className="font-outfit font-bold text-base tracking-wider uppercase text-slate-200">
+                    CORPORATE & COMMUNITY SPONSORSHIPS
                   </h3>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="p-6 sm:p-8 space-y-6">
                   {/* Custom Header Box */}
                   <div className="text-center pb-4 border-b border-slate-100">
                     <div className="inline-block bg-slate-100 border border-slate-200 text-slate-900 font-outfit font-bold text-xs px-4 py-2 rounded-xl shadow-xs uppercase tracking-wider">
                       CUSTOM SPONSORSHIP OPPORTUNITIES
                     </div>
                     <p className="text-xs text-slate-600 mt-4 leading-relaxed font-medium text-left">
-                      For larger corporations, regional employers, developers, financial institutions, healthcare organizations, utilities, major retailers, and other organizations interested in making a larger investment in Melissa.
+                      For larger corporations, regional employers, developers, financial institutions, healthcare providers, and major retailers interested in making a significant investment in Melissa.
                     </p>
                     <p className="text-xs text-slate-500 mt-2 italic leading-relaxed text-left">
-                      Rather than placing these organizations into a standard membership package, sponsorships can be built around the company&apos;s goals and desired level of community involvement.
+                      Rather than a standard membership package, sponsorships are customized around your company&apos;s strategic goals and desired community leadership footprint.
                     </p>
                   </div>
 
@@ -365,21 +304,7 @@ function MembershipContent() {
                       SPONSORSHIP OPPORTUNITIES MAY INCLUDE:
                     </h4>
                     <ul className="space-y-2">
-                      {[
-                        "Presenting sponsorships",
-                        "Annual organizational sponsorships",
-                        "Major event sponsorships",
-                        "Educational program sponsorships",
-                        "Community initiative sponsorships",
-                        "Website and digital recognition",
-                        "Premium logo placement",
-                        "Event signage and recognition",
-                        "Social media and marketing recognition",
-                        "Speaking or presentation opportunities where appropriate",
-                        "Employee engagement opportunities",
-                        "Community-impact initiatives",
-                        "Customized partnership opportunities"
-                      ].map((item, idx) => (
+                      {corporatePerks.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-medium">
                           <CheckCircle2 className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                           <span>{item}</span>
@@ -391,7 +316,7 @@ function MembershipContent() {
               </div>
 
               {/* Best For Box & Button */}
-              <div className="p-6 pt-0 space-y-4">
+              <div className="p-6 sm:p-8 pt-0 space-y-4">
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
                     <Handshake className="w-4 h-4" />
@@ -401,23 +326,23 @@ function MembershipContent() {
                       INTERESTED IN BECOMING A CORPORATE SPONSOR?
                     </div>
                     <p className="text-xs text-slate-600 mt-0.5 leading-snug">
-                      Let&apos;s build a partnership that makes sense for your organization and for Melissa.
+                      Let&apos;s build a custom partnership that makes sense for your organization and for Melissa.
                     </p>
                   </div>
                 </div>
 
-                <Link
-                  href="/contact"
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3.5 px-4 rounded-xl transition shadow-sm flex flex-col items-center justify-center gap-0.5 group text-center"
+                <button
+                  onClick={() => handleJoinClick("Corporate & Community Sponsorship")}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 px-4 rounded-xl transition shadow-sm flex flex-col items-center justify-center gap-0.5 group text-center"
                 >
                   <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black tracking-wide text-slate-100 font-outfit uppercase">
                     <span>INQUIRE ABOUT SPONSORSHIP</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                   <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    CUSTOM CORPORATE PARTNERSHIPS
+                    CUSTOM CORPORATE PACKAGES
                   </div>
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -425,142 +350,69 @@ function MembershipContent() {
         </div>
       </section>
 
-      {/* Comparison Table & Positioning Section */}
+      {/* Detailed Partner Benefits Feature Grid Section */}
       <section className="py-14 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left 8 Cols: WHAT'S THE DIFFERENCE Comparison Table */}
-            <div className="lg:col-span-8 space-y-4">
-              <div>
-                <h3 className="text-2xl font-extrabold font-outfit text-slate-900 uppercase tracking-tight">
-                  WHAT&apos;S THE DIFFERENCE?
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Compare benefits between our standard and enhanced business membership packages.
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-red-100 border border-red-200 text-red-800 font-bold text-xs uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5" />
+              WHY JOIN AS A COMMUNITY PARTNER
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-extrabold font-outfit text-slate-900 uppercase tracking-tight">
+              DESIGNED TO GROW YOUR BUSINESS IN MELISSA
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Everything your business needs to connect, build credibility, and gain exposure in our thriving community.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {partnerPerks.map((perk, idx) => (
+              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-3 hover:border-red-300 hover:shadow-md transition">
+                <div className="w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-black">
+                  <CheckCircle2 className="w-5 h-5 text-red-700" />
+                </div>
+                <h4 className="text-base font-extrabold font-outfit text-slate-900 uppercase">
+                  {perk.title}
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  {perk.desc}
                 </p>
               </div>
+            ))}
+          </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="font-outfit uppercase tracking-wider">
-                        <th className="py-3 px-4 text-xs font-bold bg-slate-900 text-white">BENEFIT</th>
-                        <th className="py-3 px-4 text-xs text-center border-l border-slate-700 bg-slate-800 text-white font-bold">
-                          COMMUNITY MEMBER<br/>
-                          <span className="text-[10px] font-normal text-slate-300">$350/YEAR</span>
-                        </th>
-                        <th className="py-3 px-4 text-xs text-center border-l border-red-800/50 bg-[#A81C24] text-white font-extrabold">
-                          COMMUNITY PARTNER<br/>
-                          <span className="text-[10px] font-bold text-white bg-red-950/80 px-2 py-0.5 rounded">$390 1ST YR <span className="text-red-200 font-normal">• RENEWS $490/YR</span></span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {comparisonRows.map((row, idx) => (
-                        <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-slate-50/60"}>
-                          <td className="py-3 px-4 font-semibold text-slate-800">
-                            {row.benefit}
-                          </td>
-                          <td className="py-3 px-4 text-center border-l border-slate-100 font-medium text-slate-700">
-                            {row.member === "check" ? (
-                              <Check className="w-4 h-4 text-slate-600 mx-auto stroke-[2.5]" />
-                            ) : row.member === "dash" ? (
-                              <Minus className="w-4 h-4 text-slate-400 mx-auto" />
-                            ) : (
-                              <span>{row.member}</span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-center border-l border-red-100 font-bold text-slate-900 bg-red-50/40">
-                            {row.partner === "check" ? (
-                              <Check className="w-4 h-4 text-[#A81C24] mx-auto stroke-[3]" />
-                            ) : row.partner === "dash" ? (
-                              <Minus className="w-4 h-4 text-slate-400 mx-auto" />
-                            ) : (
-                              <span className="text-[#A81C24] font-extrabold">{row.partner}</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+          {/* Bottom Corporate Contact Banner */}
+          <div className="bg-[#151922] text-white border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+            <div className="space-y-1 text-center md:text-left">
+              <div className="text-[10px] font-black text-red-400 uppercase tracking-widest">
+                CUSTOM CORPORATE PACKAGES
               </div>
+              <h4 className="text-lg sm:text-xl font-extrabold font-outfit text-white uppercase">
+                LOOKING FOR CORPORATE SPONSORSHIP OPPORTUNITIES?
+              </h4>
+              <p className="text-xs text-slate-300 max-w-xl">
+                Contact our executive team to explore bespoke presenting sponsorships, event underwriting, and community-wide recognition packages.
+              </p>
             </div>
 
-            {/* Right 4 Cols: Simple Positioning & Corporate Contact */}
-            <div className="lg:col-span-4 space-y-6">
-              
-              {/* Simple Positioning Card */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
-                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest border-b border-slate-200 pb-2">
-                  SIMPLE POSITIONING
-                </h4>
-
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-[#A81C24] text-white flex items-center justify-center shrink-0 shadow-sm">
-                      <Users className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-black text-slate-900 uppercase">COMMUNITY MEMBER</div>
-                      <div className="text-xs text-[#A81C24] font-bold mt-0.5">Connect. Learn. Participate.</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm">
-                      <Star className="w-4 h-4 fill-current" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-black text-slate-900 uppercase">COMMUNITY PARTNER</div>
-                      <div className="text-xs text-[#A81C24] font-bold mt-0.5">Connect. Participate. Get Seen.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Corporate Sponsorship Contact Box */}
-              <div className="bg-[#151922] text-white border border-white/10 rounded-xl p-5 space-y-4 shadow-md">
-                <div>
-                  <div className="text-[10px] font-black text-red-400 uppercase tracking-widest">
-                    CUSTOM PARTNERSHIPS
-                  </div>
-                  <h4 className="text-sm font-extrabold font-outfit text-white uppercase mt-0.5">
-                    CORPORATE SPONSORSHIPS — CONTACT US FOR OPPORTUNITIES & PRICING
-                  </h4>
-                </div>
-
-                <div className="space-y-2.5 text-xs text-slate-300 border-t border-white/10 pt-3">
-                  <a 
-                    href="mailto:info@communitycommercemelissa.org" 
-                    className="flex items-center gap-2 hover:text-white transition group"
-                  >
-                    <Mail className="w-4 h-4 text-red-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="truncate">info@communitycommercemelissa.org</span>
-                  </a>
-                  <a 
-                    href="https://www.communitycommercemelissa.org" 
-                    className="flex items-center gap-2 hover:text-white transition group"
-                  >
-                    <Globe className="w-4 h-4 text-red-400 shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="truncate">www.communitycommercemelissa.org</span>
-                  </a>
-                </div>
-
-                <Link
-                  href="/contact"
-                  className="w-full btn-red py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 text-center shadow-lg"
-                >
-                  <Handshake className="w-3.5 h-3.5" />
-                  <span>CONTACT SPONSORSHIP TEAM</span>
-                </Link>
-              </div>
-
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <button
+                onClick={() => handleJoinClick("Corporate & Community Sponsorship")}
+                className="btn-red px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg"
+              >
+                <Handshake className="w-4 h-4" />
+                <span>INQUIRE NOW</span>
+              </button>
+              <a
+                href="mailto:info@communitycommercemelissa.org"
+                className="px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border border-white/20 hover:bg-white/10 text-slate-200 transition flex items-center gap-2"
+              >
+                <Mail className="w-4 h-4 text-red-400" />
+                <span>EMAIL US</span>
+              </a>
             </div>
-
           </div>
 
         </div>

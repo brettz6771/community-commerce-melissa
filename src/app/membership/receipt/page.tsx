@@ -171,13 +171,11 @@ function ReceiptBadgeContent() {
 
       if (!ctx) return;
 
-      const cleanTier = receiptData?.tier?.toLowerCase().includes("partner") || receiptData?.isTest
-        ? "COMMUNITY PARTNER"
-        : receiptData?.tier?.toLowerCase().includes("member")
-        ? "COMMUNITY MEMBER"
-        : "OFFICIAL CONTRIBUTOR";
+      const cleanTier = receiptData?.tier?.toLowerCase().includes("corporate") || receiptData?.tier?.toLowerCase().includes("sponsorship")
+        ? "CORPORATE PARTNER"
+        : "COMMUNITY PARTNER";
 
-      const businessName = (receiptData?.businessName || "MELISSA COMMUNITY MEMBER").toUpperCase();
+      const businessName = (receiptData?.businessName || "MELISSA COMMUNITY PARTNER").toUpperCase();
       const memberId = receiptData?.memberId || "CCM-2026-MEMBER";
 
       // 1. Background
@@ -307,11 +305,9 @@ function ReceiptBadgeContent() {
     );
   }
 
-  const cleanTierDisplay = receiptData?.tier?.includes("Partner") || receiptData?.isTest
-    ? "Community Partner"
-    : receiptData?.tier?.includes("Member")
-    ? "Community Member"
-    : "Community Contributor";
+  const cleanTierDisplay = receiptData?.tier?.includes("Corporate") || receiptData?.tier?.includes("Sponsorship")
+    ? "Corporate Partner"
+    : "Community Partner";
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">

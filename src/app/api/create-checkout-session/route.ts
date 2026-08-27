@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { 
-      tier = "Community Partner ($390/yr)", 
+      tier = "Community Partner ($390 1st Yr • Renews $490/yr)", 
       businessName, 
       ownerName, 
       email, 
@@ -159,30 +159,24 @@ export async function POST(request: Request) {
 
     // ----------------------------------------------------
     // Case 2: Membership Subscriptions (mode: "subscription")
+    // Sole Membership Tier: Community Partner ($390 1st Yr, renews $490/yr)
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
-    const isPartner = !isTest && tier.toLowerCase().includes("partner");
 
-    let amountInCents = 35000; // default Community Member $350/yr
-    let productName = "Community Member — Annual Membership";
-    let productDesc = "Community Commerce Melissa — Community Member Level (1 Year Recurring Membership)";
-    let successTierParam = "Community Member";
+    let amountInCents = 39000;
+    const productName = "Community Partner — Annual Membership";
+    const productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
+    const successTierParam = "Community Partner";
     let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined = undefined;
 
-    if (isPartner) {
-      productName = "Community Partner — Annual Membership";
-      productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
-      successTierParam = "Community Partner";
-
-      const partnerCouponId = await resolvePartnerCoupon(stripe);
-      if (partnerCouponId) {
-        amountInCents = 49000; // Base annual rate $490.00/yr with $100 off 1st year coupon
-        discounts = [{ coupon: partnerCouponId }];
-      } else {
-        // Fallback if coupons cannot be created/retrieved: charge $390 directly without coupon requirement
-        amountInCents = 39000;
-        discounts = undefined;
-      }
+    const partnerCouponId = await resolvePartnerCoupon(stripe);
+    if (partnerCouponId) {
+      amountInCents = 49000; // Base annual rate $490.00/yr with $100 off 1st year coupon
+      discounts = [{ coupon: partnerCouponId }];
+    } else {
+      // Fallback if coupons cannot be created/retrieved: charge $390 directly without coupon requirement
+      amountInCents = 39000;
+      discounts = undefined;
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {

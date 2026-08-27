@@ -5,15 +5,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const memberId = searchParams.get("memberId") || "CCM-2026-MEMBER";
     const tier = searchParams.get("tier") || "Community Partner";
-    const businessName = searchParams.get("businessName") || "Melissa Community Member";
+    const businessName = searchParams.get("businessName") || "Melissa Community Partner";
     const ownerName = searchParams.get("name") || "Member";
     const download = searchParams.get("download") === "true";
 
-    const cleanTier = tier.includes("Partner")
-      ? "COMMUNITY PARTNER"
-      : tier.includes("Member")
-      ? "COMMUNITY MEMBER"
-      : "OFFICIAL CONTRIBUTOR";
+    const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
+      ? "CORPORATE PARTNER"
+      : "COMMUNITY PARTNER";
 
     const passJson = {
       formatVersion: 1,

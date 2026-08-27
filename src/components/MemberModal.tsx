@@ -48,8 +48,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   if (!isOpen) return null;
 
   const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
-  const isPartner = selectedTier.toLowerCase().includes("partner");
-  const amountDisplay = isCorporate ? "Custom" : isPartner ? "$390" : "$350";
+  const amountDisplay = isCorporate ? "Custom" : "$390";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +86,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
         return;
       }
 
-      // 2. For paid tiers (Member $350, Partner $390): initiate Stripe Checkout
+      // 2. For paid Community Partner tier ($390): initiate Stripe Checkout
       const checkoutRes = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -214,7 +213,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               </p>
             </div>
 
-            {/* Special Promo Banner (Shown only for Community Membership & Partner, hidden for Corporate Sponsorship) */}
+            {/* Special Promo Banner (Shown only for Community Partner, hidden for Corporate Sponsorship) */}
             {!isCorporate && (
               <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2 text-slate-200 font-medium">
@@ -227,26 +226,13 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               </div>
             )}
 
-            {/* Tier Selector Tabs */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedTier("Community Member ($350/yr)")}
-                className={`p-3 rounded-lg border text-center transition ${
-                  selectedTier.includes("Community Member")
-                    ? "bg-[#A81C24]/30 border-[#A81C24] text-white font-bold ring-2 ring-red-500/40"
-                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
-                }`}
-              >
-                <div className="text-[11px] font-bold">1. Community Member</div>
-                <div className="text-sm font-extrabold text-white mt-0.5">$350/yr</div>
-              </button>
-
+            {/* Tier Selector Tabs (2 Options: Community Partner or Corporate Sponsorship) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setSelectedTier("Community Partner ($390 1st Yr • Renews $490/yr)")}
-                className={`p-3 rounded-lg border text-center transition relative ${
-                  selectedTier.includes("Community Partner")
+                className={`p-3.5 rounded-xl border text-center transition relative ${
+                  !isCorporate
                     ? "bg-gradient-to-br from-red-950 to-red-900 border-[#A81C24] text-white font-bold shadow-lg ring-2 ring-red-500/50"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
@@ -254,22 +240,23 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white text-red-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
                   SAVE $100
                 </span>
-                <div className="text-[11px] font-bold text-slate-200 mt-1">2. Partner</div>
-                <div className="text-sm font-extrabold text-white">$390 <span className="text-red-300 text-[10px] font-normal">1st yr</span></div>
-                <div className="text-[9px] text-red-200 font-semibold">renews $490/yr</div>
+                <div className="text-xs font-bold text-slate-200 mt-1">1. Community Partner</div>
+                <div className="text-base font-extrabold text-white">$390 <span className="text-red-300 text-xs font-normal">1st yr</span></div>
+                <div className="text-[10px] text-red-200 font-semibold">renews $490/yr</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedTier("Corporate & Community Sponsorship")}
-                className={`p-3 rounded-lg border text-center transition ${
-                  selectedTier.includes("Corporate") || selectedTier.includes("Sponsorship")
+                className={`p-3.5 rounded-xl border text-center transition ${
+                  isCorporate
                     ? "bg-slate-800 border-slate-400 text-white font-bold ring-2 ring-slate-400/40"
                     : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
                 }`}
               >
-                <div className="text-[11px] font-bold">3. Sponsorship</div>
-                <div className="text-xs font-extrabold text-slate-200 mt-1">Custom / Inquire</div>
+                <div className="text-xs font-bold text-slate-300 mt-1">2. Corporate Sponsorship</div>
+                <div className="text-sm font-extrabold text-white mt-1">Custom Partnership</div>
+                <div className="text-[10px] text-slate-400">Tailored packages & pricing</div>
               </button>
             </div>
 
