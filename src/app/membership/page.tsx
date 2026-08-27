@@ -142,36 +142,6 @@ function MembershipContent() {
         </div>
       </section>
 
-      {/* Featured Promotion Callout Banner */}
-      <section className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 text-white py-5 shadow-lg border-b border-red-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-center sm:text-left">
-            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 hidden sm:flex border border-white/20">
-              <Star className="w-5 h-5 text-slate-100 fill-slate-100" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="bg-white text-red-950 font-black text-[10px] uppercase px-2 py-0.5 rounded shadow">
-                  INAUGURAL OFFER
-                </span>
-                <span className="text-xs font-bold text-slate-200">Save $100 First Year</span>
-              </div>
-              <h2 className="text-lg sm:text-xl font-extrabold font-outfit text-white mt-0.5">
-                Join as a Community Partner for $390 1st Year <span className="text-red-200 text-xs font-semibold ml-1">(Renews at $490/yr)</span>
-              </h2>
-            </div>
-          </div>
-
-          <button
-            onClick={() => handleJoinClick("Community Partner ($390 1st Yr • Renews $490/yr)")}
-            className="bg-white hover:bg-slate-100 text-red-950 font-black px-6 py-2.5 rounded-lg text-xs uppercase tracking-wider shrink-0 shadow-xl flex items-center gap-2 transition hover:scale-105"
-          >
-            CLAIM $390 1ST YR SPECIAL
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-      </section>
-
       {/* Main 2 Tiers Section: Community Partner (Membership) & Corporate Sponsorship */}
       <section className="py-14 bg-[#E5E9EE]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
