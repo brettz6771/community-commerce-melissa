@@ -11,6 +11,7 @@ import MobileLogoBanner from "@/components/MobileLogoBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
+import NewsletterModal from "@/components/NewsletterModal";
 import { Play } from "lucide-react";
 
 export default function HomePage() {
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [isRSVPModalOpen, setIsRSVPModalOpen] = useState(false);
   const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
 
   const handleOpenJoinWithTier = (tier?: string) => {
     setSelectedTier(tier || "Community Partner ($390 1st Yr • Renews $490/yr)");
@@ -46,6 +48,7 @@ export default function HomePage() {
       <HeroSection
         onOpenJoinModal={() => handleOpenJoinWithTier()}
         onOpenVideoModal={() => setIsVideoModalOpen(true)}
+        onOpenNewsletterModal={() => setIsNewsletterModalOpen(true)}
       />
 
       {/* Quote & Value Proposition Section */}
@@ -75,6 +78,11 @@ export default function HomePage() {
         isOpen={isRSVPModalOpen}
         onClose={() => setIsRSVPModalOpen(false)}
         eventTitle={selectedEventTitle}
+      />
+
+      <NewsletterModal
+        isOpen={isNewsletterModalOpen}
+        onClose={() => setIsNewsletterModalOpen(false)}
       />
 
       {/* Video Modal Player */}

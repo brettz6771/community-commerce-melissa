@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
-import { Users, TrendingUp, Calendar, Heart, ChevronRight, Play } from "lucide-react";
+import { Users, TrendingUp, Calendar, Heart, ChevronRight, Play, Mail } from "lucide-react";
 import Link from "next/link";
 
 interface HeroSectionProps {
   onOpenJoinModal?: () => void;
   onOpenVideoModal?: () => void;
+  onOpenNewsletterModal?: () => void;
 }
 
-export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroSectionProps) {
+export default function HeroSection({ onOpenJoinModal, onOpenVideoModal, onOpenNewsletterModal }: HeroSectionProps) {
   return (
     <section className="relative bg-[#0B0E14] text-white pt-12 pb-24 md:pb-32 overflow-hidden border-b border-white/10">
       
@@ -56,12 +57,23 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal }: HeroS
 
           {/* Action CTAs */}
           <div className="pt-2 flex flex-wrap items-center gap-4">
-            <Link
-              href="/contact"
-              className="btn-red px-7 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider shadow-xl shadow-red-950/50 flex items-center gap-2"
-            >
-              GET IN TOUCH
-            </Link>
+            {onOpenNewsletterModal ? (
+              <button
+                onClick={onOpenNewsletterModal}
+                className="btn-red px-7 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider shadow-xl shadow-red-950/50 flex items-center gap-2 hover:scale-105 transition duration-200"
+              >
+                <Mail className="w-4 h-4" />
+                <span>STAY CONNECTED</span>
+              </button>
+            ) : (
+              <Link
+                href="/contact"
+                className="btn-red px-7 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider shadow-xl shadow-red-950/50 flex items-center gap-2 hover:scale-105 transition duration-200"
+              >
+                <Mail className="w-4 h-4" />
+                <span>STAY CONNECTED</span>
+              </Link>
+            )}
 
             <Link
               href="/events"
