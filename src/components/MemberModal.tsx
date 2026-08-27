@@ -6,8 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 
-const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
-const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
+const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
 interface MemberModalProps {
   isOpen: boolean;
@@ -33,6 +32,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [stripePromise, setStripePromise] = useState<ReturnType<typeof loadStripe> | null>(
+    () => (buildTimePublishableKey ? loadStripe(buildTimePublishableKey) : null)
+  );
+  const [stripeConfigLoaded, setStripeConfigLoaded] = useState(Boolean(buildTimePublishableKey));
 
   useEffect(() => {
     if (defaultTier) {
@@ -44,6 +47,30 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
       setErrorMessage("");
     }
   }, [defaultTier, isOpen]);
+
+  useEffect(() => {
+    if (stripeConfigLoaded) return;
+
+    let cancelled = false;
+    fetch("/api/stripe-config")
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data?.publishableKey) {
+          setStripePromise(loadStripe(data.publishableKey));
+        }
+      })
+      .catch(() => {
+        // Hosted Stripe Checkout still works without a client publishable key.
+      })
+      .finally(() => {
+        if (!cancelled) setStripeConfigLoaded(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [stripeConfigLoaded]);
 
   if (!isOpen) return null;
 
