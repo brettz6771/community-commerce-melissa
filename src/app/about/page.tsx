@@ -94,27 +94,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission & Vision Grid */}
-      <section className="py-16 bg-[#E5E9EE] border-t border-slate-200">
+      {/* Mission & Vision Grid (Dark Section) */}
+      <section className="py-16 bg-[#0B0E14] text-white border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            <div className="bg-white p-8 rounded-2xl shadow-md border border-slate-200 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
+            <div className="bg-[#151922] p-8 rounded-2xl shadow-xl border border-white/10 space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center">
                 <Target className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR MISSION</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-xl font-extrabold font-outfit text-white uppercase">OUR MISSION</h3>
+              <p className="text-slate-300 text-sm leading-relaxed">
                 To serve Melissa, Texas — connecting local entrepreneurs, giving back to community causes, and building a supportive, thriving economic ecosystem.
               </p>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-md border border-slate-200 space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center">
+            <div className="bg-[#151922] p-8 rounded-2xl shadow-xl border border-white/10 space-y-4">
+              <div className="w-12 h-12 rounded-xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center">
                 <Award className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-extrabold font-outfit text-slate-900 uppercase">OUR VISION</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <h3 className="text-xl font-extrabold font-outfit text-white uppercase">OUR VISION</h3>
+              <p className="text-slate-300 text-sm leading-relaxed">
                 To build a vibrant, connected Melissa community where local businesses, entrepreneurs, and families thrive together — creating lasting economic opportunity, fostering genuine relationships, and making a meaningful impact through non-profit service.
               </p>
             </div>
@@ -123,27 +123,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Pillars (4 Columns) */}
-      <section className="py-16 bg-[#0B0E14] text-white border-t border-white/10">
+      {/* Core Pillars (4 Columns - Light Gray Section) */}
+      <section className="py-16 bg-[#E5E9EE] border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 text-red-700 font-bold text-xs uppercase tracking-widest">
               <Heart className="w-4 h-4" />
               GUIDING PRINCIPLES
             </div>
-            <h2 className="text-3xl font-extrabold font-outfit text-white uppercase">
+            <h2 className="text-3xl font-extrabold font-outfit text-slate-900 uppercase">
               OUR CORE PILLARS
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {coreValues.map((val, idx) => (
-              <div key={idx} className="bg-[#151922] p-6 rounded-xl border border-white/10 space-y-3">
-                <div className="w-8 h-8 rounded-full bg-red-700 text-slate-200 font-bold flex items-center justify-center text-xs">
+              <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md space-y-3">
+                <div className="w-8 h-8 rounded-full bg-red-100 text-red-700 font-bold flex items-center justify-center text-xs">
                   0{idx + 1}
                 </div>
-                <h4 className="font-extrabold text-white text-base font-outfit">{val.title}</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">{val.desc}</p>
+                <h4 className="font-extrabold text-slate-900 text-base font-outfit">{val.title}</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">{val.desc}</p>
               </div>
             ))}
           </div>
