@@ -9,19 +9,13 @@ import PageTitle from "@/components/PageTitle";
 import { 
   Users, 
   Target, 
-  Compass, 
   Heart, 
-  CheckCircle2, 
   Award, 
-  Sparkles, 
-  Play, 
-  History,
-  ShieldCheck
+  History
 } from "lucide-react";
 
 export default function AboutPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const coreValues = [
     { title: "Servant Leadership & Impact", desc: "Fostering genuine relationships, mentorship, and meaningful community service over transactional networking." },
@@ -89,46 +83,18 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Video Feature Card */}
-            <div className="bg-[#0F1218] text-white rounded-2xl p-8 shadow-2xl border border-slate-800 space-y-6">
-              <div className="flex items-center gap-3">
-                <img
-                  src="/ccm-logo-transparent.png"
-                  alt="Community Commerce Melissa Logo"
-                  className="w-14 h-14 object-contain"
-                />
-                <div>
-                  <h3 className="font-extrabold text-lg text-white font-outfit uppercase">WELCOME VIDEO FROM THE FOUNDERS</h3>
-                  <p className="text-xs text-slate-300">Hear directly from Melissa leaders</p>
-                </div>
-              </div>
-
-              <div 
-                onClick={() => setIsVideoModalOpen(true)}
-                className="relative rounded-xl overflow-hidden aspect-video bg-slate-900 cursor-pointer border border-white/15 group"
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800"
-                  alt="Video Thumbnail"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-red-700 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                    <Play className="w-6 h-6 fill-current ml-1" />
-                  </div>
-                </div>
-                <div className="absolute bottom-3 left-3 text-xs text-white font-semibold">
-                  Watch Founder Welcome (2:30)
-                </div>
-              </div>
-
-              <button
-                onClick={() => setIsJoinModalOpen(true)}
-                className="w-full bg-red-700 hover:bg-red-800 text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
-              >
-                JOIN THE MOVEMENT TODAY
-              </button>
+            {/* Cardinal Animation Video Container */}
+            <div className="flex items-center justify-center bg-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 overflow-hidden">
+              <video
+                src="/logo-animation.mp4"
+                poster="/logo-animation-still.jpg"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                className="w-full h-auto max-h-[420px] object-contain rounded-xl"
+              />
             </div>
 
           </div>
@@ -224,16 +190,6 @@ export default function AboutPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
       />
-
-      {isVideoModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
-          <div className="relative w-full max-w-3xl bg-black rounded-xl p-8 text-center text-white space-y-4">
-            <button onClick={() => setIsVideoModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-            <h3 className="text-xl font-bold font-outfit">Community Commerce Founder Welcome Video</h3>
-            <p className="text-xs text-slate-400">Video Player Simulation — Featuring Melissa Business Leaders</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
