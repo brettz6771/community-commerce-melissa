@@ -10,24 +10,17 @@ import {
   Users, 
   Target, 
   Heart, 
-  Award, 
-  History
+  Award
 } from "lucide-react";
 
 export default function AboutPage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
 
   const coreValues = [
-    { title: "Servant Leadership & Impact", desc: "Fostering genuine relationships, mentorship, and meaningful community service over transactional networking." },
-    { title: "Economic Momentum", desc: "Equipping small businesses, corporate entities, and entrepreneurs with tools, visibility, and networking to scale." },
-    { title: "Non-profit stewardship", desc: "Funneling membership dues and expo proceeds back into Collin County school districts and local charities." }
-  ];
-
-  const milestones = [
-    { year: "Q1 2026", title: "Community Vision Founded", desc: "Local Melissa business leaders unite to form Community Commerce Melissa." },
-    { year: "Q2 2026", title: "Official 501(c)(3) Non-Profit Status", desc: "Established Community Commerce Melissa as a registered 501(c)(3) non-profit organization." },
-    { year: "Q3 2026", title: "First Annual Melissa Expo", desc: "Bringing 60+ local vendors and 1,000+ residents together at the Z-Plex." },
-    { year: "Q4 2026+", title: "Digital Hub & Member Portal", desc: "Expanding interactive tools, job boards, and business referral automation." }
+    { title: "Connection", desc: "Fostering genuine relationships, business collaboration, and active peer networking across Melissa." },
+    { title: "Promotion & Visibility", desc: "Equipping local businesses with live directory rankings, member badge credentials, and high-impact spotlight reach." },
+    { title: "Education & Growth", desc: "Providing practical workshops, leadership panels, and actionable development resources for entrepreneurs." },
+    { title: "Community Stewardship", desc: "501(c)(3) non-profit leadership reinvesting dues and event proceeds directly into Melissa schools and community causes." }
   ];
 
   return (
@@ -83,8 +76,8 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Cardinal Animation Video Container */}
-            <div className="flex items-center justify-center bg-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 overflow-hidden">
+            {/* Cardinal Animation Video (Clean Borderless Container) */}
+            <div className="flex items-center justify-center">
               <video
                 src="/logo-animation.mp4"
                 poster="/logo-animation-still.jpg"
@@ -93,7 +86,7 @@ export default function AboutPage() {
                 loop
                 playsInline
                 preload="auto"
-                className="w-full h-auto max-h-[420px] object-contain rounded-xl"
+                className="w-full max-w-md h-auto object-contain"
               />
             </div>
 
@@ -130,7 +123,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Pillars */}
+      {/* Core Pillars (4 Columns) */}
       <section className="py-16 bg-[#0B0E14] text-white border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -151,33 +144,6 @@ export default function AboutPage() {
                 </div>
                 <h4 className="font-extrabold text-white text-base font-outfit">{val.title}</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">{val.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-12">
-            <div className="inline-flex items-center gap-2 text-red-700 font-bold text-xs uppercase tracking-widest">
-              <History className="w-4 h-4" />
-              TIMELINE OF MILESTONES
-            </div>
-            <h2 className="text-3xl font-extrabold font-outfit text-slate-900 uppercase">
-              BUILDING THE FUTURE OF MELISSA
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {milestones.map((m, i) => (
-              <div key={i} className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-2 relative">
-                <div className="text-xs font-black text-red-700 bg-red-100 inline-block px-2.5 py-0.5 rounded-full uppercase">
-                  {m.year}
-                </div>
-                <h4 className="font-extrabold text-slate-900 text-sm">{m.title}</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">{m.desc}</p>
               </div>
             ))}
           </div>
