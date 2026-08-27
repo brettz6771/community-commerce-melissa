@@ -19,7 +19,11 @@ import {
   Loader2,
   AlertCircle,
   PartyPopper,
-  Sparkles
+  Sparkles,
+  GraduationCap,
+  Users,
+  Briefcase,
+  Gift
 } from "lucide-react";
 
 function GiveDonateContent() {
@@ -29,24 +33,15 @@ function GiveDonateContent() {
   const paidAmount = searchParams.get("amount") || "Contribution";
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState("$100");
-  const [customAmount, setCustomAmount] = useState("");
+  const [customAmount, setCustomAmount] = useState("50");
   const [donorInfo, setDonorInfo] = useState({ name: "", email: "", company: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const donationTiers = [
-    { amount: "$50", title: "Community Supporter", desc: "Sponsors local business networking refreshments & educational workshop materials." },
-    { amount: "$100", title: "Youth Scholarship Patron", desc: "Funds student entrepreneur grants & Melissa High School Cardinal student scholarships." },
-    { amount: "$250", title: "Economic Catalyst", desc: "Powers local merchant directory spotlights, business features & community mixers." },
-    { amount: "Custom", title: "Custom Contribution", desc: "Specify any contribution amount to directly power Melissa community initiatives." }
-  ];
+  const quickPills = ["25", "50", "100", "250", "500"];
 
   const getNumericAmount = (): number => {
-    if (selectedAmount === "Custom") {
-      return Math.max(1, parseFloat(customAmount) || 25);
-    }
-    return Math.max(1, parseFloat(selectedAmount.replace("$", "")) || 100);
+    return Math.max(1, parseFloat(customAmount) || 50);
   };
 
   const handleDonateSubmit = async (e: React.FormEvent) => {
@@ -90,13 +85,13 @@ function GiveDonateContent() {
     }
   };
 
-  const displayButtonAmount = selectedAmount === "Custom" 
-    ? (customAmount ? `$${customAmount}` : "Custom Amount")
-    : selectedAmount;
+  const currentFormattedAmount = customAmount && !isNaN(Number(customAmount)) && Number(customAmount) > 0
+    ? `$${Number(customAmount).toLocaleString()}`
+    : "$50";
 
   return (
     <div className="min-h-screen bg-[#E5E9EE] flex flex-col font-sans">
-      <PageTitle title="Give & Donate — Support Melissa, TX" />
+      <PageTitle title="Make a Contribution — Support Melissa, TX" />
       <LaunchBanner onOpenJoinModal={() => setIsJoinModalOpen(true)} />
       <Navbar onOpenJoinModal={() => setIsJoinModalOpen(true)} />
 
@@ -131,13 +126,13 @@ function GiveDonateContent() {
           <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-700/60 text-red-300 font-bold text-xs uppercase tracking-widest">
               <Heart className="w-4 h-4 text-red-500 fill-current" />
-              501(c)(3) COMMUNITY CONTRIBUTION
+              COMMUNITY CONTRIBUTION
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
               SUPPORT OUR MISSION — <span className="text-red-500">DONATE</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-              Invest directly in Melissa&apos;s economic growth, youth leadership scholarships, and local small business support programs.
+              Every contribution makes a real difference. We are grateful for gifts of any amount to directly power Melissa community programs, student scholarships, and local business development.
             </p>
           </div>
         </div>
@@ -153,7 +148,7 @@ function GiveDonateContent() {
         </div>
       </div>
 
-      {/* Non-profit 501(c)(3) Status Notice Banner */}
+      {/* Tax-Deductible Status Notice Banner */}
       <section className="py-5 bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-black/30 border border-white/20 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
@@ -162,7 +157,7 @@ function GiveDonateContent() {
               <div>
                 <div className="text-sm font-extrabold text-white uppercase tracking-wide">501(c)(3) NON-PROFIT ORGANIZATION</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">
-                  Community Commerce Melissa is an official 501(c)(3) non-profit organization. Contributions directly fund local community programs.
+                  Community Commerce Melissa is a 501(c)(3) non-profit organization. Your contributions are tax-deductible to the full extent of the law.
                 </div>
               </div>
             </div>
@@ -173,151 +168,155 @@ function GiveDonateContent() {
         </div>
       </section>
 
-      {/* Main Donation Section */}
-      <section className="py-16 bg-[#E5E9EE]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* Main Custom Donation Section */}
+      <section className="py-14 bg-[#E5E9EE]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
-          {/* Donation Tiers Grid */}
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${donationTiers.length > 4 ? "lg:grid-cols-5" : "lg:grid-cols-4"} gap-6`}>
-            {donationTiers.map((tier, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedAmount(tier.amount)}
-                className={`bg-white rounded-2xl p-6 border transition cursor-pointer flex flex-col justify-between ${
-                  selectedAmount === tier.amount
-                    ? "border-red-600 ring-2 ring-red-600/50 shadow-xl"
-                    : "border-slate-300 shadow-sm hover:shadow-md"
-                }`}
-              >
-                <div className="space-y-3">
-                  <div className="text-3xl font-black font-outfit text-slate-900">{tier.amount}</div>
-                  <h3 className="text-sm font-extrabold text-slate-900 uppercase font-outfit">{tier.title}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">{tier.desc}</p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold">
-                  <span className={selectedAmount === tier.amount ? "text-red-700 font-black" : "text-slate-400"}>
-                    {selectedAmount === tier.amount ? "Selected Tier ✓" : "Select Level"}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
           {/* Donation Form Card */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-300 shadow-xl max-w-3xl mx-auto space-y-6">
-            <div className="border-b border-slate-100 pb-4">
-              <div className="inline-flex items-center gap-1.5 bg-red-100 text-red-800 font-bold px-2.5 py-0.5 rounded text-xs uppercase mb-1">
-                <DollarSign className="w-3.5 h-3.5" />
-                ONLINE CONTRIBUTION FORM
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-300 shadow-xl space-y-8">
+            
+            <div className="text-center max-w-xl mx-auto space-y-2">
+              <div className="inline-flex items-center gap-1.5 bg-red-100 text-red-800 font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider">
+                <Gift className="w-3.5 h-3.5 text-red-700" />
+                CUSTOM CONTRIBUTION
               </div>
-              <h2 className="text-2xl font-extrabold font-outfit uppercase text-slate-900">
-                MAKE A CONTRIBUTION
+              <h2 className="text-2xl sm:text-3xl font-extrabold font-outfit uppercase text-slate-900">
+                CHOOSE ANY CONTRIBUTION AMOUNT
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Selected Contribution Level: <strong className="text-red-700">{displayButtonAmount}</strong>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Whether it&apos;s $10 or $1,000, 100% of your tax-deductible gift directly supports Melissa schools, youth scholarships, and community initiatives.
               </p>
             </div>
 
-            <form onSubmit={handleDonateSubmit} className="space-y-4">
-              {selectedAmount === "Custom" && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                    Custom Amount ($ USD) *
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">$</span>
+            <form onSubmit={handleDonateSubmit} className="space-y-6">
+              
+              {/* Contribution Amount Box */}
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 space-y-4">
+                <label className="block text-xs font-black text-slate-900 uppercase tracking-wider text-center">
+                  ENTER YOUR CONTRIBUTION AMOUNT ($ USD) *
+                </label>
+                
+                <div className="relative max-w-xs mx-auto">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold text-2xl sm:text-3xl pointer-events-none">$</span>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    step="any"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="50"
+                    className="w-full bg-white border-2 border-slate-300 rounded-2xl pl-10 pr-4 py-3.5 text-2xl sm:text-3xl text-slate-900 text-center font-outfit font-black focus:outline-none focus:border-red-600 focus:ring-4 focus:ring-red-500/10 transition shadow-inner"
+                  />
+                </div>
+
+                {/* Quick select amount shortcuts */}
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase mr-1">Quick Select:</span>
+                  {quickPills.map((amt) => (
+                    <button
+                      key={amt}
+                      type="button"
+                      onClick={() => setCustomAmount(amt)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                        customAmount === amt
+                          ? "bg-red-700 text-white shadow-sm"
+                          : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400"
+                      }`}
+                    >
+                      ${amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Donor Details Grid */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                  <Users className="w-4 h-4 text-red-600" />
+                  DONOR INFORMATION
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                      Full Name *
+                    </label>
                     <input
-                      type="number"
+                      type="text"
                       required
-                      min="1"
-                      step="any"
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                      placeholder="e.g. 500"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-lg pl-8 pr-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-red-600 focus:bg-white font-bold"
+                      value={donorInfo.name}
+                      onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
+                      placeholder="Jane Doe"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                      Email Address (For Tax Receipt) *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={donorInfo.email}
+                      onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
+                      placeholder="jane@example.com"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
                     />
                   </div>
                 </div>
-              )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                    Full Name *
+                    Company / Organization / Family Fund (Optional)
                   </label>
                   <input
                     type="text"
-                    required
-                    value={donorInfo.name}
-                    onChange={(e) => setDonorInfo({ ...donorInfo, name: e.target.value })}
-                    placeholder="Jane Doe"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
+                    value={donorInfo.company}
+                    onChange={(e) => setDonorInfo({ ...donorInfo, company: e.target.value })}
+                    placeholder="Melissa Business Name or Family Fund"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                    Email Address (For Receipt) *
+                    Dedication or Special Program Note (Optional)
                   </label>
-                  <input
-                    type="email"
-                    required
-                    value={donorInfo.email}
-                    onChange={(e) => setDonorInfo({ ...donorInfo, email: e.target.value })}
-                    placeholder="jane@example.com"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
+                  <textarea
+                    rows={2}
+                    value={donorInfo.message}
+                    onChange={(e) => setDonorInfo({ ...donorInfo, message: e.target.value })}
+                    placeholder="In honor of... / Direct towards youth scholarships / General community support..."
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                  Company / Organization (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={donorInfo.company}
-                  onChange={(e) => setDonorInfo({ ...donorInfo, company: e.target.value })}
-                  placeholder="Melissa Business Name or Family Fund"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                  Dedicated Message / Program Note (Optional)
-                </label>
-                <textarea
-                  rows={2}
-                  value={donorInfo.message}
-                  onChange={(e) => setDonorInfo({ ...donorInfo, message: e.target.value })}
-                  placeholder="In honor of... / Direct towards youth leadership scholarships..."
-                  className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
-                />
-              </div>
-
-              <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-center justify-between text-xs text-slate-600">
+              {/* Security & Summary Bar */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
                 <div className="flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-slate-500" />
-                  <span>One-Time Contribution: <strong className="text-slate-900">{displayButtonAmount}</strong></span>
+                  <span>Contribution Amount: <strong className="text-slate-900 text-sm">{currentFormattedAmount}</strong></span>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold">
+                <div className="flex items-center gap-1.5 text-emerald-700 font-bold text-[11px] uppercase">
                   <Lock className="w-3.5 h-3.5" />
                   <span>Stripe 256-Bit SSL Encrypted</span>
                 </div>
               </div>
 
               {errorMessage && (
-                <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-lg text-xs">
+                <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-xl text-xs">
                   {errorMessage}
                 </div>
               )}
 
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full btn-red py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition"
+                className="w-full btn-red py-4 rounded-xl font-black text-sm uppercase tracking-wider shadow-xl flex items-center justify-center gap-2 hover:scale-[1.01] transition"
               >
                 {isSubmitting ? (
                   <>
@@ -326,13 +325,66 @@ function GiveDonateContent() {
                   </>
                 ) : (
                   <>
-                    <CreditCard className="w-4 h-4" />
-                    <span>PROCEED TO DONATION CHECKOUT ({displayButtonAmount})</span>
+                    <Heart className="w-4 h-4 fill-current" />
+                    <span>DONATE {currentFormattedAmount} NOW</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
+
+              <p className="text-[11px] text-slate-500 text-center">
+                Official 501(c)(3) tax receipt automatically generated and emailed immediately following confirmation.
+              </p>
             </form>
+          </div>
+
+          {/* Where Your Gift Goes Feature Strip */}
+          <div className="space-y-4">
+            <h3 className="text-center text-xs font-black text-slate-600 uppercase tracking-widest">
+              HOW YOUR CONTRIBUTION POWERS MELISSA
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="w-9 h-9 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-slate-900 text-xs font-outfit uppercase">Youth Scholarships</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Funding student entrepreneur grants and leadership scholarships for local Melissa youth.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="w-9 h-9 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-slate-900 text-xs font-outfit uppercase">Business Education</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Providing practical workshops, speaker panels, and resources for local founders.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="w-9 h-9 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                  <Users className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-slate-900 text-xs font-outfit uppercase">Community Mixers</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Connecting Melissa entrepreneurs and residents through collaborative networking evenings.
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div className="w-9 h-9 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <h4 className="font-extrabold text-slate-900 text-xs font-outfit uppercase">Civic Stewardship</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Reinvesting directly into Melissa schools, local non-profits, and community causes.
+                </p>
+              </div>
+            </div>
           </div>
 
         </div>
