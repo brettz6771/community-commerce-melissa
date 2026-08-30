@@ -112,7 +112,23 @@ export default function NewsletterAdminPage() {
 
   const copyEmails = async () => {
     const emails = filtered.map((row) => row.email).join("\n");
-    await navigator.clipboard.writeText(emails);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(emails);
+      } else {
+        throw new Error("clipboard unavailable");
+      }
+    } catch {
+      const textarea = document.createElement("textarea");
+      textarea.value = emails;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
     setCopyLabel("Copied");
     window.setTimeout(() => setCopyLabel("Copy emails"), 1600);
   };
