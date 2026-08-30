@@ -1,20 +1,11 @@
 import { NextResponse } from "next/server";
 import { saveDirectoryMember } from "@/lib/db";
 import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
-
-function isAuthorized(request: Request): boolean {
-  const secret = process.env.INTERNAL_API_SECRET;
-  if (!secret) {
-    return process.env.NODE_ENV !== "production";
-  }
-  const header = request.headers.get("authorization") || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : request.headers.get("x-internal-api-secret");
-  return token === secret;
-}
+import { isInternalAuthorized } from "@/lib/internal-auth";
 
 export async function POST(request: Request) {
   try {
-    if (!isAuthorized(request)) {
+    if (!isInternalAuthorized(request)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -90,10 +81,11 @@ export async function POST(request: Request) {
         "Community Partner"
       )}&amount=390&simulated=true`,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in simulated member signup:", error);
+    const message = error instanceof Error ? error.message : "Failed to simulate member signup.";
     return NextResponse.json(
-      { error: error?.message || "Failed to simulate member signup." },
+      { error: message },
       { status: 500 }
     );
   }

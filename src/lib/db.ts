@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { mergeNewsletterRows, NEWSLETTER_FORM_TYPE, type NewsletterSubscriber } from "@/lib/newsletter";
 
 let pool: Pool | null = null;
 
@@ -41,25 +42,7 @@ export async function saveContactToDb({
     const firstName = details["First Name"] || details["firstName"] || null;
     const lastName = details["Last Name"] || details["lastName"] || null;
 
-    // Ensure table exists
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS website_contacts (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) NOT NULL,
-        form_type VARCHAR(100) DEFAULT 'Newsletter Subscription',
-        source VARCHAR(100) DEFAULT 'Footer Subscribe',
-        details JSONB,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    // Ensure columns exist (for backwards compatibility if table already exists)
-    await dbPool.query(`
-      ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS first_name VARCHAR(100);
-    `);
-    await dbPool.query(`
-      ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS last_name VARCHAR(100);
-    `);
+    await ensureWebsiteContactsTable(dbPool);
 
     // Insert record
     await dbPool.query(
@@ -76,6 +59,56 @@ export async function saveContactToDb({
     console.error("Error saving contact to Postgres database:", error);
     return false;
   }
+}
+
+async function ensureWebsiteContactsTable(dbPool: Pool) {
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS website_contacts (
+      id SERIAL PRIMARY KEY,
+      email VARCHAR(255) NOT NULL,
+      form_type VARCHAR(100) DEFAULT 'Newsletter Subscription',
+      source VARCHAR(100) DEFAULT 'Footer Subscribe',
+      details JSONB,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  await dbPool.query(`
+    ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS first_name VARCHAR(100);
+  `);
+  await dbPool.query(`
+    ALTER TABLE website_contacts ADD COLUMN IF NOT EXISTS last_name VARCHAR(100);
+  `);
+}
+
+export async function getNewsletterSubscribers(): Promise<{
+  configured: boolean;
+  subscribers: NewsletterSubscriber[];
+}> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return { configured: false, subscribers: [] };
+  }
+
+  await ensureWebsiteContactsTable(dbPool);
+
+  const res = await dbPool.query(`
+    SELECT
+      email,
+      first_name AS "firstName",
+      last_name AS "lastName",
+      source,
+      details,
+      created_at AS "createdAt"
+    FROM website_contacts
+    WHERE form_type = $1
+    ORDER BY created_at DESC;
+  `, [NEWSLETTER_FORM_TYPE]);
+
+  return {
+    configured: true,
+    subscribers: mergeNewsletterRows(res.rows),
+  };
 }
 
 export interface DirectoryMemberRecord {
