@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import TermsAgreement from "@/components/TermsAgreement";
 import Link from "next/link";
 import { 
   HeartHandshake, 
@@ -29,6 +30,7 @@ export default function VolunteerPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,9 +237,17 @@ export default function VolunteerPage() {
                   />
                 </div>
 
+                <TermsAgreement
+                  id="volunteer-agree-terms"
+                  variant="light"
+                  checked={agreedToTerms}
+                  onChange={setAgreedToTerms}
+                />
+
                 <button
                   type="submit"
-                  className="w-full btn-red py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
+                  disabled={!agreedToTerms}
+                  className="w-full btn-red py-3 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   SUBMIT VOLUNTEER APPLICATION

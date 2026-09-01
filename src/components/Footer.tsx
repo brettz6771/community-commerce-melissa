@@ -123,6 +123,7 @@ export default function Footer() {
               <li><Link href="/contact/feedback" className="hover:text-white transition">Leave Feedback / Suggestions</Link></li>
               <li><Link href="/volunteer" className="hover:text-white transition">Volunteer Program</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -200,6 +201,13 @@ export default function Footer() {
               >
                 SUBSCRIBE
               </button>
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                By subscribing, you agree to our{" "}
+                <Link href="/terms" className="text-slate-300 hover:text-white underline underline-offset-2">
+                  Terms of Service
+                </Link>
+                .
+              </p>
             </form>
           </div>
 
@@ -228,8 +236,14 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="text-xs text-slate-400 text-center md:text-right">
-            MELISSA, TEXAS • &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved.
+          <div className="text-xs text-slate-400 text-center md:text-right space-y-1">
+            <div>
+              <Link href="/terms" className="hover:text-white transition">
+                Terms of Service
+              </Link>
+              {" • "}All payments are non-refundable
+            </div>
+            <div>MELISSA, TEXAS • &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved.</div>
           </div>
 
         </div>

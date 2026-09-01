@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import PageTitle from "@/components/PageTitle";
+import TermsAgreement from "@/components/TermsAgreement";
 import { 
   MessageSquareHeart, 
   Send, 
@@ -32,6 +33,7 @@ export default function FeedbackPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -275,11 +277,18 @@ export default function FeedbackPage() {
                     </label>
                   </div>
 
+                  <TermsAgreement
+                    id="feedback-agree-terms"
+                    variant="light"
+                    checked={agreedToTerms}
+                    onChange={setAgreedToTerms}
+                  />
+
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full btn-red py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition mt-2"
+                    disabled={isSubmitting || !agreedToTerms}
+                    className="w-full btn-red py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition mt-2 disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {isSubmitting ? (
                       <>

@@ -5,6 +5,7 @@ import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, L
 import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
+import TermsAgreement from "@/components/TermsAgreement";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -36,6 +37,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     () => (buildTimePublishableKey ? loadStripe(buildTimePublishableKey) : null)
   );
   const [stripeConfigLoaded, setStripeConfigLoaded] = useState(Boolean(buildTimePublishableKey));
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     if (defaultTier) {
@@ -45,6 +47,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
       setClientSecret(null);
       setIsSubmitted(false);
       setErrorMessage("");
+      setAgreedToTerms(false);
     }
   }, [defaultTier, isOpen]);
 
@@ -79,6 +82,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreedToTerms) {
+      setErrorMessage("Please agree to the Terms of Service to continue.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage("");
 
@@ -218,6 +226,13 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 {amountDisplay}/yr
               </div>
             </div>
+            <p className="text-[11px] text-slate-400">
+              Membership dues are non-refundable under our{" "}
+              <a href="/terms#refunds" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                Terms of Service
+              </a>
+              .
+            </p>
 
             <div className="bg-white rounded-xl overflow-hidden min-h-[420px] p-2">
               <EmbeddedCheckoutProvider
@@ -476,12 +491,19 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 </div>
               )}
 
+              <TermsAgreement
+                id="member-agree-terms"
+                checked={agreedToTerms}
+                onChange={setAgreedToTerms}
+                includeRefund
+              />
+
               {/* Submit CTA */}
               <div className="space-y-2">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition btn-red"
+                  disabled={isSubmitting || !agreedToTerms}
+                  className="w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition btn-red disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {isSubmitting ? (
                     <>

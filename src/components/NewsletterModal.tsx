@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Mail, CheckCircle2, Loader2, Sparkles, Bell, ArrowRight } from "lucide-react";
+import { X, Mail, CheckCircle2, Loader2, Bell, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface NewsletterModalProps {
   isOpen: boolean;
@@ -200,10 +201,13 @@ export default function NewsletterModal({ isOpen, onClose }: NewsletterModalProp
                 )}
               </button>
 
-              <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
-                <Sparkles className="w-3.5 h-3.5 text-red-400" />
-                <span>Monthly curated updates • Unsubscribe anytime</span>
-              </div>
+              <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+                By subscribing, you agree to our{" "}
+                <Link href="/terms" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                  Terms of Service
+                </Link>
+                . Monthly curated updates • Unsubscribe anytime
+              </p>
             </form>
           </div>
         )}

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
+import TermsAgreement from "@/components/TermsAgreement";
 import { MOCK_SPONSORSHIPS } from "@/data/mockData";
 import { 
   Star, 
@@ -22,6 +23,7 @@ export default function SponsorshipPage() {
   const [formData, setFormData] = useState({ name: "", company: "", email: "", phone: "", tier: "Community Champion (Platinum)" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -226,9 +228,17 @@ export default function SponsorshipPage() {
                   </div>
                 </div>
 
+                <TermsAgreement
+                  id="sponsorship-agree-terms"
+                  checked={agreedToTerms}
+                  onChange={setAgreedToTerms}
+                  includeRefund
+                />
+
                 <button
                   type="submit"
-                  className="w-full btn-red py-3 rounded font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2"
+                  disabled={!agreedToTerms}
+                  className="w-full btn-red py-3 rounded font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   SUBMIT SPONSORSHIP INQUIRY
