@@ -250,7 +250,6 @@ export default function Footer() {
               <Link href="/privacy" className="hover:text-white transition">
                 Privacy Policy
               </Link>
-              {" · "}Payments are non-refundable except as described in the Terms
             </div>
             <div>MELISSA, TEXAS • &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved.</div>
           </div>

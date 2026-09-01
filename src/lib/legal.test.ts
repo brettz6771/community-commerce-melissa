@@ -31,6 +31,9 @@ describe("membership pricing copy", () => {
     assert.match(membershipAutoRenewDisclosure(), /Automatically renews annually/i);
     assert.match(membershipAutoRenewDisclosure(), /until canceled/i);
     assert.match(membershipAutoRenewCheckboxLabel(), /automatically renews annually/i);
+    assert.doesNotMatch(membershipAutoRenewDisclosure(), /non-refundable/i);
+    assert.doesNotMatch(membershipAutoRenewCheckboxLabel(), /non-refundable/i);
+    assert.doesNotMatch(STRIPE_MEMBERSHIP_SUBMIT_MESSAGE, /non-refundable/i);
   });
 
   it("keeps Stripe receipt language from implying dues are charitable gifts", () => {

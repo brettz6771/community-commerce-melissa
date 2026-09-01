@@ -7,7 +7,7 @@ import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 import TermsAgreement, { AutoRenewAcknowledgment } from "@/components/TermsAgreement";
 import MembershipCheckoutNotice from "@/components/MembershipCheckoutNotice";
-import { membershipAutoRenewCheckboxLabel, REFUND_POLICY_SHORT } from "@/lib/legal";
+import { membershipAutoRenewCheckboxLabel } from "@/lib/legal";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -236,8 +236,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
             </div>
             <MembershipCheckoutNotice compact />
             <p className="text-[11px] text-slate-400">
-              {REFUND_POLICY_SHORT} See our{" "}
-              <a href="/terms#refunds" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+              See our{" "}
+              <a href="/terms" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
                 Terms of Service
               </a>
               {" and "}
@@ -511,7 +511,6 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 id="member-agree-terms"
                 checked={agreedToTerms}
                 onChange={setAgreedToTerms}
-                includeRefund
               />
               {!isCorporate && (
                 <AutoRenewAcknowledgment

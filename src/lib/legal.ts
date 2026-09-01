@@ -27,24 +27,24 @@ export function membershipPricingLines(): { firstYear: string; renewal: string }
 }
 
 export function membershipAutoRenewDisclosure(): string {
-  return `${formatUsd(PARTNER_INTRO_USD)} first year. Automatically renews annually at the then-current membership rate (currently ${formatUsd(PARTNER_RENEWAL_USD)} per year) until canceled. Cancel before your renewal date to prevent the next charge. Payments already processed are non-refundable except for duplicate charges, processing errors, unauthorized transactions, or where a refund is legally required.`;
+  return `${formatUsd(PARTNER_INTRO_USD)} first year. Automatically renews annually at the then-current membership rate (currently ${formatUsd(PARTNER_RENEWAL_USD)} per year) until canceled. Cancel before your renewal date to prevent the next charge.`;
 }
 
 export function membershipAutoRenewCheckboxLabel(): string {
-  return `I understand this Community Partner membership is ${formatUsd(PARTNER_INTRO_USD)} for the first year and automatically renews annually at the then-current rate (currently ${formatUsd(PARTNER_RENEWAL_USD)}/year) until I cancel. I can cancel before the renewal date to prevent the next charge. Payments already processed are non-refundable except as described in the Terms.`;
+  return `I understand this Community Partner membership is ${formatUsd(PARTNER_INTRO_USD)} for the first year and automatically renews annually at the then-current rate (currently ${formatUsd(PARTNER_RENEWAL_USD)}/year) until I cancel. I can cancel before the renewal date to prevent the next charge.`;
 }
 
 export const STRIPE_MEMBERSHIP_PRODUCT_DESCRIPTION =
   `First year ${formatUsd(PARTNER_INTRO_USD)}; then ${formatUsd(PARTNER_RENEWAL_USD)}/year until canceled. 12-month term from payment. Program dues, not a charitable contribution unless CCM’s acknowledgment says otherwise. Non-refundable except corrections or as required by law.`;
 
 export const STRIPE_MEMBERSHIP_SUBMIT_MESSAGE =
-  `First year ${formatUsd(PARTNER_INTRO_USD)}. Renews at ${formatUsd(PARTNER_RENEWAL_USD)}/year until canceled. 12-month term from payment. Dues may not be tax-deductible. Non-refundable except corrections or as required by law.`;
+  `First year ${formatUsd(PARTNER_INTRO_USD)}. Renews at ${formatUsd(PARTNER_RENEWAL_USD)}/year until canceled. 12-month term from payment. Dues may not be tax-deductible.`;
 
 export const STRIPE_DONATION_PRODUCT_DESCRIPTION =
   "Voluntary charitable contribution to Community Commerce Melissa (501(c)(3)). Deductibility depends on tax law and the donor’s circumstances. CCM provides a written acknowledgment where required. Unrestricted unless CCM expressly accepts a restricted purpose. Non-refundable except corrections or as required by law.";
 
 export const STRIPE_DONATION_SUBMIT_MESSAGE =
-  "Unrestricted charitable gift unless CCM expressly accepts a restricted purpose. Deductibility depends on tax law and your circumstances. Written acknowledgment provided where required. Non-refundable except corrections or as required by law.";
+  "Unrestricted charitable gift unless CCM expressly accepts a restricted purpose. Deductibility depends on tax law and your circumstances. Written acknowledgment provided where required.";
 
 export const TAX_TREATMENT_SHORT =
   "Membership dues, sponsorships, event fees, purchases, and charitable donations may receive different tax treatment. Community Commerce Melissa will provide required written acknowledgments where applicable. We do not provide tax advice; consult your own advisor about deductibility.";
