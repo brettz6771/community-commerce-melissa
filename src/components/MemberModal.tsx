@@ -5,7 +5,9 @@ import { X, CheckCircle2, ShieldCheck, Sparkles, CreditCard, Lock, ArrowRight, L
 import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
-import TermsAgreement from "@/components/TermsAgreement";
+import TermsAgreement, { AutoRenewAcknowledgment } from "@/components/TermsAgreement";
+import MembershipCheckoutNotice from "@/components/MembershipCheckoutNotice";
+import { membershipAutoRenewCheckboxLabel, REFUND_POLICY_SHORT } from "@/lib/legal";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -38,6 +40,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   );
   const [stripeConfigLoaded, setStripeConfigLoaded] = useState(Boolean(buildTimePublishableKey));
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToAutoRenew, setAgreedToAutoRenew] = useState(false);
 
   useEffect(() => {
     if (defaultTier) {
@@ -48,6 +51,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
       setIsSubmitted(false);
       setErrorMessage("");
       setAgreedToTerms(false);
+      setAgreedToAutoRenew(false);
     }
   }, [defaultTier, isOpen]);
 
@@ -83,7 +87,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreedToTerms) {
-      setErrorMessage("Please agree to the Terms of Service to continue.");
+      setErrorMessage("Please agree to the Terms of Service and Privacy Policy to continue.");
+      return;
+    }
+    if (!isCorporate && !agreedToAutoRenew) {
+      setErrorMessage("Please acknowledge the annual auto-renewal terms to continue.");
       return;
     }
 
@@ -223,13 +231,18 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <strong className="text-white">{selectedTier}</strong>
               </div>
               <div className="text-sm font-black text-red-400">
-                {amountDisplay}/yr
+                {amountDisplay} first year
               </div>
             </div>
+            <MembershipCheckoutNotice compact />
             <p className="text-[11px] text-slate-400">
-              Membership dues are non-refundable under our{" "}
+              {REFUND_POLICY_SHORT} See our{" "}
               <a href="/terms#refunds" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
                 Terms of Service
+              </a>
+              {" and "}
+              <a href="/privacy" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                Privacy Policy
               </a>
               .
             </p>
@@ -463,15 +476,18 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
               {/* Payment & Sponsorship Tier Info */}
               {!isCorporate ? (
-                <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-slate-300" />
-                    <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+                <div className="space-y-3">
+                  <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-slate-300" />
+                      <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[11px]">
+                      <Lock className="w-3 h-3 text-emerald-400" />
+                      <span>Annual Auto-Renewing Subscription</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1 text-[11px]">
-                    <Lock className="w-3 h-3 text-emerald-400" />
-                    <span>Annual Auto-Renewing Subscription</span>
-                  </div>
+                  <MembershipCheckoutNotice />
                 </div>
               ) : (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
@@ -497,12 +513,20 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 onChange={setAgreedToTerms}
                 includeRefund
               />
+              {!isCorporate && (
+                <AutoRenewAcknowledgment
+                  id="member-agree-autorenew"
+                  checked={agreedToAutoRenew}
+                  onChange={setAgreedToAutoRenew}
+                  label={membershipAutoRenewCheckboxLabel()}
+                />
+              )}
 
               {/* Submit CTA */}
               <div className="space-y-2">
                 <button
                   type="submit"
-                  disabled={isSubmitting || !agreedToTerms}
+                  disabled={isSubmitting || !agreedToTerms || (!isCorporate && !agreedToAutoRenew)}
                   className="w-full py-3.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01] transition btn-red disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {isSubmitting ? (

@@ -9,6 +9,11 @@ import LaunchBanner from "@/components/LaunchBanner";
 import PageTitle from "@/components/PageTitle";
 import Link from "next/link";
 import { MOCK_BUSINESSES, BUSINESS_CATEGORIES } from "@/data/mockData";
+import {
+  DIRECTORY_EXPIRATION_NOTE,
+  DIRECTORY_NON_ENDORSEMENT,
+  DIRECTORY_NOT_A_PARTY,
+} from "@/lib/legal";
 import { 
   Building2, 
   Search, 
@@ -147,7 +152,10 @@ function DirectoryContent() {
             COMMUNITY COMMERCE <span className="text-red-500">DIRECTORY</span>
           </h1>
           <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Find local, support local, and grow local. Discover trusted products, commercial partners, and professional services right here in Melissa, Texas.
+            Find local, support local, and grow local. Discover products, commercial partners, and professional services right here in Melissa, Texas.
+          </p>
+          <p className="text-[11px] sm:text-xs text-slate-400 max-w-3xl mx-auto leading-relaxed pt-1">
+            {DIRECTORY_NON_ENDORSEMENT} {DIRECTORY_NOT_A_PARTY} {DIRECTORY_EXPIRATION_NOTE}
           </p>
 
           <div className="pt-2">

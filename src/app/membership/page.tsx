@@ -6,7 +6,11 @@ import Navbar from "@/components/Navbar";
 import LaunchBanner from "@/components/LaunchBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
-import Link from "next/link";
+import {
+  MEMBERSHIP_NOT_VOTING_MEMBER,
+  MEMBERSHIP_TERM_SENTENCE,
+  membershipPricingLines,
+} from "@/lib/legal";
 import { 
   Star, 
   Handshake, 
@@ -40,7 +44,7 @@ function MembershipContent() {
     },
     {
       title: "Official Digital Member Badge & Framed Certificate",
-      desc: "High-resolution verified 2026 digital badge for your website footer, email signature, and storefront certificate display."
+      desc: "High-resolution digital badge for your website footer, email signature, and storefront certificate display. Usable only while membership is active."
     },
     {
       title: "Priority Business Spotlights & Social Features",
@@ -69,6 +73,8 @@ function MembershipContent() {
     "Customized partnership scope built around your organization's goals"
   ];
 
+  const pricing = membershipPricingLines();
+
   const faqs = [
     { 
       q: "What does the Community Partner membership include?", 
@@ -76,7 +82,15 @@ function MembershipContent() {
     },
     { 
       q: "How does the limited-time Community Partner first-year deal work?", 
-      a: "For a limited time, you can secure the Community Partner membership level for $390 for your first year (saving $100 off the standard $490/year rate). After your first year, your subscription will renew automatically at the regular annual rate of $490/year." 
+      a: "For a limited time, you can secure the Community Partner membership level for $390 for your first year (saving $100 off the standard $490/year rate). After your first year, your subscription will renew automatically at the then-current annual rate, currently $490/year, until canceled." 
+    },
+    {
+      q: "When does my membership term start and end?",
+      a: MEMBERSHIP_TERM_SENTENCE + " It is not a calendar-year membership unless we say otherwise at checkout. Membership automatically renews for successive 12-month terms until you cancel."
+    },
+    {
+      q: "Does buying a Community Partner membership make me a voting member of the nonprofit?",
+      a: MEMBERSHIP_NOT_VOTING_MEMBER
     },
     { 
       q: "What are the Special Discounts from local businesses?", 
@@ -84,7 +98,7 @@ function MembershipContent() {
     },
     { 
       q: "How are Corporate & Community Sponsorships structured?", 
-      a: "Corporate sponsorships are tailored for larger organizations, regional employers, healthcare providers, and developers wanting substantial community impact. Sponsorship packages can include presenting sponsorships, annual program underwriting, premium logo placement, and speaking opportunities." 
+      a: "Corporate sponsorships are tailored for larger organizations, regional employers, healthcare providers, and developers wanting substantial community impact. Sponsorship packages can include presenting sponsorships, annual program underwriting, premium logo placement, and speaking opportunities. Sponsorship payments are not automatically tax-deductible; CCM will provide required acknowledgments where applicable." 
     },
     { 
       q: "What type of organization is Community Commerce Melissa?", 
@@ -92,11 +106,15 @@ function MembershipContent() {
     },
     { 
       q: "How quickly is my business directory listing activated?", 
-      a: "Upon completing your member application and Stripe payment, our team verifies and activates your directory profile within 24 to 48 business hours." 
+      a: "Upon completing your member application and Stripe payment, our team verifies and activates your directory profile within 24 to 48 business hours. Listings and badges remain active only while membership is current and end when membership expires or is terminated." 
     },
     { 
       q: "Do you offer refunds?", 
-      a: "No. Membership dues, donations, sponsorship payments, and other charges are non-refundable. You may cancel a future membership renewal before the next billing date, but amounts already paid for the current term are not refunded. See our Terms of Service for details." 
+      a: "No. Membership dues, donations, sponsorship payments, and other charges are non-refundable, except that we may correct duplicate charges, processing errors, unauthorized transactions, or issue a refund where legally required. You may cancel a future membership renewal before the next billing date, but amounts already paid for the current term are not refunded. See our Terms of Service for details." 
+    },
+    {
+      q: "Are membership dues tax deductible?",
+      a: "Not automatically. Membership dues, sponsorships, event fees, purchases, and charitable donations may receive different tax treatment. CCM will provide required written acknowledgments where applicable. Consult your own tax advisor; we do not provide tax advice."
     },
   ];
 
@@ -178,14 +196,17 @@ function MembershipContent() {
                         <span className="text-xs font-semibold text-red-200">/1st year</span>
                       </div>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <span className="text-red-200 text-xs font-semibold">Renews at $490/yr</span>
+                        <span className="text-red-200 text-xs font-semibold">Current annual rate after first year: $490</span>
                         <span className="bg-white text-[#A81C24] text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-xs">
                           SAVE $100 YEAR 1
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-700 mt-4 leading-relaxed font-semibold text-left">
+                    <p className="text-[11px] text-slate-600 mt-3 leading-relaxed">
+                      {pricing.firstYear}. {pricing.renewal}. {MEMBERSHIP_TERM_SENTENCE} Automatically renews annually until canceled.
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-700 mt-3 leading-relaxed font-semibold text-left">
                       Our premier all-inclusive business membership designed for local businesses and entrepreneurs looking to connect, participate, gain maximum exposure, access exclusive local discounts, and build lasting community partnerships.
                     </p>
                   </div>
@@ -242,9 +263,12 @@ function MembershipContent() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                   <div className="text-[11px] font-bold text-red-100 uppercase tracking-wider">
-                    $390 / 1ST YEAR • SAVE $100
+                    $390 FIRST YEAR • THEN $490/YEAR UNTIL CANCELED
                   </div>
                 </button>
+                <p className="text-[11px] text-slate-600 leading-relaxed text-center">
+                  Automatically renews annually at the then-current membership rate. Cancel before your renewal date to prevent the next charge. {MEMBERSHIP_NOT_VOTING_MEMBER}
+                </p>
               </div>
             </div>
 

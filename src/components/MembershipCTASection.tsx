@@ -78,12 +78,12 @@ export default function MembershipCTASection({ onOpenJoinModal }: MembershipCTAS
                   <div className="text-2xl sm:text-3xl font-black font-outfit text-white">
                     $390
                   </div>
-                  <div className="text-[10px] text-red-300 font-bold">1st Yr (Renews $490/yr)</div>
+                  <div className="text-[10px] text-red-300 font-bold">First year $390 · then $490/yr</div>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
-                All-inclusive membership with enhanced directory ranking, priority spotlights, digital member badge, and exclusive local business discounts.
+              <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                12-month term from payment. Automatically renews annually at the then-current rate until canceled.
               </p>
 
               <ul className="space-y-2 text-xs text-slate-200">
