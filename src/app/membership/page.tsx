@@ -93,7 +93,11 @@ function MembershipContent() {
     { 
       q: "How quickly is my business directory listing activated?", 
       a: "Upon completing your member application and Stripe payment, our team verifies and activates your directory profile within 24 to 48 business hours." 
-    }
+    },
+    { 
+      q: "Do you offer refunds?", 
+      a: "No. Membership dues, donations, sponsorship payments, and other charges are non-refundable. You may cancel a future membership renewal before the next billing date, but amounts already paid for the current term are not refunded. See our Terms of Service for details." 
+    },
   ];
 
   return (

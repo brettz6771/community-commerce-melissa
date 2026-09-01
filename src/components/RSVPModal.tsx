@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { X, Calendar, MapPin, Clock, CheckCircle2, Download, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 interface RSVPModalProps {
   isOpen: boolean;
@@ -198,6 +199,13 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
               >
                 <span>CONFIRM RSVP & RESERVE SEAT</span>
               </button>
+              <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+                By reserving a seat, you agree to our{" "}
+                <Link href="/terms" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                  Terms of Service
+                </Link>
+                .
+              </p>
             </form>
           </div>
         )}

@@ -7,6 +7,7 @@ import LaunchBanner from "@/components/LaunchBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import PageTitle from "@/components/PageTitle";
+import TermsAgreement from "@/components/TermsAgreement";
 import Link from "next/link";
 import { 
   Heart, 
@@ -37,6 +38,7 @@ function GiveDonateContent() {
   const [donorInfo, setDonorInfo] = useState({ name: "", email: "", company: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const quickPills = ["25", "50", "100", "250", "500"];
 
@@ -312,11 +314,19 @@ function GiveDonateContent() {
                 </div>
               )}
 
+              <TermsAgreement
+                id="donate-agree-terms"
+                variant="light"
+                checked={agreedToTerms}
+                onChange={setAgreedToTerms}
+                includeRefund
+              />
+
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full btn-red py-4 rounded-xl font-black text-sm uppercase tracking-wider shadow-xl flex items-center justify-center gap-2 hover:scale-[1.01] transition"
+                disabled={isSubmitting || !agreedToTerms}
+                className="w-full btn-red py-4 rounded-xl font-black text-sm uppercase tracking-wider shadow-xl flex items-center justify-center gap-2 hover:scale-[1.01] transition disabled:opacity-50 disabled:hover:scale-100"
               >
                 {isSubmitting ? (
                   <>
@@ -333,7 +343,7 @@ function GiveDonateContent() {
               </button>
 
               <p className="text-[11px] text-slate-500 text-center">
-                Official 501(c)(3) tax receipt automatically generated and emailed immediately following confirmation.
+                Official 501(c)(3) tax receipt automatically generated and emailed immediately following confirmation. Donations are non-refundable.
               </p>
             </form>
           </div>

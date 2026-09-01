@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/photos-videos",
     "/community",
     "/news",
+    "/terms",
   ];
 
   return routes.map((route) => ({

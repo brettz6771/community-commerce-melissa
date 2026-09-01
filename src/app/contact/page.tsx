@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import PageTitle from "@/components/PageTitle";
+import TermsAgreement from "@/components/TermsAgreement";
 import { 
   PhoneCall, 
   Mail, 
@@ -22,6 +23,7 @@ export default function ContactPage() {
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", phone: "", subject: "General Inquiry", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,9 +182,17 @@ export default function ContactPage() {
                     ></textarea>
                   </div>
 
+                    <TermsAgreement
+                      id="contact-agree-terms"
+                      variant="light"
+                      checked={agreedToTerms}
+                      onChange={setAgreedToTerms}
+                    />
+
                   <button
                     type="submit"
-                    className="w-full btn-red py-3 rounded font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-2"
+                    disabled={!agreedToTerms}
+                    className="w-full btn-red py-3 rounded font-bold text-xs uppercase tracking-wider shadow flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     <Send className="w-4 h-4" />
                     SEND MESSAGE
