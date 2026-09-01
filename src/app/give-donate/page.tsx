@@ -8,6 +8,11 @@ import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import PageTitle from "@/components/PageTitle";
 import TermsAgreement from "@/components/TermsAgreement";
+import {
+  DONATION_UNRESTRICTED_NOTE,
+  REFUND_POLICY_SHORT,
+  TAX_TREATMENT_SHORT,
+} from "@/lib/legal";
 import Link from "next/link";
 import { 
   Heart, 
@@ -159,12 +164,12 @@ function GiveDonateContent() {
               <div>
                 <div className="text-sm font-extrabold text-white uppercase tracking-wide">501(c)(3) NON-PROFIT ORGANIZATION</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">
-                  Community Commerce Melissa is a 501(c)(3) non-profit organization. Your contributions are tax-deductible to the full extent of the law.
+                  Community Commerce Melissa is a 501(c)(3) non-profit organization. Charitable donations may be tax-deductible to the extent allowed by law. Deductibility depends on your circumstances; CCM does not provide tax advice.
                 </div>
               </div>
             </div>
             <span className="bg-white text-red-950 font-black px-4 py-1.5 rounded-full text-xs uppercase shrink-0 shadow-md">
-              TAX-DEDUCTIBLE
+              501(c)(3)
             </span>
           </div>
         </div>
@@ -186,7 +191,7 @@ function GiveDonateContent() {
                 CHOOSE ANY CONTRIBUTION AMOUNT
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Whether it&apos;s $10 or $1,000, 100% of your tax-deductible gift directly supports Melissa schools, youth scholarships, and community initiatives.
+                Whether it&apos;s $10 or $1,000, your gift supports Melissa schools, youth scholarships, and community initiatives. Deductibility depends on tax law and your circumstances.
               </p>
             </div>
 
@@ -255,9 +260,9 @@ function GiveDonateContent() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                      Email Address (For Tax Receipt) *
-                    </label>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                    Email Address (For Acknowledgment) *
+                  </label>
                     <input
                       type="email"
                       required
@@ -284,15 +289,18 @@ function GiveDonateContent() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                    Dedication or Special Program Note (Optional)
+                    Dedication or Program Preference (Optional)
                   </label>
                   <textarea
                     rows={2}
                     value={donorInfo.message}
                     onChange={(e) => setDonorInfo({ ...donorInfo, message: e.target.value })}
-                    placeholder="In honor of... / Direct towards youth scholarships / General community support..."
+                    placeholder="In honor of... / Preference for youth scholarships / General community support..."
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white"
                   />
+                  <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                    {DONATION_UNRESTRICTED_NOTE}
+                  </p>
                 </div>
               </div>
 
@@ -342,8 +350,8 @@ function GiveDonateContent() {
                 )}
               </button>
 
-              <p className="text-[11px] text-slate-500 text-center">
-                Official 501(c)(3) tax receipt automatically generated and emailed immediately following confirmation. Donations are non-refundable.
+              <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+                {TAX_TREATMENT_SHORT} {REFUND_POLICY_SHORT} CCM will email a written acknowledgment where required.
               </p>
             </form>
           </div>

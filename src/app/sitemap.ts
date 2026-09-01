@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/community",
     "/news",
     "/terms",
+    "/privacy",
   ];
 
   return routes.map((route) => ({

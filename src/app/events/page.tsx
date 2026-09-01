@@ -8,6 +8,7 @@ import RSVPModal from "@/components/RSVPModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import { MOCK_EVENTS } from "@/data/mockData";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
+import { EVENTS_NOTICE, PHOTOGRAPHY_POLICY } from "@/lib/legal";
 import { 
   Calendar, 
   MapPin, 
@@ -78,6 +79,9 @@ export default function EventsPage() {
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
               Connect with fellow business owners, gain valuable knowledge, and elevate your presence in Melissa, Texas.
+            </p>
+            <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed pt-1">
+              {EVENTS_NOTICE} {PHOTOGRAPHY_POLICY}
             </p>
           </div>
         </div>
