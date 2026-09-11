@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
+import { isStripeCheckoutFulfilled } from "@/lib/membership-coupons";
 
 export async function GET(request: Request) {
   try {
@@ -28,7 +29,7 @@ export async function GET(request: Request) {
       expand: ["line_items", "customer", "subscription"],
     });
 
-    if (session.payment_status !== "paid" && session.status !== "complete") {
+    if (!isStripeCheckoutFulfilled(session) && session.status !== "complete") {
       return NextResponse.json(
         { error: "Checkout session is not paid." },
         { status: 402 }
@@ -71,6 +72,8 @@ export async function GET(request: Request) {
       subscriptionId: typeof session.subscription === "string" ? session.subscription : (session.subscription as { id?: string } | null)?.id,
       date,
       isTest: metadata.isTest === "true",
+      complimentary: metadata.complimentary === "true",
+      promoCode: metadata.promoCode || "",
       category: metadata.category || "General Business",
       website: metadata.website || "",
       notes: metadata.notes || "",

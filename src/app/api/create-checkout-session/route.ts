@@ -3,6 +3,14 @@ import Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { clampDonationAmountUsd, getCheckoutOrigin, truncateMeta } from "@/lib/site";
 import { isValidEmail } from "@/lib/html";
+import {
+  STAFF_COMP_PROMO_CODE,
+  classifyMembershipPromo,
+  createFreshStaffCompCoupon,
+  INVALID_MEMBERSHIP_CODE_MESSAGE,
+  resolveStaffCompCoupon,
+  STAFF_COMP_COUPON_MISSING_MESSAGE,
+} from "@/lib/membership-coupons";
 
 const PARTNER_ANNUAL_CENTS = 49000; // Recurring list price: $490/year
 const PARTNER_INTRO_OFF_CENTS = 10000; // First invoice only: $100 off → $390 due today
@@ -90,6 +98,14 @@ export async function POST(request: Request) {
       notes 
     } = body;
 
+    const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
+    if (!isDonation) {
+      const earlyPromoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
+      if (earlyPromoKind === "invalid") {
+        return NextResponse.json({ error: INVALID_MEMBERSHIP_CODE_MESSAGE }, { status: 400 });
+      }
+    }
+
     let stripe: Stripe;
     try {
       stripe = getStripe();
@@ -103,8 +119,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
     const origin = getCheckoutOrigin(request);
 
     const useEmbedded = body.uiMode === "embedded" || body.embedded === true;
@@ -168,28 +182,44 @@ export async function POST(request: Request) {
     // ----------------------------------------------------
     // Case 2: Membership Subscriptions (mode: "subscription")
     // Sole Membership Tier: Community Partner ($390 1st Yr, renews $490/yr)
+    // Optional staff code CCMCommunityBuilder: indefinite $0 membership
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
+    const isComplimentary = classifyMembershipPromo(body.couponCode ?? body.promoCode) === "staff_comp";
 
-    const productName = "Community Partner — Annual Membership";
-    const productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
+    const productName = isComplimentary
+      ? "Community Partner — Complimentary Membership"
+      : "Community Partner — Annual Membership";
+    const productDesc = isComplimentary
+      ? "Community Commerce Melissa — Complimentary Community Partner (CCMCommunityBuilder). $0 due, no automatic billing until cancelled."
+      : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
     const successTierParam = "Community Partner";
 
-    const partnerCouponId = await resolvePartnerCoupon(stripe);
-    if (!partnerCouponId) {
-      return NextResponse.json(
-        {
-          error:
-            "The $100 first-year membership discount could not be applied. Please try again or email info@communitycommercemelissa.org.",
-        },
-        { status: 503 }
-      );
+    let appliedCouponId: string | null = null;
+    if (isComplimentary) {
+      appliedCouponId = await resolveStaffCompCoupon(stripe);
+      if (!appliedCouponId) {
+        return NextResponse.json({ error: STAFF_COMP_COUPON_MISSING_MESSAGE }, { status: 503 });
+      }
+    } else {
+      appliedCouponId = await resolvePartnerCoupon(stripe);
+      if (!appliedCouponId) {
+        return NextResponse.json(
+          {
+            error:
+              "The $100 first-year membership discount could not be applied. Please try again or email info@communitycommercemelissa.org.",
+          },
+          { status: 503 }
+        );
+      }
     }
 
     const membershipMetadata: Stripe.MetadataParam = {
       type: "membership",
       tier: isTest ? "Community Partner ($390 1st Yr • Renews $490/yr)" : truncateMeta(tier, 200),
       isTest: isTest ? "true" : "false",
+      complimentary: isComplimentary ? "true" : "false",
+      promoCode: isComplimentary ? STAFF_COMP_PROMO_CODE : "",
       businessName: truncateMeta(businessName || "N/A"),
       contactName: truncateMeta(ownerName || "N/A"),
       email: truncateMeta(email || "N/A"),
@@ -213,8 +243,10 @@ export async function POST(request: Request) {
               description: productDesc,
               images: [`${origin}/ccm-logo-transparent.png`],
             },
-            // Recurring list price is always $490/year. The once coupon takes $100
-            // off invoice #1 only ($390 due today); later cycles bill $490.
+            // Recurring list price is always $490/year. Paid signups use a once
+            // $100 coupon (year 1 = $390). CCMCommunityBuilder replaces that
+            // with a duration=forever 100% coupon so invoices stay $0 until
+            // the subscription is cancelled — not a trial, not a one-time off.
             unit_amount: PARTNER_ANNUAL_CENTS,
             recurring: {
               interval: "year",
@@ -224,7 +256,7 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      discounts: [{ coupon: partnerCouponId }],
+      discounts: [{ coupon: appliedCouponId }],
       mode: "subscription",
       customer_email: isValidEmail(email) ? email.trim() : undefined,
       metadata: membershipMetadata,
@@ -232,6 +264,13 @@ export async function POST(request: Request) {
         metadata: membershipMetadata,
       },
     };
+
+    if (isComplimentary) {
+      // $0 first invoice + forever 100% off: do not collect a card and do not
+      // start paid billing later. Stripe Checkout forbids combining `discounts`
+      // with `allow_promotion_codes`, so the staff code is applied server-side.
+      sessionParams.payment_method_collection = "if_required";
+    }
 
     if (useEmbedded) {
       sessionParams.ui_mode = "embedded";
@@ -246,17 +285,24 @@ export async function POST(request: Request) {
       session = await stripe.checkout.sessions.create(sessionParams);
     } catch (createErr: unknown) {
       const errMsg = String(createErr instanceof Error ? createErr.message : createErr).toLowerCase();
-      // Keep the $490 recurring price. If the coupon ID was stale, mint a fresh
-      // once-only $100 coupon and retry — never drop the list price to $390.
       if (errMsg.includes("coupon") || errMsg.includes("discount") || errMsg.includes("no such")) {
-        console.warn("Retrying Community Partner checkout with a fresh $100-off once coupon:", createErr);
-        const freshCoupon = await stripe.coupons.create({
-          amount_off: PARTNER_INTRO_OFF_CENTS,
-          currency: "usd",
-          duration: "once",
-        });
-        sessionParams.discounts = [{ coupon: freshCoupon.id }];
-        session = await stripe.checkout.sessions.create(sessionParams);
+        if (isComplimentary) {
+          console.warn("Retrying complimentary checkout with a fresh forever 100% coupon:", createErr);
+          const freshCompId = await createFreshStaffCompCoupon(stripe);
+          sessionParams.discounts = [{ coupon: freshCompId }];
+          session = await stripe.checkout.sessions.create(sessionParams);
+        } else {
+          // Keep the $490 recurring price. If the coupon ID was stale, mint a fresh
+          // once-only $100 coupon and retry — never drop the list price to $390.
+          console.warn("Retrying Community Partner checkout with a fresh $100-off once coupon:", createErr);
+          const freshCoupon = await stripe.coupons.create({
+            amount_off: PARTNER_INTRO_OFF_CENTS,
+            currency: "usd",
+            duration: "once",
+          });
+          sessionParams.discounts = [{ coupon: freshCoupon.id }];
+          session = await stripe.checkout.sessions.create(sessionParams);
+        }
       } else {
         throw createErr;
       }
