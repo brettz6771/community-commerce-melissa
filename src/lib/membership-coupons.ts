@@ -57,10 +57,10 @@ export function isStripeCheckoutFulfilled(session: {
 }
 
 export const INVALID_MEMBERSHIP_CODE_MESSAGE =
-  "That membership code is not valid. Leave the field blank to continue at the standard first-year rate, or ask staff for a complimentary code.";
+  "That coupon code is not valid. Leave the field blank to continue at the standard first-year rate, or ask staff for a complimentary code.";
 
 export const STAFF_COMP_COUPON_MISSING_MESSAGE =
-  "The complimentary membership code could not be applied. Staff: in Stripe Dashboard create a 100% off coupon with Duration = Forever (not once, not repeating), then a Promotion code exactly CCMCommunityBuilder. The site will also try to create this automatically on the next signup if the Stripe key can write coupons.";
+  "The complimentary coupon code could not be applied. Staff: in Stripe Dashboard create a 100% off coupon with Duration = Forever (not once, not repeating), then a Promotion code exactly CCMCommunityBuilder. The site will also try to create this automatically on the next signup if the Stripe key can write coupons.";
 
 function couponFromPromo(promo: Stripe.PromotionCode): Stripe.Coupon | string | null {
   return promo.promotion?.coupon ?? null;
