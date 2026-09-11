@@ -145,6 +145,13 @@ export default function TermsPage() {
                 </a>{" "}
                 before the next billing date. Cancellation stops future charges; it does not refund amounts already paid for the current term.
               </p>
+              <p>
+                Complimentary memberships, when granted by staff, stay active at no charge with no automatic conversion to paid billing. They remain in effect until the member asks us to cancel or Community Commerce Melissa staff cancel the membership in Stripe. Complimentary members cancel the same way as paid members: email{" "}
+                <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
+                  info@communitycommercemelissa.org
+                </a>
+                . Staff cancel in the Stripe Dashboard by opening the customer&apos;s subscription and choosing Cancel subscription.
+              </p>
             </section>
 
             <section id="refunds" className="scroll-mt-28 space-y-3">

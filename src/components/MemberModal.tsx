@@ -6,6 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 import TermsAgreement from "@/components/TermsAgreement";
+import { isStaffCompPromoCode } from "@/lib/membership-coupons";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -27,7 +28,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
     website: "",
     city: "Melissa",
     state: "TX",
-    notes: ""
+    notes: "",
+    couponCode: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -78,7 +80,8 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   if (!isOpen) return null;
 
   const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
-  const amountDisplay = isCorporate ? "Custom" : "$390";
+  const isComplimentaryPreview = !isCorporate && isStaffCompPromoCode(formData.couponCode);
+  const amountDisplay = isCorporate ? "Custom" : isComplimentaryPreview ? "Complimentary" : "$390";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,6 +146,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
           city: formData.city || "Melissa",
           state: formData.state || "TX",
           notes: formData.notes,
+          couponCode: formData.couponCode,
           uiMode: stripePromise ? "embedded" : "hosted",
         }),
       });
@@ -223,7 +227,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <strong className="text-white">{selectedTier}</strong>
               </div>
               <div className="text-sm font-black text-red-400">
-                {amountDisplay}/yr
+                {isComplimentaryPreview ? "Complimentary" : `${amountDisplay}/yr`}
               </div>
             </div>
             <p className="text-[11px] text-slate-400">
@@ -461,6 +465,32 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 </div>
               )}
 
+              {!isCorporate && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                    Membership code (optional)
+                  </label>
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    spellCheck={false}
+                    value={formData.couponCode}
+                    onChange={(e) => setFormData({ ...formData, couponCode: e.target.value })}
+                    placeholder="Staff code, if you were given one"
+                    className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                  {isComplimentaryPreview ? (
+                    <p className="text-[10px] text-emerald-400 mt-1">
+                      Complimentary membership: $0 due, no automatic billing until cancelled.
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Leave blank to continue at the standard first-year rate.
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Payment & Sponsorship Tier Info */}
               {!isCorporate ? (
                 <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
@@ -470,7 +500,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <Lock className="w-3 h-3 text-emerald-400" />
-                    <span>Annual Auto-Renewing Subscription</span>
+                    <span>
+                      {isComplimentaryPreview
+                        ? "Complimentary — no automatic billing"
+                        : "Annual Auto-Renewing Subscription"}
+                    </span>
                   </div>
                 </div>
               ) : (
@@ -517,7 +551,11 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     </>
                   ) : (
                     <>
-                      <span>PROCEED TO SECURE CHECKOUT ({amountDisplay})</span>
+                      <span>
+                        {isComplimentaryPreview
+                          ? "PROCEED TO COMPLIMENTARY CHECKOUT ($0)"
+                          : `PROCEED TO SECURE CHECKOUT (${amountDisplay})`}
+                      </span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}

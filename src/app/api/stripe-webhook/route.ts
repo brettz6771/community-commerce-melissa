@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
 import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 import { getStripe } from "@/lib/stripe";
+import { isStripeCheckoutFulfilled } from "@/lib/membership-coupons";
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -80,18 +81,30 @@ export async function POST(request: Request) {
               },
             });
           } else {
+            const isComplimentary = metadata.complimentary === "true";
+            const membershipFulfilled = isStripeCheckoutFulfilled(session);
             await saveContactToDb({
               email: targetEmail as string,
-              formType: metadata.isTest === "true" ? "Live Test Membership (Stripe)" : "Paid Membership (Stripe)",
+              formType:
+                metadata.isTest === "true"
+                  ? "Live Test Membership (Stripe)"
+                  : isComplimentary
+                    ? "Complimentary Membership (Stripe)"
+                    : "Paid Membership (Stripe)",
               source: "Stripe Subscription Checkout",
               details: {
-                "Payment Status": "Active Subscription",
+                "Payment Status": isComplimentary
+                  ? "Complimentary — $0, no automatic billing"
+                  : "Active Subscription",
                 "Stripe Session ID": session.id,
                 "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
                 "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
                 "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
-                "Billing Frequency": "Annual Recurring",
+                "Billing Frequency": isComplimentary
+                  ? "Indefinite complimentary (cancels only if member or staff cancel)"
+                  : "Annual Recurring",
                 "Membership Tier": metadata.tier || "N/A",
+                "Complimentary Code": isComplimentary ? metadata.promoCode || "CCMCommunityBuilder" : "N/A",
                 "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
                 "Business Name": metadata.businessName || "N/A",
                 "Contact Name": metadata.contactName || "N/A",
@@ -104,8 +117,8 @@ export async function POST(request: Request) {
               },
             });
 
-            // Auto-add new business to Directory table after a paid checkout
-            if (session.payment_status === "paid" && metadata.businessName && metadata.businessName !== "N/A") {
+            // Auto-add new business after paid or $0 complimentary checkout
+            if (membershipFulfilled && metadata.businessName && metadata.businessName !== "N/A") {
               await saveDirectoryMember({
                 businessName: metadata.businessName,
                 category: metadata.category || "General Business",
@@ -129,7 +142,9 @@ export async function POST(request: Request) {
                 ownerName: metadata.contactName || "",
                 tier: metadata.tier || "Community Partner",
                 memberId,
-                amount: ((session.amount_total || 0) / 100).toFixed(2),
+                amount: isComplimentary
+                  ? "0.00 (Complimentary — CCMCommunityBuilder)"
+                  : ((session.amount_total || 0) / 100).toFixed(2),
                 city: metadata.city || "Melissa",
                 state: metadata.state || "TX",
                 phone: metadata.phone || "",

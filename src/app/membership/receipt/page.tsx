@@ -576,7 +576,11 @@ function ReceiptBadgeContent() {
                   <div className="flex justify-between py-2 border-b border-slate-100">
                     <span className="text-slate-500 font-medium">Billing Term:</span>
                     <span className="font-bold text-slate-900">
-                      {receiptData?.isSubscription ? "Annual Auto-Renewing" : "One-Time Contribution"}
+                      {receiptData?.complimentary
+                        ? "Complimentary — no automatic billing"
+                        : receiptData?.isSubscription
+                          ? "Annual Auto-Renewing"
+                          : "One-Time Contribution"}
                     </span>
                   </div>
 
@@ -595,7 +599,9 @@ function ReceiptBadgeContent() {
                       <div className="text-xs text-slate-600">Annual Membership</div>
                     </div>
                     <div className="text-2xl font-black font-outfit text-slate-900">
-                      ${receiptData?.amount?.toFixed(2) || "390.00"}
+                      {receiptData?.complimentary
+                        ? "$0.00"
+                        : `$${receiptData?.amount?.toFixed(2) || "390.00"}`}
                     </div>
                   </div>
                 </div>
