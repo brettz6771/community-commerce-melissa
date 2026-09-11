@@ -468,7 +468,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               {!isCorporate && (
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
-                    Membership code (optional)
+                    Coupon Code
                   </label>
                   <input
                     type="text"
@@ -476,7 +476,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     spellCheck={false}
                     value={formData.couponCode}
                     onChange={(e) => setFormData({ ...formData, couponCode: e.target.value })}
-                    placeholder="Staff code, if you were given one"
+                    placeholder="Coupon code, if you were given one"
                     className="w-full bg-[#151922] border border-slate-700 rounded px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
                   />
                   {isComplimentaryPreview ? (
@@ -485,7 +485,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     </p>
                   ) : (
                     <p className="text-[10px] text-slate-500 mt-1">
-                      Leave blank to continue at the standard first-year rate.
+                      Coupon code, if you were given one
                     </p>
                   )}
                 </div>
