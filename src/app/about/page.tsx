@@ -38,7 +38,7 @@ export default function AboutPage() {
               ABOUT COMMUNITY COMMERCE MELISSA
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold font-outfit uppercase tracking-tight">
-              &ldquo;Not a Chamber. <span className="text-slate-200">A Community.&rdquo;</span>
+              Built by Community. <span className="text-slate-200">Driven by Impact.</span>
             </h1>
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
               Dedicated to serving Melissa, giving back to local causes, and championing local business growth.
