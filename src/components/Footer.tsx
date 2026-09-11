@@ -124,6 +124,7 @@ export default function Footer() {
               <li><Link href="/volunteer" className="hover:text-white transition">Volunteer Program</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Us</Link></li>
               <li><Link href="/terms" className="hover:text-white transition">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -206,6 +207,10 @@ export default function Footer() {
                 <Link href="/terms" className="text-slate-300 hover:text-white underline underline-offset-2">
                   Terms of Service
                 </Link>
+                {" and "}
+                <Link href="/privacy" className="text-slate-300 hover:text-white underline underline-offset-2">
+                  Privacy Policy
+                </Link>
                 .
               </p>
             </form>
@@ -225,7 +230,7 @@ export default function Footer() {
               />
             </Link>
             <span className="font-outfit font-medium text-xs sm:text-sm tracking-wide text-slate-300">
-              Community Commerce Melissa is a 501(c)(3) non-profit organization.
+              Community Commerce Melissa is a 501(c)(3) non-profit organization. Not all payments are tax-deductible.
             </span>
           </div>
 
@@ -241,7 +246,10 @@ export default function Footer() {
               <Link href="/terms" className="hover:text-white transition">
                 Terms of Service
               </Link>
-              {" • "}All payments are non-refundable
+              {" · "}
+              <Link href="/privacy" className="hover:text-white transition">
+                Privacy Policy
+              </Link>
             </div>
             <div>MELISSA, TEXAS • &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved.</div>
           </div>

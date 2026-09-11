@@ -171,8 +171,8 @@ export async function sendMemberWelcomeAndAdminAlert({
   const directoryUrl = `${siteUrl}/directory`;
 
   const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
-    ? "2026 Corporate Partner"
-    : "2026 Community Partner";
+    ? "Corporate Partner"
+    : "Community Partner";
 
   const safeOwner = escapeHtml(ownerName || businessName);
   const safeBusiness = escapeHtml(businessName);
@@ -256,7 +256,7 @@ export async function sendMemberWelcomeAndAdminAlert({
                       </tr>
                       <tr>
                         <td style="color: #94a3b8;">Status:</td>
-                        <td style="color: #22c55e; font-weight: bold;">Active Verified (2026–2027)</td>
+                        <td style="color: #22c55e; font-weight: bold;">Active for 12 months from payment (auto-renews annually until canceled)</td>
                       </tr>
                     </table>
                   </div>
@@ -272,7 +272,10 @@ export async function sendMemberWelcomeAndAdminAlert({
                   </div>
 
                   <p style="color: #94a3b8; font-size: 13px; line-height: 1.6;">
-                    Your digital member badge is now active and your profile is live in the Melissa Business Directory. You can download the high-resolution badge image for your website footer and email signature, or print your official storefront certificate.
+                    Your digital member badge is now active and your profile is live in the Melissa Business Directory while membership remains current. You can download the high-resolution badge image for your website footer and email signature, or print your official storefront certificate. The badge is revocable, non-transferable, and may be used only while membership is active. Do not alter it in a misleading way or use it to imply that CCM guarantees or endorses your business.
+                  </p>
+                  <p style="color: #94a3b8; font-size: 13px; line-height: 1.6;">
+                    This membership payment is program dues and is not a charitable contribution unless CCM’s written acknowledgment says otherwise. Consult your own tax advisor. See our Terms of Service and Privacy Policy at ${siteUrl}/terms and ${siteUrl}/privacy.
                   </p>
                 </td>
               </tr>
@@ -452,8 +455,8 @@ export async function sendMemberBadgeOnlyEmail({
   const receiptUrl = `${siteUrl}/membership/receipt?session_id=${encodeURIComponent(sessionId || "")}&tier=${encodeURIComponent(tier)}`;
 
   const cleanTier = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
-    ? "2026 Corporate Partner"
-    : "2026 Community Partner";
+    ? "Corporate Partner"
+    : "Community Partner";
 
   const safeOwner = escapeHtml(ownerName || businessName);
   const safeBusiness = escapeHtml(businessName);
@@ -475,7 +478,7 @@ export async function sendMemberBadgeOnlyEmail({
                     Official Member Badge Copy
                   </h1>
                   <p style="color: #ef4444; margin: 6px 0 0 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">
-                    ${cleanTier} • 2026–2027
+                    ${cleanTier} • 12-month term from payment
                   </p>
                 </td>
               </tr>
@@ -485,7 +488,7 @@ export async function sendMemberBadgeOnlyEmail({
                     Hello <strong>${safeOwner}</strong>,
                   </p>
                   <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">
-                    Here is a copy of your verified digital membership badge and credential toolkit for <strong>${safeBusiness}</strong>.
+                    Here is a copy of your verified digital membership badge and credential toolkit for <strong>${safeBusiness}</strong>. Use the badge only while membership is active. It is revocable, non-transferable, and does not mean CCM guarantees or endorses your business.
                   </p>
                   <div style="background-color: #1a202c; border: 1px solid #334155; border-radius: 10px; padding: 16px; margin: 20px 0;">
                     <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold;">Member Verification ID</div>

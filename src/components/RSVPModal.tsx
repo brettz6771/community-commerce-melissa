@@ -204,7 +204,11 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
                 <Link href="/terms" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
                   Terms of Service
                 </Link>
-                .
+                {" and "}
+                <Link href="/privacy" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                  Privacy Policy
+                </Link>
+                , including event conduct, ordinary event risks, photography practices, and rules regarding minors.
               </p>
             </form>
           </div>

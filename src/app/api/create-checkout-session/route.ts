@@ -3,9 +3,16 @@ import Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { clampDonationAmountUsd, getCheckoutOrigin, truncateMeta } from "@/lib/site";
 import { isValidEmail } from "@/lib/html";
+import {
+  PARTNER_INTRO_OFF_CENTS,
+  PARTNER_RENEWAL_CENTS,
+  STRIPE_DONATION_PRODUCT_DESCRIPTION,
+  STRIPE_DONATION_SUBMIT_MESSAGE,
+  STRIPE_MEMBERSHIP_PRODUCT_DESCRIPTION,
+  STRIPE_MEMBERSHIP_SUBMIT_MESSAGE,
+} from "@/lib/legal";
 
-const PARTNER_ANNUAL_CENTS = 49000; // Recurring list price: $490/year
-const PARTNER_INTRO_OFF_CENTS = 10000; // First invoice only: $100 off → $390 due today
+const PARTNER_ANNUAL_CENTS = PARTNER_RENEWAL_CENTS;
 
 function isOnceHundredOffCoupon(coupon: Stripe.Coupon): boolean {
   return (
@@ -128,7 +135,7 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: `Community Commerce Melissa — One-Time Contribution ($${donationAmountNum})`,
-                description: `501(c)(3) Non-Profit Contribution supporting Melissa community programs, youth scholarships, and local initiatives.`,
+                description: STRIPE_DONATION_PRODUCT_DESCRIPTION,
                 images: [`${origin}/ccm-logo-transparent.png`],
               },
               unit_amount: amountInCents,
@@ -145,6 +152,14 @@ export async function POST(request: Request) {
           company: company || "N/A",
           donationAmount: `$${donationAmountNum}`,
           message: donationMessage || "None",
+        },
+        custom_text: {
+          submit: {
+            message: STRIPE_DONATION_SUBMIT_MESSAGE,
+          },
+        },
+        payment_intent_data: {
+          description: STRIPE_DONATION_PRODUCT_DESCRIPTION.slice(0, 1000),
         },
       };
 
@@ -172,7 +187,7 @@ export async function POST(request: Request) {
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
 
     const productName = "Community Partner — Annual Membership";
-    const productDesc = "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
+    const productDesc = STRIPE_MEMBERSHIP_PRODUCT_DESCRIPTION;
     const successTierParam = "Community Partner";
 
     const partnerCouponId = await resolvePartnerCoupon(stripe);
@@ -230,6 +245,12 @@ export async function POST(request: Request) {
       metadata: membershipMetadata,
       subscription_data: {
         metadata: membershipMetadata,
+        description: STRIPE_MEMBERSHIP_PRODUCT_DESCRIPTION.slice(0, 500),
+      },
+      custom_text: {
+        submit: {
+          message: STRIPE_MEMBERSHIP_SUBMIT_MESSAGE,
+        },
       },
     };
 

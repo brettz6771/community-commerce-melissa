@@ -1,8 +1,62 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
+import { saveContactToDb, saveDirectoryMember, updateDirectoryMembershipStatus } from "@/lib/db";
 import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 import { getStripe } from "@/lib/stripe";
+import {
+  defaultMembershipExpiresAt,
+  shouldRestoreAfterDispute,
+  subscriptionPeriodEndUnix,
+  unixSecondsToDate,
+} from "@/lib/membership-listing";
+
+function idOf(value: unknown): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value && "id" in value) {
+    return String((value as { id?: string }).id || "");
+  }
+  return String(value);
+}
+
+async function contactFromDispute(
+  stripe: Stripe,
+  dispute: Stripe.Dispute
+): Promise<{ email: string; customerId: string }> {
+  let email = dispute.evidence?.customer_email_address || "";
+  let customerId = "";
+  let charge = dispute.charge;
+  try {
+    if (typeof charge === "string") {
+      charge = await stripe.charges.retrieve(charge);
+    }
+  } catch (err) {
+    console.warn("Could not retrieve disputed charge:", err);
+  }
+  if (charge && typeof charge !== "string") {
+    email = email || charge.billing_details?.email || "";
+    customerId = idOf(charge.customer);
+  }
+  return { email, customerId };
+}
+
+function periodEndFromSubscription(sub: Stripe.Subscription): Date {
+  const unix = subscriptionPeriodEndUnix(sub);
+  return unixSecondsToDate(unix) || defaultMembershipExpiresAt(new Date());
+}
+
+async function expiresAtForSubscription(stripe: Stripe, subscriptionId: string): Promise<Date> {
+  if (!subscriptionId) {
+    return defaultMembershipExpiresAt(new Date());
+  }
+  try {
+    const sub = await stripe.subscriptions.retrieve(subscriptionId);
+    return periodEndFromSubscription(sub);
+  } catch (err) {
+    console.warn("Could not retrieve Stripe subscription period end:", err);
+    return defaultMembershipExpiresAt(new Date());
+  }
+}
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -62,7 +116,6 @@ export async function POST(request: Request) {
           isTest: metadata.isTest,
         });
 
-        // Save to database
         const targetEmail = session.customer_email || metadata.donorEmail || metadata.email;
         if (targetEmail) {
           if (isDonation) {
@@ -80,6 +133,10 @@ export async function POST(request: Request) {
               },
             });
           } else {
+            const subscriptionId = idOf(session.subscription);
+            const customerId = idOf(session.customer);
+            const membershipExpiresAt = await expiresAtForSubscription(stripe, subscriptionId);
+
             await saveContactToDb({
               email: targetEmail as string,
               formType: metadata.isTest === "true" ? "Live Test Membership (Stripe)" : "Paid Membership (Stripe)",
@@ -87,10 +144,12 @@ export async function POST(request: Request) {
               details: {
                 "Payment Status": "Active Subscription",
                 "Stripe Session ID": session.id,
-                "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
-                "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
+                "Stripe Subscription ID": subscriptionId || "N/A",
+                "Stripe Customer ID": customerId || "N/A",
                 "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
                 "Billing Frequency": "Annual Recurring",
+                "Membership Term": "12 months from payment, auto-renews until canceled",
+                "Membership Expires At": membershipExpiresAt.toISOString(),
                 "Membership Tier": metadata.tier || "N/A",
                 "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
                 "Business Name": metadata.businessName || "N/A",
@@ -104,7 +163,6 @@ export async function POST(request: Request) {
               },
             });
 
-            // Auto-add new business to Directory table after a paid checkout
             if (session.payment_status === "paid" && metadata.businessName && metadata.businessName !== "N/A") {
               await saveDirectoryMember({
                 businessName: metadata.businessName,
@@ -118,9 +176,13 @@ export async function POST(request: Request) {
                 ownerName: metadata.contactName || "",
                 tier: metadata.tier || "Community Partner",
                 isTest: metadata.isTest === "true",
+                isActive: true,
+                stripeSubscriptionId: subscriptionId,
+                stripeCustomerId: customerId,
+                membershipStartedAt: new Date(),
+                membershipExpiresAt,
               });
 
-              // Dispatch Member Welcome Email & Admin Notification
               const shortId = session.id.slice(-6).toUpperCase();
               const memberId = `CCM-2026-${shortId}`;
               await sendMemberWelcomeAndAdminAlert({
@@ -144,32 +206,102 @@ export async function POST(request: Request) {
       }
 
       case "invoice.payment_succeeded": {
-        const invoice = event.data.object as any;
-        // Ignore the very first invoice if it was already handled by checkout.session.completed
-        if (invoice.billing_reason === "subscription_cycle") {
-          const subscriptionId = invoice.subscription || invoice.parent?.subscription_details?.subscription || invoice.subscription_details?.subscription || "N/A";
+        const invoice = event.data.object as Stripe.Invoice;
+        const billingReason = (invoice as { billing_reason?: string }).billing_reason;
+        if (billingReason === "subscription_cycle") {
+          const subscriptionId =
+            idOf((invoice as { subscription?: unknown }).subscription) ||
+            idOf((invoice as { parent?: { subscription_details?: { subscription?: unknown } } }).parent?.subscription_details?.subscription);
+          const customerEmail = invoice.customer_email || "";
+          const customerId = idOf(invoice.customer);
+          const membershipExpiresAt = await expiresAtForSubscription(stripe, subscriptionId);
+
           console.log("Stripe Recurring Subscription Payment Succeeded:", {
             invoiceId: invoice.id,
-            subscriptionId: subscriptionId,
-            customerEmail: invoice.customer_email,
+            subscriptionId,
+            customerEmail,
             amountPaid: invoice.amount_paid,
           });
 
-          if (invoice.customer_email) {
+          if (customerEmail) {
             await saveContactToDb({
-              email: invoice.customer_email,
+              email: customerEmail,
               formType: "Membership Subscription Renewal (Stripe)",
               source: "Stripe Recurring Billing",
               details: {
                 "Payment Status": "Renewed",
                 "Invoice ID": invoice.id,
-                "Subscription ID": String(subscriptionId),
+                "Subscription ID": subscriptionId || "N/A",
                 "Amount Paid": `$${((invoice.amount_paid || 0) / 100).toFixed(2)}`,
-                "Billing Reason": invoice.billing_reason,
+                "Billing Reason": billingReason,
+                "Membership Expires At": membershipExpiresAt.toISOString(),
               },
             });
           }
+
+          await updateDirectoryMembershipStatus({
+            isActive: true,
+            stripeSubscriptionId: subscriptionId,
+            stripeCustomerId: customerId,
+            email: customerEmail,
+            membershipExpiresAt,
+          });
         }
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const inactiveStatuses = new Set(["canceled", "unpaid", "incomplete_expired", "paused"]);
+        const isActive = !inactiveStatuses.has(subscription.status);
+        const metadata = subscription.metadata || {};
+        await updateDirectoryMembershipStatus({
+          isActive,
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: idOf(subscription.customer),
+          email: metadata.email || "",
+          membershipExpiresAt: isActive ? periodEndFromSubscription(subscription) : new Date(),
+        });
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const metadata = subscription.metadata || {};
+        console.log("Stripe Subscription Canceled:", subscription.id);
+        await updateDirectoryMembershipStatus({
+          isActive: false,
+          stripeSubscriptionId: subscription.id,
+          stripeCustomerId: idOf(subscription.customer),
+          email: metadata.email || "",
+          membershipExpiresAt: new Date(),
+        });
+        break;
+      }
+
+      case "charge.dispute.created": {
+        const dispute = event.data.object as Stripe.Dispute;
+        const { email, customerId } = await contactFromDispute(stripe, dispute);
+        console.log("Stripe Dispute Created; temporarily suspending associated membership benefits:", dispute.id);
+        await updateDirectoryMembershipStatus({
+          isActive: false,
+          stripeCustomerId: customerId,
+          email,
+        });
+        break;
+      }
+
+      case "charge.dispute.closed": {
+        const dispute = event.data.object as Stripe.Dispute;
+        if (!shouldRestoreAfterDispute(dispute.status)) {
+          break;
+        }
+        const { email, customerId } = await contactFromDispute(stripe, dispute);
+        await updateDirectoryMembershipStatus({
+          isActive: true,
+          stripeCustomerId: customerId,
+          email,
+        });
         break;
       }
 
@@ -193,12 +325,6 @@ export async function POST(request: Request) {
             },
           });
         }
-        break;
-      }
-
-      case "customer.subscription.deleted": {
-        const subscription = event.data.object as Stripe.Subscription;
-        console.log("Stripe Subscription Canceled:", subscription.id);
         break;
       }
 

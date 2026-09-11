@@ -53,7 +53,20 @@ function ReceiptBadgeContent() {
       renewalDate.setFullYear(renewalDate.getFullYear() + 1);
       return renewalDate.toLocaleDateString("en-US", { month: "long", year: "numeric" }).toUpperCase();
     } catch {
-      return "AUGUST 2027";
+      return "12 MONTHS FROM PAYMENT";
+    }
+  };
+
+  const getTermLabel = (dateStr?: string) => {
+    try {
+      const start = dateStr ? new Date(dateStr) : new Date();
+      if (isNaN(start.getTime())) return "12 MONTHS FROM PAYMENT";
+      const end = new Date(start);
+      end.setFullYear(end.getFullYear() + 1);
+      const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", year: "numeric" }).toUpperCase();
+      return `${fmt(start)} – ${fmt(end)}`;
+    } catch {
+      return "12 MONTHS FROM PAYMENT";
     }
   };
 
@@ -140,6 +153,7 @@ function ReceiptBadgeContent() {
 
       const businessName = (receiptData?.businessName || "MELISSA COMMUNITY PARTNER").toUpperCase();
       const memberId = receiptData?.memberId || "CCM-2026-MEMBER";
+      const termLabel = getTermLabel(receiptData?.date);
 
       // 1. Background
       const bgGrad = ctx.createLinearGradient(0, 0, 1200, 800);
@@ -178,7 +192,7 @@ function ReceiptBadgeContent() {
       // 5. Tier Name Banner
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "900 48px sans-serif";
-      ctx.fillText(`2026 ${cleanTier}`, 600, 275);
+      ctx.fillText(cleanTier, 600, 275);
 
       // 6. Gold Separator Line
       const lineGrad = ctx.createLinearGradient(300, 0, 900, 0);
@@ -233,7 +247,7 @@ function ReceiptBadgeContent() {
       ctx.fillText("MEMBERSHIP TERM", 660, 570);
       ctx.fillStyle = "#FFFFFF";
       ctx.font = "900 32px sans-serif";
-      ctx.fillText("2026 – 2027", 660, 620);
+      ctx.fillText(termLabel, 660, 620);
       ctx.fillStyle = "#94A3B8";
       ctx.font = "bold 14px sans-serif";
       ctx.fillText("Melissa, Collin County, TX", 660, 660);
@@ -458,7 +472,7 @@ function ReceiptBadgeContent() {
 
                   <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-500/50 rounded-xl px-3 py-1.5 text-center shadow">
                     <div className="text-[9px] font-black text-slate-200 uppercase tracking-wider">OFFICIAL</div>
-                    <div className="text-xs font-black text-white uppercase tracking-tight">2026–2027</div>
+                    <div className="text-xs font-black text-white uppercase tracking-tight">{getTermLabel(receiptData?.date)}</div>
                   </div>
                 </div>
 
@@ -520,10 +534,11 @@ function ReceiptBadgeContent() {
                   HOW TO DISPLAY YOUR DIGITAL BADGE:
                 </h4>
                 <ul className="text-xs text-slate-600 space-y-2 list-disc list-inside">
-                  <li><strong>Website Footer & Header:</strong> Place your official 2026 member badge PNG on your website to build trust with local customers.</li>
-                  <li><strong>Email Signatures:</strong> Add your Member ID and badge to your business email signature.</li>
+                  <li><strong>Website Footer & Header:</strong> Place your official member badge PNG on your website only while membership is active.</li>
+                  <li><strong>Email Signatures:</strong> Add your Member ID and badge to your business email signature while membership is active.</li>
                   <li><strong>Storefront Decal / Frame:</strong> Print the certificate to display at your physical retail counter or office reception desk.</li>
                   <li><strong>Social Media:</strong> Announce your Community Commerce Melissa membership on LinkedIn, Facebook, and Instagram.</li>
+                  <li>The badge is revocable, non-transferable, and may not be altered in a misleading way or used to imply that CCM guarantees or endorses your business. Stop using it when membership expires or is terminated.</li>
                 </ul>
               </div>
 
@@ -592,7 +607,7 @@ function ReceiptBadgeContent() {
                   <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between mt-4">
                     <div>
                       <div className="text-[10px] font-black text-slate-500 uppercase">AMOUNT PAID TODAY</div>
-                      <div className="text-xs text-slate-600">Annual Membership</div>
+                      <div className="text-xs text-slate-600">12-month term from payment; auto-renews annually</div>
                     </div>
                     <div className="text-2xl font-black font-outfit text-slate-900">
                       ${receiptData?.amount?.toFixed(2) || "390.00"}
@@ -624,7 +639,10 @@ function ReceiptBadgeContent() {
                     NEXT STEPS & MEMBER WELCOME:
                   </div>
                   <p className="text-slate-700 leading-relaxed">
-                    Your membership details and business information are securely saved in our database. Check your email for your digital badge confirmation and calendar invites for upcoming member networking events.
+                    Your membership details and business information are securely saved in our database. Directory listings and badges remain active only while membership is current. Check your email for your digital badge confirmation and calendar invites for upcoming member networking events.
+                  </p>
+                  <p className="text-slate-600 leading-relaxed">
+                    This membership payment is program dues and is not a charitable contribution unless CCM&apos;s written acknowledgment says otherwise. Consult your own tax advisor.
                   </p>
                 </div>
 
@@ -907,7 +925,7 @@ function ReceiptBadgeContent() {
                   fontWeight: "bold",
                 }}
               >
-                TERM: 2026 – 2027
+                TERM: {getTermLabel(receiptData?.date)}
               </div>
             </div>
 

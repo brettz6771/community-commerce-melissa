@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test src/lib/csv.test.ts src/lib/newsletter.test.ts src/lib/internal-auth.test.ts"
+    "test": "node --experimental-strip-types --test src/lib/csv.test.ts src/lib/newsletter.test.ts src/lib/internal-auth.test.ts src/lib/legal.test.ts src/lib/membership-listing.test.ts"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^6.8.2",

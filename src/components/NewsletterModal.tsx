@@ -206,6 +206,10 @@ export default function NewsletterModal({ isOpen, onClose }: NewsletterModalProp
                 <Link href="/terms" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
                   Terms of Service
                 </Link>
+                {" and "}
+                <Link href="/privacy" target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 underline underline-offset-2">
+                  Privacy Policy
+                </Link>
                 . Monthly curated updates • Unsubscribe anytime
               </p>
             </form>
