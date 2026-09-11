@@ -98,6 +98,14 @@ export async function POST(request: Request) {
       notes 
     } = body;
 
+    const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
+    if (!isDonation) {
+      const earlyPromoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
+      if (earlyPromoKind === "invalid") {
+        return NextResponse.json({ error: INVALID_MEMBERSHIP_CODE_MESSAGE }, { status: 400 });
+      }
+    }
+
     let stripe: Stripe;
     try {
       stripe = getStripe();
@@ -111,8 +119,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    const isDonation = Boolean(body.isDonation) || body.type === "donation" || body.formType === "Donation";
     const origin = getCheckoutOrigin(request);
 
     const useEmbedded = body.uiMode === "embedded" || body.embedded === true;
@@ -179,11 +185,7 @@ export async function POST(request: Request) {
     // Optional staff code CCMCommunityBuilder: indefinite $0 membership
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
-    const promoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
-    if (promoKind === "invalid") {
-      return NextResponse.json({ error: INVALID_MEMBERSHIP_CODE_MESSAGE }, { status: 400 });
-    }
-    const isComplimentary = promoKind === "staff_comp";
+    const isComplimentary = classifyMembershipPromo(body.couponCode ?? body.promoCode) === "staff_comp";
 
     const productName = isComplimentary
       ? "Community Partner — Complimentary Membership"
