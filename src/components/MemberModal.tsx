@@ -284,7 +284,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                   )}
                 </div>
                 <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                  {isNonprofitPreview ? "20% OFF FOREVER" : "SAVE $100 YR 1"}
+                  {isNonprofitPreview ? "20% OFF DUES" : "SAVE $100 YR 1"}
                 </span>
               </div>
             )}
