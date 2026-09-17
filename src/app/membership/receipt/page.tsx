@@ -578,9 +578,11 @@ function ReceiptBadgeContent() {
                     <span className="font-bold text-slate-900">
                       {receiptData?.complimentary
                         ? "Complimentary — no automatic billing"
-                        : receiptData?.isSubscription
-                          ? "Annual Auto-Renewing"
-                          : "One-Time Contribution"}
+                        : receiptData?.nonprofit
+                          ? "Annual Auto-Renewing — 20% non-profit rate"
+                          : receiptData?.isSubscription
+                            ? "Annual Auto-Renewing"
+                            : "One-Time Contribution"}
                     </span>
                   </div>
 

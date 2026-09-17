@@ -5,11 +5,15 @@ import { clampDonationAmountUsd, getCheckoutOrigin, truncateMeta } from "@/lib/s
 import { isValidEmail } from "@/lib/html";
 import {
   STAFF_COMP_PROMO_CODE,
+  NONPROFIT_PROMO_CODE,
   classifyMembershipPromo,
   createFreshStaffCompCoupon,
+  createFreshNonprofitCoupon,
   INVALID_MEMBERSHIP_CODE_MESSAGE,
   resolveStaffCompCoupon,
+  resolveNonprofitCoupon,
   STAFF_COMP_COUPON_MISSING_MESSAGE,
+  NONPROFIT_COUPON_MISSING_MESSAGE,
 } from "@/lib/membership-coupons";
 
 const PARTNER_ANNUAL_CENTS = 49000; // Recurring list price: $490/year
@@ -183,16 +187,23 @@ export async function POST(request: Request) {
     // Case 2: Membership Subscriptions (mode: "subscription")
     // Sole Membership Tier: Community Partner ($390 1st Yr, renews $490/yr)
     // Optional staff code CCMCommunityBuilder: indefinite $0 membership
+    // Optional non-profit code CCMNonprofits: indefinite 20% off dues & renewals
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
-    const isComplimentary = classifyMembershipPromo(body.couponCode ?? body.promoCode) === "staff_comp";
+    const promoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
+    const isComplimentary = promoKind === "staff_comp";
+    const isNonprofit = promoKind === "nonprofit";
 
     const productName = isComplimentary
       ? "Community Partner — Complimentary Membership"
-      : "Community Partner — Annual Membership";
+      : isNonprofit
+        ? "Community Partner — Non-Profit Membership"
+        : "Community Partner — Annual Membership";
     const productDesc = isComplimentary
       ? "Community Commerce Melissa — Complimentary Community Partner (CCMCommunityBuilder). $0 due, no automatic billing until cancelled."
-      : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
+      : isNonprofit
+        ? "Community Commerce Melissa — Community Partner Non-Profit Rate (CCMNonprofits). 20% off $490 dues ($392 due today • renews at $392/yr)."
+        : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
     const successTierParam = "Community Partner";
 
     let appliedCouponId: string | null = null;
@@ -200,6 +211,11 @@ export async function POST(request: Request) {
       appliedCouponId = await resolveStaffCompCoupon(stripe);
       if (!appliedCouponId) {
         return NextResponse.json({ error: STAFF_COMP_COUPON_MISSING_MESSAGE }, { status: 503 });
+      }
+    } else if (isNonprofit) {
+      appliedCouponId = await resolveNonprofitCoupon(stripe);
+      if (!appliedCouponId) {
+        return NextResponse.json({ error: NONPROFIT_COUPON_MISSING_MESSAGE }, { status: 503 });
       }
     } else {
       appliedCouponId = await resolvePartnerCoupon(stripe);
@@ -219,7 +235,8 @@ export async function POST(request: Request) {
       tier: isTest ? "Community Partner ($390 1st Yr • Renews $490/yr)" : truncateMeta(tier, 200),
       isTest: isTest ? "true" : "false",
       complimentary: isComplimentary ? "true" : "false",
-      promoCode: isComplimentary ? STAFF_COMP_PROMO_CODE : "",
+      nonprofit: isNonprofit ? "true" : "false",
+      promoCode: isComplimentary ? STAFF_COMP_PROMO_CODE : isNonprofit ? NONPROFIT_PROMO_CODE : "",
       businessName: truncateMeta(businessName || "N/A"),
       contactName: truncateMeta(ownerName || "N/A"),
       email: truncateMeta(email || "N/A"),
@@ -247,6 +264,8 @@ export async function POST(request: Request) {
             // $100 coupon (year 1 = $390). CCMCommunityBuilder replaces that
             // with a duration=forever 100% coupon so invoices stay $0 until
             // the subscription is cancelled — not a trial, not a one-time off.
+            // CCMNonprofits replaces it with duration=forever 20% so year 1
+            // and every renewal bill $392.
             unit_amount: PARTNER_ANNUAL_CENTS,
             recurring: {
               interval: "year",
@@ -290,6 +309,11 @@ export async function POST(request: Request) {
           console.warn("Retrying complimentary checkout with a fresh forever 100% coupon:", createErr);
           const freshCompId = await createFreshStaffCompCoupon(stripe);
           sessionParams.discounts = [{ coupon: freshCompId }];
+          session = await stripe.checkout.sessions.create(sessionParams);
+        } else if (isNonprofit) {
+          console.warn("Retrying non-profit checkout with a fresh forever 20% coupon:", createErr);
+          const freshNonprofitId = await createFreshNonprofitCoupon(stripe);
+          sessionParams.discounts = [{ coupon: freshNonprofitId }];
           session = await stripe.checkout.sessions.create(sessionParams);
         } else {
           // Keep the $490 recurring price. If the coupon ID was stale, mint a fresh

@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 import TermsAgreement from "@/components/TermsAgreement";
-import { isStaffCompPromoCode } from "@/lib/membership-coupons";
+import { isNonprofitPromoCode, isStaffCompPromoCode } from "@/lib/membership-coupons";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -81,7 +81,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
   const isComplimentaryPreview = !isCorporate && isStaffCompPromoCode(formData.couponCode);
-  const amountDisplay = isCorporate ? "Custom" : isComplimentaryPreview ? "Complimentary" : "$390";
+  const isNonprofitPreview = !isCorporate && isNonprofitPromoCode(formData.couponCode);
+  const amountDisplay = isCorporate
+    ? "Custom"
+    : isComplimentaryPreview
+      ? "Complimentary"
+      : isNonprofitPreview
+        ? "$392"
+        : "$390";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -483,6 +490,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     <p className="text-[10px] text-emerald-400 mt-1">
                       Complimentary membership: $0 due, no automatic billing until cancelled.
                     </p>
+                  ) : isNonprofitPreview ? (
+                    <p className="text-[10px] text-emerald-400 mt-1">
+                      Non-profit rate: 20% off membership dues — $392 due today, renews at $392/yr.
+                    </p>
                   ) : (
                     <p className="text-[10px] text-slate-500 mt-1">
                       Coupon code, if you were given one
@@ -503,7 +514,9 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     <span>
                       {isComplimentaryPreview
                         ? "Complimentary — no automatic billing"
-                        : "Annual Auto-Renewing Subscription"}
+                        : isNonprofitPreview
+                          ? "Annual Auto-Renewing — 20% non-profit rate"
+                          : "Annual Auto-Renewing Subscription"}
                     </span>
                   </div>
                 </div>

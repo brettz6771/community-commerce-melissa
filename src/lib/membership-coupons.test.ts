@@ -3,9 +3,13 @@ import assert from "node:assert/strict";
 import type Stripe from "stripe";
 import {
   STAFF_COMP_PROMO_CODE,
+  NONPROFIT_PROMO_CODE,
   classifyMembershipPromo,
+  getConfiguredNonprofitCode,
   getConfiguredStaffCompCode,
   isIndefiniteHundredPercentCoupon,
+  isIndefiniteNonprofitCoupon,
+  isNonprofitPromoCode,
   isStaffCompPromoCode,
   isStripeCheckoutFulfilled,
   normalizePromoCode,
@@ -13,12 +17,18 @@ import {
 } from "./membership-coupons.ts";
 
 const originalEnvCode = process.env.STAFF_COMP_MEMBERSHIP_CODE;
+const originalNonprofitEnvCode = process.env.NONPROFIT_MEMBERSHIP_CODE;
 
 afterEach(() => {
   if (originalEnvCode === undefined) {
     delete process.env.STAFF_COMP_MEMBERSHIP_CODE;
   } else {
     process.env.STAFF_COMP_MEMBERSHIP_CODE = originalEnvCode;
+  }
+  if (originalNonprofitEnvCode === undefined) {
+    delete process.env.NONPROFIT_MEMBERSHIP_CODE;
+  } else {
+    process.env.NONPROFIT_MEMBERSHIP_CODE = originalNonprofitEnvCode;
   }
 });
 
@@ -47,7 +57,31 @@ describe("CCMCommunityBuilder promo matching", () => {
     assert.equal(classifyMembershipPromo(""), "none");
     assert.equal(classifyMembershipPromo("   "), "none");
     assert.equal(classifyMembershipPromo("CCMCommunityBuilder"), "staff_comp");
+    assert.equal(classifyMembershipPromo("CCMNonprofits"), "nonprofit");
     assert.equal(classifyMembershipPromo("SAVE100"), "invalid");
+  });
+});
+
+describe("CCMNonprofits promo matching", () => {
+  it("uses the exact non-profit code string", () => {
+    assert.equal(NONPROFIT_PROMO_CODE, "CCMNonprofits");
+    assert.equal(getConfiguredNonprofitCode(), "CCMNonprofits");
+  });
+
+  it("accepts the official code case-insensitively and rejects other codes", () => {
+    assert.equal(isNonprofitPromoCode("CCMNonprofits"), true);
+    assert.equal(isNonprofitPromoCode("ccmnonprofits"), true);
+    assert.equal(isNonprofitPromoCode("CCMNONPROFITS"), true);
+    assert.equal(isNonprofitPromoCode("CCMCommunityBuilder"), false);
+    assert.equal(isNonprofitPromoCode("SAVE20"), false);
+    assert.equal(isNonprofitPromoCode(""), false);
+  });
+
+  it("honors NONPROFIT_MEMBERSHIP_CODE when set", () => {
+    process.env.NONPROFIT_MEMBERSHIP_CODE = "CustomNonprofit";
+    assert.equal(isNonprofitPromoCode("CustomNonprofit"), true);
+    assert.equal(isNonprofitPromoCode("CCMNonprofits"), true);
+    assert.equal(classifyMembershipPromo("CustomNonprofit"), "nonprofit");
   });
 });
 
@@ -86,6 +120,27 @@ describe("isIndefiniteHundredPercentCoupon", () => {
       isIndefiniteHundredPercentCoupon(coupon({ redeem_by: Math.floor(Date.now() / 1000) - 60 })),
       false
     );
+  });
+});
+
+describe("isIndefiniteNonprofitCoupon", () => {
+  function coupon(overrides: Partial<Stripe.Coupon>): Stripe.Coupon {
+    return {
+      id: "np1",
+      object: "coupon",
+      valid: true,
+      deleted: undefined,
+      percent_off: 20,
+      duration: "forever",
+      ...overrides,
+    } as Stripe.Coupon;
+  }
+
+  it("accepts only duration=forever 20% coupons", () => {
+    assert.equal(isIndefiniteNonprofitCoupon(coupon({})), true);
+    assert.equal(isIndefiniteNonprofitCoupon(coupon({ duration: "once" })), false);
+    assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 100 })), false);
+    assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 10 })), false);
   });
 });
 
