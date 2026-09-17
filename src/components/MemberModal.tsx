@@ -277,10 +277,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2 text-slate-200 font-medium">
                   <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                  <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+                  {isNonprofitPreview ? (
+                    <span>Non-profit rate: <strong>$392 due today</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $392/yr</span></span>
+                  ) : (
+                    <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+                  )}
                 </div>
                 <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                  SAVE $100 YR 1
+                  {isNonprofitPreview ? "20% OFF FOREVER" : "SAVE $100 YR 1"}
                 </span>
               </div>
             )}
@@ -507,7 +511,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-slate-300" />
-                    <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+                    <span>Selected Level: <strong className="text-white">{isNonprofitPreview ? "Community Partner ($392/yr non-profit rate)" : selectedTier}</strong></span>
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <Lock className="w-3 h-3 text-emerald-400" />
