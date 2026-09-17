@@ -6,7 +6,7 @@ export const STAFF_COMP_PROMO_CODE = "CCMCommunityBuilder";
 /** Stable Stripe Coupon id for the indefinite 100% membership discount. */
 export const STAFF_COMP_COUPON_ID = "CCM_COMMUNITY_BUILDER_FOREVER";
 
-/** Non-profit membership code: 20% off dues, including renewals. */
+/** Non-profit membership code: 20% off dues, including renewals. Do not advertise on the public site. */
 export const NONPROFIT_PROMO_CODE = "CCMNonprofits";
 
 /** Stable Stripe Coupon id for the indefinite 20% non-profit discount. */
@@ -93,7 +93,7 @@ export function isStripeCheckoutFulfilled(session: {
 }
 
 export const INVALID_MEMBERSHIP_CODE_MESSAGE =
-  "That coupon code is not valid. Leave the field blank to continue at the standard first-year rate, or ask staff for a complimentary or non-profit code.";
+  "That coupon code is not valid. Leave the field blank to continue at the standard first-year rate, or ask staff for a complimentary code.";
 
 export const STAFF_COMP_COUPON_MISSING_MESSAGE =
   "The complimentary coupon code could not be applied. Staff: in Stripe Dashboard create a 100% off coupon with Duration = Forever (not once, not repeating), then a Promotion code exactly CCMCommunityBuilder. The site will also try to create this automatically on the next signup if the Stripe key can write coupons.";

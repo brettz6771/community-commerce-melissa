@@ -202,7 +202,7 @@ export async function POST(request: Request) {
     const productDesc = isComplimentary
       ? "Community Commerce Melissa — Complimentary Community Partner (CCMCommunityBuilder). $0 due, no automatic billing until cancelled."
       : isNonprofit
-        ? "Community Commerce Melissa — Community Partner Non-Profit Rate (CCMNonprofits). 20% off $490 dues ($392 due today • renews at $392/yr)."
+        ? "Community Commerce Melissa — Community Partner Non-Profit Rate. 20% off $490 dues ($392 due today • renews at $392/yr)."
         : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
     const successTierParam = "Community Partner";
 
