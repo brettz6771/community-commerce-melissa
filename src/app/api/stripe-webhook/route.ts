@@ -82,6 +82,7 @@ export async function POST(request: Request) {
             });
           } else {
             const isComplimentary = metadata.complimentary === "true";
+            const isNonprofit = metadata.nonprofit === "true";
             const membershipFulfilled = isStripeCheckoutFulfilled(session);
             await saveContactToDb({
               email: targetEmail as string,
@@ -95,16 +96,21 @@ export async function POST(request: Request) {
               details: {
                 "Payment Status": isComplimentary
                   ? "Complimentary — $0, no automatic billing"
-                  : "Active Subscription",
+                  : isNonprofit
+                    ? "Active Subscription — 20% non-profit rate"
+                    : "Active Subscription",
                 "Stripe Session ID": session.id,
                 "Stripe Subscription ID": session.subscription ? String(session.subscription) : "N/A",
                 "Stripe Customer ID": session.customer ? String(session.customer) : "N/A",
                 "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
                 "Billing Frequency": isComplimentary
                   ? "Indefinite complimentary (cancels only if member or staff cancel)"
-                  : "Annual Recurring",
+                  : isNonprofit
+                    ? "Annual Recurring — 20% off dues forever (CCMNonprofits)"
+                    : "Annual Recurring",
                 "Membership Tier": metadata.tier || "N/A",
                 "Complimentary Code": isComplimentary ? metadata.promoCode || "CCMCommunityBuilder" : "N/A",
+                "Coupon Code": isNonprofit ? metadata.promoCode || "CCMNonprofits" : isComplimentary ? metadata.promoCode || "CCMCommunityBuilder" : "N/A",
                 "Is Test Mode": metadata.isTest === "true" ? "Yes" : "No",
                 "Business Name": metadata.businessName || "N/A",
                 "Contact Name": metadata.contactName || "N/A",

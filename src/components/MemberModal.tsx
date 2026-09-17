@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 import TermsAgreement from "@/components/TermsAgreement";
-import { isStaffCompPromoCode } from "@/lib/membership-coupons";
+import { isNonprofitPromoCode, isStaffCompPromoCode } from "@/lib/membership-coupons";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -81,7 +81,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
 
   const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
   const isComplimentaryPreview = !isCorporate && isStaffCompPromoCode(formData.couponCode);
-  const amountDisplay = isCorporate ? "Custom" : isComplimentaryPreview ? "Complimentary" : "$390";
+  const isNonprofitPreview = !isCorporate && isNonprofitPromoCode(formData.couponCode);
+  const amountDisplay = isCorporate
+    ? "Custom"
+    : isComplimentaryPreview
+      ? "Complimentary"
+      : isNonprofitPreview
+        ? "$392"
+        : "$390";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -270,10 +277,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
               <div className="bg-gradient-to-r from-red-950 via-[#A81C24] to-red-900 border border-red-700/60 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2 text-slate-200 font-medium">
                   <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-                  <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+                  {isNonprofitPreview ? (
+                    <span>Non-profit rate: <strong>$392 due today</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $392/yr</span></span>
+                  ) : (
+                    <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
+                  )}
                 </div>
                 <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                  SAVE $100 YR 1
+                  {isNonprofitPreview ? "20% OFF FOREVER" : "SAVE $100 YR 1"}
                 </span>
               </div>
             )}
@@ -483,6 +494,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     <p className="text-[10px] text-emerald-400 mt-1">
                       Complimentary membership: $0 due, no automatic billing until cancelled.
                     </p>
+                  ) : isNonprofitPreview ? (
+                    <p className="text-[10px] text-emerald-400 mt-1">
+                      Non-profit rate: 20% off membership dues — $392 due today, renews at $392/yr.
+                    </p>
                   ) : (
                     <p className="text-[10px] text-slate-500 mt-1">
                       Coupon code, if you were given one
@@ -496,14 +511,16 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-slate-300" />
-                    <span>Selected Level: <strong className="text-white">{selectedTier}</strong></span>
+                    <span>Selected Level: <strong className="text-white">{isNonprofitPreview ? "Community Partner ($392/yr non-profit rate)" : selectedTier}</strong></span>
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <Lock className="w-3 h-3 text-emerald-400" />
                     <span>
                       {isComplimentaryPreview
                         ? "Complimentary — no automatic billing"
-                        : "Annual Auto-Renewing Subscription"}
+                        : isNonprofitPreview
+                          ? "Annual Auto-Renewing — 20% non-profit rate"
+                          : "Annual Auto-Renewing Subscription"}
                     </span>
                   </div>
                 </div>
