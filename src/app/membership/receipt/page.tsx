@@ -579,7 +579,7 @@ function ReceiptBadgeContent() {
                       {receiptData?.complimentary
                         ? "Complimentary — no automatic billing"
                         : receiptData?.nonprofit
-                          ? "Annual Auto-Renewing — 20% non-profit rate"
+                          ? "Annual Auto-Renewing — $312 year 1, then $392/yr"
                           : receiptData?.isSubscription
                             ? "Annual Auto-Renewing"
                             : "One-Time Contribution"}

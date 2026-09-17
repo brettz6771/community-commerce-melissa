@@ -6,17 +6,19 @@ import { isValidEmail } from "@/lib/html";
 import {
   STAFF_COMP_PROMO_CODE,
   NONPROFIT_PROMO_CODE,
+  PARTNER_ANNUAL_CENTS,
+  NONPROFIT_RENEWAL_CENTS,
   classifyMembershipPromo,
   createFreshStaffCompCoupon,
-  createFreshNonprofitCoupon,
+  createFreshNonprofitYear1ExtraCoupon,
   INVALID_MEMBERSHIP_CODE_MESSAGE,
   resolveStaffCompCoupon,
   resolveNonprofitCoupon,
+  resolveNonprofitYear1ExtraCoupon,
   STAFF_COMP_COUPON_MISSING_MESSAGE,
   NONPROFIT_COUPON_MISSING_MESSAGE,
 } from "@/lib/membership-coupons";
 
-const PARTNER_ANNUAL_CENTS = 49000; // Recurring list price: $490/year
 const PARTNER_INTRO_OFF_CENTS = 10000; // First invoice only: $100 off → $390 due today
 
 function isOnceHundredOffCoupon(coupon: Stripe.Coupon): boolean {
@@ -187,7 +189,7 @@ export async function POST(request: Request) {
     // Case 2: Membership Subscriptions (mode: "subscription")
     // Sole Membership Tier: Community Partner ($390 1st Yr, renews $490/yr)
     // Optional staff code CCMCommunityBuilder: indefinite $0 membership
-    // Optional non-profit code CCMNonprofits: indefinite 20% off dues & renewals
+    // Optional unpublished non-profit code: 20% off $390 year 1, 20% off $490 renewals
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
     const promoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
@@ -202,7 +204,7 @@ export async function POST(request: Request) {
     const productDesc = isComplimentary
       ? "Community Commerce Melissa — Complimentary Community Partner (CCMCommunityBuilder). $0 due, no automatic billing until cancelled."
       : isNonprofit
-        ? "Community Commerce Melissa — Community Partner Non-Profit Rate. 20% off $490 dues ($392 due today • renews at $392/yr)."
+        ? "Community Commerce Melissa — Community Partner Non-Profit Rate. 20% off the $390 first-year price ($312 due today) • renews at 20% off $490 ($392/yr)."
         : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
     const successTierParam = "Community Partner";
 
@@ -213,7 +215,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: STAFF_COMP_COUPON_MISSING_MESSAGE }, { status: 503 });
       }
     } else if (isNonprofit) {
-      appliedCouponId = await resolveNonprofitCoupon(stripe);
+      // Ensure the unpublished Stripe promo exists, then apply the year-1 extra
+      // $80 off against a $392 recurring price (20% off $490). Checkout allows
+      // only one coupon, so renewal 20% is the recurring price, not a second coupon.
+      await resolveNonprofitCoupon(stripe);
+      appliedCouponId = await resolveNonprofitYear1ExtraCoupon(stripe);
       if (!appliedCouponId) {
         return NextResponse.json({ error: NONPROFIT_COUPON_MISSING_MESSAGE }, { status: 503 });
       }
@@ -260,13 +266,11 @@ export async function POST(request: Request) {
               description: productDesc,
               images: [`${origin}/ccm-logo-transparent.png`],
             },
-            // Recurring list price is always $490/year. Paid signups use a once
-            // $100 coupon (year 1 = $390). CCMCommunityBuilder replaces that
-            // with a duration=forever 100% coupon so invoices stay $0 until
-            // the subscription is cancelled — not a trial, not a one-time off.
-            // CCMNonprofits replaces it with duration=forever 20% so year 1
-            // and every renewal bill $392.
-            unit_amount: PARTNER_ANNUAL_CENTS,
+            // Regular and staff keep the $490 list price. Non-profit uses $392
+            // recurring (20% off $490) plus a once $80 coupon so year 1 is $312
+            // (20% off the $390 intro). Checkout allows only one coupon, so do
+            // not stack a forever 20% coupon on top of the $392 price.
+            unit_amount: isNonprofit ? NONPROFIT_RENEWAL_CENTS : PARTNER_ANNUAL_CENTS,
             recurring: {
               interval: "year",
               interval_count: 1,
@@ -311,9 +315,9 @@ export async function POST(request: Request) {
           sessionParams.discounts = [{ coupon: freshCompId }];
           session = await stripe.checkout.sessions.create(sessionParams);
         } else if (isNonprofit) {
-          console.warn("Retrying non-profit checkout with a fresh forever 20% coupon:", createErr);
-          const freshNonprofitId = await createFreshNonprofitCoupon(stripe);
-          sessionParams.discounts = [{ coupon: freshNonprofitId }];
+          console.warn("Retrying non-profit checkout with a fresh year-1 extra $80-off coupon:", createErr);
+          const freshNonprofitYear1Id = await createFreshNonprofitYear1ExtraCoupon(stripe);
+          sessionParams.discounts = [{ coupon: freshNonprofitYear1Id }];
           session = await stripe.checkout.sessions.create(sessionParams);
         } else {
           // Keep the $490 recurring price. If the coupon ID was stale, mint a fresh
