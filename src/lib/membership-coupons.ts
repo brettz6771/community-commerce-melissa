@@ -14,6 +14,29 @@ export const NONPROFIT_COUPON_ID = "CCM_NONPROFIT_20_FOREVER";
 
 export const NONPROFIT_PERCENT_OFF = 20;
 
+/** Published Community Partner list and intro prices (cents). */
+export const PARTNER_ANNUAL_CENTS = 49000;
+export const PARTNER_INTRO_CENTS = 39000;
+
+/** 20% off the $390 first-year price. */
+export const NONPROFIT_YEAR1_CENTS = Math.round(
+  PARTNER_INTRO_CENTS * (1 - NONPROFIT_PERCENT_OFF / 100)
+);
+
+/** 20% off the $490 renewal price. */
+export const NONPROFIT_RENEWAL_CENTS = Math.round(
+  PARTNER_ANNUAL_CENTS * (1 - NONPROFIT_PERCENT_OFF / 100)
+);
+
+/**
+ * Extra first-invoice amount-off so year 1 is 20% of $390 ($312)
+ * when the recurring price is already 20% of $490 ($392).
+ */
+export const NONPROFIT_YEAR1_EXTRA_OFF_CENTS = NONPROFIT_RENEWAL_CENTS - NONPROFIT_YEAR1_CENTS;
+
+/** Stable Stripe Coupon id for the once-only year-1 extra $80 off. */
+export const NONPROFIT_YEAR1_COUPON_ID = "CCM_NONPROFIT_YEAR1_80_OFF";
+
 export type MembershipPromoKind = "none" | "staff_comp" | "nonprofit" | "invalid";
 
 export function normalizePromoCode(raw: unknown): string {
@@ -83,6 +106,16 @@ export function isIndefiniteNonprofitCoupon(coupon: Stripe.Coupon): boolean {
   return isIndefinitePercentOffCoupon(coupon, NONPROFIT_PERCENT_OFF);
 }
 
+export function isOnceNonprofitYear1ExtraCoupon(coupon: Stripe.Coupon): boolean {
+  return (
+    !coupon.deleted &&
+    coupon.valid &&
+    coupon.duration === "once" &&
+    coupon.amount_off === NONPROFIT_YEAR1_EXTRA_OFF_CENTS &&
+    (coupon.currency || "usd") === "usd"
+  );
+}
+
 export function isStripeCheckoutFulfilled(session: {
   payment_status?: string | null;
 }): boolean {
@@ -99,7 +132,7 @@ export const STAFF_COMP_COUPON_MISSING_MESSAGE =
   "The complimentary coupon code could not be applied. Staff: in Stripe Dashboard create a 100% off coupon with Duration = Forever (not once, not repeating), then a Promotion code exactly CCMCommunityBuilder. The site will also try to create this automatically on the next signup if the Stripe key can write coupons.";
 
 export const NONPROFIT_COUPON_MISSING_MESSAGE =
-  "The non-profit coupon code could not be applied. Staff: in Stripe Dashboard create a 20% off coupon with Duration = Forever (not once, not repeating), then a Promotion code exactly CCMNonprofits. The site will also try to create this automatically on the next signup if the Stripe key can write coupons.";
+  "The non-profit coupon code could not be applied. The site will try to create the year-1 extra $80-off coupon automatically on the next signup if the Stripe key can write coupons.";
 
 function couponFromPromo(promo: Stripe.PromotionCode): Stripe.Coupon | string | null {
   return promo.promotion?.coupon ?? null;
@@ -351,5 +384,76 @@ export async function createFreshNonprofitCoupon(stripe: Stripe): Promise<string
     throw new Error("Stripe did not return a non-profit coupon id.");
   }
   await ensurePromotionCode(stripe, created.id, NONPROFIT_PROMO_CODE);
+  return created.id;
+}
+
+/**
+ * Once-only extra $80 off so year 1 is $312 when the recurring price is $392.
+ * Stripe Checkout allows only one coupon, so renewals stay 20% off $490 via the
+ * $392 recurring price rather than a second stacked coupon.
+ */
+export async function resolveNonprofitYear1ExtraCoupon(stripe: Stripe): Promise<string | null> {
+  try {
+    const existing = await stripe.coupons.retrieve(NONPROFIT_YEAR1_COUPON_ID);
+    if (isOnceNonprofitYear1ExtraCoupon(existing)) {
+      return existing.id;
+    }
+  } catch {
+    // Not found
+  }
+
+  try {
+    const list = await stripe.coupons.list({ limit: 100 });
+    const match = list.data.find(
+      (coupon) =>
+        isOnceNonprofitYear1ExtraCoupon(coupon) &&
+        coupon.metadata?.purpose === "nonprofit_year1_extra"
+    );
+    if (match) {
+      return match.id;
+    }
+  } catch {
+    // List permission may be restricted
+  }
+
+  try {
+    const created = await stripe.coupons.create({
+      id: NONPROFIT_YEAR1_COUPON_ID,
+      amount_off: NONPROFIT_YEAR1_EXTRA_OFF_CENTS,
+      currency: "usd",
+      duration: "once",
+      metadata: {
+        purpose: "nonprofit_year1_extra",
+        promo_code: NONPROFIT_PROMO_CODE,
+      },
+    });
+    if (created?.id) {
+      return created.id;
+    }
+  } catch {
+    // ID might already exist in a deleted/invalid state
+  }
+
+  try {
+    return await createFreshNonprofitYear1ExtraCoupon(stripe);
+  } catch (err) {
+    console.error("Unable to create non-profit year-1 extra $80-off coupon:", err);
+    return null;
+  }
+}
+
+export async function createFreshNonprofitYear1ExtraCoupon(stripe: Stripe): Promise<string> {
+  const created = await stripe.coupons.create({
+    amount_off: NONPROFIT_YEAR1_EXTRA_OFF_CENTS,
+    currency: "usd",
+    duration: "once",
+    metadata: {
+      purpose: "nonprofit_year1_extra",
+      promo_code: NONPROFIT_PROMO_CODE,
+    },
+  });
+  if (!created?.id) {
+    throw new Error("Stripe did not return a non-profit year-1 coupon id.");
+  }
   return created.id;
 }

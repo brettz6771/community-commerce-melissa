@@ -4,11 +4,15 @@ import type Stripe from "stripe";
 import {
   STAFF_COMP_PROMO_CODE,
   NONPROFIT_PROMO_CODE,
+  NONPROFIT_YEAR1_CENTS,
+  NONPROFIT_RENEWAL_CENTS,
+  NONPROFIT_YEAR1_EXTRA_OFF_CENTS,
   classifyMembershipPromo,
   getConfiguredNonprofitCode,
   getConfiguredStaffCompCode,
   isIndefiniteHundredPercentCoupon,
   isIndefiniteNonprofitCoupon,
+  isOnceNonprofitYear1ExtraCoupon,
   isNonprofitPromoCode,
   isStaffCompPromoCode,
   isStripeCheckoutFulfilled,
@@ -83,6 +87,12 @@ describe("CCMNonprofits promo matching", () => {
     assert.equal(isNonprofitPromoCode("CCMNonprofits"), true);
     assert.equal(classifyMembershipPromo("CustomNonprofit"), "nonprofit");
   });
+
+  it("is 20% off $390 year 1 and 20% off $490 on renewals", () => {
+    assert.equal(NONPROFIT_YEAR1_CENTS, 31200);
+    assert.equal(NONPROFIT_RENEWAL_CENTS, 39200);
+    assert.equal(NONPROFIT_YEAR1_EXTRA_OFF_CENTS, 8000);
+  });
 });
 
 describe("isIndefiniteHundredPercentCoupon", () => {
@@ -141,6 +151,28 @@ describe("isIndefiniteNonprofitCoupon", () => {
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ duration: "once" })), false);
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 100 })), false);
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 10 })), false);
+  });
+});
+
+describe("isOnceNonprofitYear1ExtraCoupon", () => {
+  function coupon(overrides: Partial<Stripe.Coupon>): Stripe.Coupon {
+    return {
+      id: "np-y1",
+      object: "coupon",
+      valid: true,
+      deleted: undefined,
+      amount_off: 8000,
+      currency: "usd",
+      duration: "once",
+      ...overrides,
+    } as Stripe.Coupon;
+  }
+
+  it("accepts only a once $80-off coupon", () => {
+    assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({})), true);
+    assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ duration: "forever" })), false);
+    assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ amount_off: 10000 })), false);
+    assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ valid: false })), false);
   });
 });
 

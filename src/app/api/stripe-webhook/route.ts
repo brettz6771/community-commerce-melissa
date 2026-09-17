@@ -106,7 +106,7 @@ export async function POST(request: Request) {
                 "Billing Frequency": isComplimentary
                   ? "Indefinite complimentary (cancels only if member or staff cancel)"
                   : isNonprofit
-                    ? "Annual Recurring — 20% off dues forever (CCMNonprofits)"
+                    ? "Annual Recurring — 20% off $390 year 1, 20% off $490 thereafter"
                     : "Annual Recurring",
                 "Membership Tier": metadata.tier || "N/A",
                 "Complimentary Code": isComplimentary ? metadata.promoCode || "CCMCommunityBuilder" : "N/A",
