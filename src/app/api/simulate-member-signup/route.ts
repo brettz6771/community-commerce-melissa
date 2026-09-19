@@ -38,6 +38,7 @@ export async function POST(request: Request) {
       email: targetEmail,
       ownerName,
       tier: "Community Partner",
+      memberId,
       isTest: true,
     }).catch((err) => console.warn("Directory save notice:", err));
 

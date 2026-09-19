@@ -125,6 +125,9 @@ export async function POST(request: Request) {
 
             // Auto-add new business after paid or $0 complimentary checkout
             if (membershipFulfilled && metadata.businessName && metadata.businessName !== "N/A") {
+              const shortId = session.id.slice(-6).toUpperCase();
+              const memberId = `CCM-2026-${shortId}`;
+
               await saveDirectoryMember({
                 businessName: metadata.businessName,
                 category: metadata.category || "General Business",
@@ -136,12 +139,11 @@ export async function POST(request: Request) {
                 email: targetEmail as string,
                 ownerName: metadata.contactName || "",
                 tier: metadata.tier || "Community Partner",
+                memberId,
                 isTest: metadata.isTest === "true",
               });
 
               // Dispatch Member Welcome Email & Admin Notification
-              const shortId = session.id.slice(-6).toUpperCase();
-              const memberId = `CCM-2026-${shortId}`;
               await sendMemberWelcomeAndAdminAlert({
                 memberEmail: targetEmail as string,
                 businessName: metadata.businessName,

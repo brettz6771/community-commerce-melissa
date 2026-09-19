@@ -1,5 +1,19 @@
 import { Pool } from "pg";
 import { mergeNewsletterRows, NEWSLETTER_FORM_TYPE, type NewsletterSubscriber } from "@/lib/newsletter";
+import {
+  applyPublicDirectoryVisibility,
+  type DirectoryVisibility,
+  type MemberProfileFields,
+} from "@/lib/member-portal";
+import {
+  allowDevMemoryStore,
+  getMemoryMemberByEmail,
+  getMemoryMemberById,
+  listMemoryMembers,
+  updateMemoryProfile,
+  updateMemoryVisibility,
+} from "@/lib/member-memory";
+import { normalizeMemberEmail } from "@/lib/member-portal-auth";
 
 let pool: Pool | null = null;
 
@@ -124,9 +138,71 @@ export interface DirectoryMemberRecord {
   ownerName?: string;
   tier?: string;
   badge?: string;
+  memberId?: string;
   isActive?: boolean;
   isTest?: boolean;
   createdAt?: string;
+  listingVisible?: boolean;
+  showPhone?: boolean;
+  showWebsite?: boolean;
+  showDescription?: boolean;
+  showLocation?: boolean;
+  showEmail?: boolean;
+}
+
+const DIRECTORY_MEMBER_SELECT = `
+  id,
+  business_name AS "businessName",
+  category,
+  description,
+  website,
+  city,
+  state,
+  phone,
+  email,
+  owner_name AS "ownerName",
+  tier,
+  badge,
+  member_id AS "memberId",
+  is_active AS "isActive",
+  is_test AS "isTest",
+  created_at AS "createdAt",
+  listing_visible AS "listingVisible",
+  show_phone AS "showPhone",
+  show_website AS "showWebsite",
+  show_description AS "showDescription",
+  show_location AS "showLocation",
+  show_email AS "showEmail"
+`;
+
+async function ensureDirectoryMembersTable(dbPool: Pool) {
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS directory_members (
+      id SERIAL PRIMARY KEY,
+      business_name VARCHAR(255) NOT NULL,
+      category VARCHAR(100) NOT NULL,
+      description TEXT,
+      website VARCHAR(500),
+      city VARCHAR(100) DEFAULT 'Melissa',
+      state VARCHAR(50) DEFAULT 'TX',
+      phone VARCHAR(50),
+      email VARCHAR(255),
+      owner_name VARCHAR(255),
+      tier VARCHAR(100) DEFAULT 'Community Partner',
+      badge VARCHAR(100) DEFAULT 'Community Partner',
+      is_active BOOLEAN DEFAULT true,
+      is_test BOOLEAN DEFAULT false,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS member_id VARCHAR(50);`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS listing_visible BOOLEAN DEFAULT true;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_phone BOOLEAN DEFAULT true;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_website BOOLEAN DEFAULT true;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_description BOOLEAN DEFAULT true;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_location BOOLEAN DEFAULT true;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_email BOOLEAN DEFAULT false;`);
 }
 
 export async function saveDirectoryMember({
@@ -140,6 +216,7 @@ export async function saveDirectoryMember({
   email = "",
   ownerName = "",
   tier = "Community Partner",
+  memberId = "",
   isTest = false,
 }: {
   businessName: string;
@@ -152,6 +229,7 @@ export async function saveDirectoryMember({
   email?: string;
   ownerName?: string;
   tier?: string;
+  memberId?: string;
   isTest?: boolean;
 }) {
   const dbPool = getDbPool();
@@ -165,27 +243,7 @@ export async function saveDirectoryMember({
   }
 
   try {
-    // Ensure table exists
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS directory_members (
-        id SERIAL PRIMARY KEY,
-        business_name VARCHAR(255) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        description TEXT,
-        website VARCHAR(500),
-        city VARCHAR(100) DEFAULT 'Melissa',
-        state VARCHAR(50) DEFAULT 'TX',
-        phone VARCHAR(50),
-        email VARCHAR(255),
-        owner_name VARCHAR(255),
-        tier VARCHAR(100) DEFAULT 'Community Partner',
-        badge VARCHAR(100) DEFAULT 'Community Partner',
-        is_active BOOLEAN DEFAULT true,
-        is_test BOOLEAN DEFAULT false,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-      ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;
-    `);
+    await ensureDirectoryMembersTable(dbPool);
 
     // Determine badge name
     const badge = tier.toLowerCase().includes("corporate") || tier.toLowerCase().includes("sponsorship")
@@ -195,6 +253,7 @@ export async function saveDirectoryMember({
     // Check if business already exists by name or email to prevent duplicates
     const cleanBizName = businessName.trim();
     const cleanEmail = email.trim().toLowerCase();
+    const cleanMemberId = memberId.trim().toUpperCase();
 
     const existingCheck = await dbPool.query(
       `
@@ -223,9 +282,10 @@ export async function saveDirectoryMember({
           owner_name = COALESCE(NULLIF($9, ''), owner_name),
           tier = $10,
           badge = $11,
+          member_id = COALESCE(NULLIF($12, ''), member_id),
           is_active = true,
-          is_test = $12
-        WHERE id = $13;
+          is_test = $13
+        WHERE id = $14;
         `,
         [
           cleanBizName,
@@ -239,6 +299,7 @@ export async function saveDirectoryMember({
           ownerName.trim(),
           tier,
           badge,
+          cleanMemberId,
           isTest,
           existingId,
         ]
@@ -248,9 +309,10 @@ export async function saveDirectoryMember({
       await dbPool.query(
         `
         INSERT INTO directory_members (
-          business_name, category, description, website, city, state, phone, email, owner_name, tier, badge, is_active, is_test
+          business_name, category, description, website, city, state, phone, email, owner_name, tier, badge, member_id, is_active, is_test,
+          listing_visible, show_phone, show_website, show_description, show_location, show_email
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true, $12);
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NULLIF($12, ''), true, $13, true, true, true, true, true, false);
         `,
         [
           cleanBizName,
@@ -264,6 +326,7 @@ export async function saveDirectoryMember({
           ownerName.trim(),
           tier,
           badge,
+          cleanMemberId,
           isTest,
         ]
       );
@@ -277,33 +340,33 @@ export async function saveDirectoryMember({
   }
 }
 
+function dedupeDirectoryMembers(rows: DirectoryMemberRecord[]): DirectoryMemberRecord[] {
+  const seenNames = new Set<string>();
+  const uniqueMembers: DirectoryMemberRecord[] = [];
+
+  for (const row of rows) {
+    const publicRow = applyPublicDirectoryVisibility(row);
+    if (!publicRow) continue;
+    const key = (publicRow.businessName || "").toLowerCase().trim();
+    if (!key || seenNames.has(key)) continue;
+    seenNames.add(key);
+    uniqueMembers.push(publicRow);
+  }
+
+  return uniqueMembers;
+}
+
 export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
   const dbPool = getDbPool();
   if (!dbPool) {
+    if (allowDevMemoryStore()) {
+      return dedupeDirectoryMembers(listMemoryMembers());
+    }
     return [];
   }
 
   try {
-    await dbPool.query(`
-      CREATE TABLE IF NOT EXISTS directory_members (
-        id SERIAL PRIMARY KEY,
-        business_name VARCHAR(255) NOT NULL,
-        category VARCHAR(100) NOT NULL,
-        description TEXT,
-        website VARCHAR(500),
-        city VARCHAR(100) DEFAULT 'Melissa',
-        state VARCHAR(50) DEFAULT 'TX',
-        phone VARCHAR(50),
-        email VARCHAR(255),
-        owner_name VARCHAR(255),
-        tier VARCHAR(100) DEFAULT 'Community Partner',
-        badge VARCHAR(100) DEFAULT 'Community Partner',
-        is_active BOOLEAN DEFAULT true,
-        is_test BOOLEAN DEFAULT false,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-      ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS description TEXT;
-    `);
+    await ensureDirectoryMembersTable(dbPool);
 
     // Clean up any historical duplicate entries in the database
     await dbPool.query(`
@@ -312,44 +375,188 @@ export async function getDirectoryMembers(): Promise<DirectoryMemberRecord[]> {
     `).catch(() => {});
 
     const res = await dbPool.query(`
-      SELECT 
-        id, 
-        business_name AS "businessName", 
-        category, 
-        description,
-        website, 
-        city, 
-        state, 
-        phone, 
-        email, 
-        owner_name AS "ownerName", 
-        tier, 
-        badge, 
-        is_active AS "isActive", 
-        is_test AS "isTest", 
-        created_at AS "createdAt"
+      SELECT ${DIRECTORY_MEMBER_SELECT}
       FROM directory_members
       WHERE is_active = true
+        AND COALESCE(listing_visible, true) = true
       ORDER BY 
         CASE WHEN badge = 'Community Partner' THEN 1 WHEN badge = 'Founding Member' THEN 2 ELSE 3 END,
         created_at DESC;
     `);
 
-    // Guarantee unique businesses by lowercase name
-    const seenNames = new Set<string>();
-    const uniqueMembers: DirectoryMemberRecord[] = [];
-
-    for (const row of res.rows) {
-      const key = (row.businessName || "").toLowerCase().trim();
-      if (!key || seenNames.has(key)) continue;
-      seenNames.add(key);
-      uniqueMembers.push(row);
-    }
-
-    return uniqueMembers;
+    return dedupeDirectoryMembers(res.rows);
   } catch (error) {
     console.error("Error fetching directory members from Postgres:", error);
     return [];
+  }
+}
+
+export function isMemberDirectoryConfigured(): boolean {
+  return Boolean(getDbPool()) || allowDevMemoryStore();
+}
+
+export async function getDirectoryMemberByEmail(email: string): Promise<DirectoryMemberRecord | null> {
+  const needle = normalizeMemberEmail(email);
+  if (!needle) return null;
+
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? getMemoryMemberByEmail(needle) : null;
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(
+      `
+      SELECT ${DIRECTORY_MEMBER_SELECT}
+      FROM directory_members
+      WHERE LOWER(TRIM(email)) = $1
+      ORDER BY is_active DESC, id DESC
+      LIMIT 1;
+      `,
+      [needle]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error("Error looking up directory member by email:", error);
+    return null;
+  }
+}
+
+export async function getDirectoryMemberById(id: number): Promise<DirectoryMemberRecord | null> {
+  if (!Number.isFinite(id)) return null;
+
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? getMemoryMemberById(id) : null;
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(
+      `
+      SELECT ${DIRECTORY_MEMBER_SELECT}
+      FROM directory_members
+      WHERE id = $1
+      LIMIT 1;
+      `,
+      [id]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error("Error looking up directory member by id:", error);
+    return null;
+  }
+}
+
+export async function updateDirectoryMemberProfile(
+  id: number,
+  fields: MemberProfileFields
+): Promise<DirectoryMemberRecord | null> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    if (!allowDevMemoryStore()) return null;
+    try {
+      return updateMemoryProfile(id, fields);
+    } catch (error) {
+      if (error instanceof Error && error.message === "EMAIL_IN_USE") {
+        throw error;
+      }
+      return null;
+    }
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const emailTaken = await dbPool.query(
+      `
+      SELECT id FROM directory_members
+      WHERE LOWER(TRIM(email)) = $1 AND id <> $2
+      LIMIT 1;
+      `,
+      [normalizeMemberEmail(fields.email), id]
+    );
+    if ((emailTaken.rowCount || 0) > 0) {
+      throw new Error("EMAIL_IN_USE");
+    }
+
+    const res = await dbPool.query(
+      `
+      UPDATE directory_members
+      SET
+        business_name = $1,
+        owner_name = $2,
+        email = $3,
+        phone = $4,
+        category = $5,
+        description = $6,
+        website = $7,
+        city = $8,
+        state = $9
+      WHERE id = $10
+      RETURNING ${DIRECTORY_MEMBER_SELECT};
+      `,
+      [
+        fields.businessName,
+        fields.ownerName,
+        normalizeMemberEmail(fields.email),
+        fields.phone,
+        fields.category,
+        fields.description.slice(0, 250),
+        fields.website,
+        fields.city,
+        fields.state,
+        id,
+      ]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    if (error instanceof Error && error.message === "EMAIL_IN_USE") {
+      throw error;
+    }
+    console.error("Error updating directory member profile:", error);
+    return null;
+  }
+}
+
+export async function updateDirectoryMemberVisibility(
+  id: number,
+  visibility: DirectoryVisibility
+): Promise<DirectoryMemberRecord | null> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? updateMemoryVisibility(id, visibility) : null;
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(
+      `
+      UPDATE directory_members
+      SET
+        listing_visible = $1,
+        show_phone = $2,
+        show_website = $3,
+        show_description = $4,
+        show_location = $5,
+        show_email = $6
+      WHERE id = $7
+      RETURNING ${DIRECTORY_MEMBER_SELECT};
+      `,
+      [
+        visibility.listingVisible,
+        visibility.showPhone,
+        visibility.showWebsite,
+        visibility.showDescription,
+        visibility.showLocation,
+        visibility.showEmail,
+        id,
+      ]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error("Error updating directory member visibility:", error);
+    return null;
   }
 }
 

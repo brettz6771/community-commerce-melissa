@@ -26,6 +26,8 @@ import {
   Copy,
   Check
 } from "lucide-react";
+import { toBadgeRenderData } from "@/lib/member-badge";
+import { renderBadgePngBlob, triggerPngDownload } from "@/lib/member-badge-canvas";
 
 function ReceiptBadgeContent() {
   const searchParams = useSearchParams();
@@ -123,129 +125,18 @@ function ReceiptBadgeContent() {
     }
   };
 
-  // High-Resolution Client-side PNG Badge Generator via HTML5 Canvas
-  const handleDownloadBadge = () => {
+  const handleDownloadBadge = async () => {
     setIsDownloading(true);
     try {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1200;
-      canvas.height = 800;
-      const ctx = canvas.getContext("2d");
-
-      if (!ctx) return;
-
-      const cleanTier = receiptData?.tier?.toLowerCase().includes("corporate") || receiptData?.tier?.toLowerCase().includes("sponsorship")
-        ? "CORPORATE PARTNER"
-        : "COMMUNITY PARTNER";
-
-      const businessName = (receiptData?.businessName || "MELISSA COMMUNITY PARTNER").toUpperCase();
-      const memberId = receiptData?.memberId || "CCM-2026-MEMBER";
-
-      // 1. Background
-      const bgGrad = ctx.createLinearGradient(0, 0, 1200, 800);
-      bgGrad.addColorStop(0, "#0B0E14");
-      bgGrad.addColorStop(0.5, "#151922");
-      bgGrad.addColorStop(1, "#0B0E14");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 1200, 800);
-
-      // 2. Decorative Outer Border
-      ctx.strokeStyle = "#A81C24";
-      ctx.lineWidth = 14;
-      ctx.strokeRect(30, 30, 1140, 740);
-
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(46, 46, 1108, 708);
-
-      // 3. Top Ribbon Banner
-      const ribbonGrad = ctx.createLinearGradient(0, 70, 0, 150);
-      ribbonGrad.addColorStop(0, "#7A141A");
-      ribbonGrad.addColorStop(1, "#A81C24");
-      ctx.fillStyle = ribbonGrad;
-      ctx.fillRect(50, 70, 1100, 90);
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "bold 28px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("COMMUNITY COMMERCE MELISSA, TX", 600, 125);
-
-      // 4. Subtitle
-      ctx.fillStyle = "#94A3B8";
-      ctx.font = "bold 18px sans-serif";
-      ctx.fillText("OFFICIAL VERIFIED BUSINESS MEMBER", 600, 205);
-
-      // 5. Tier Name Banner
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "900 48px sans-serif";
-      ctx.fillText(`2026 ${cleanTier}`, 600, 275);
-
-      // 6. Gold Separator Line
-      const lineGrad = ctx.createLinearGradient(300, 0, 900, 0);
-      lineGrad.addColorStop(0, "rgba(220, 38, 38, 0)");
-      lineGrad.addColorStop(0.5, "rgba(220, 38, 38, 1)");
-      lineGrad.addColorStop(1, "rgba(220, 38, 38, 0)");
-      ctx.strokeStyle = lineGrad;
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(300, 310);
-      ctx.lineTo(900, 310);
-      ctx.stroke();
-
-      // 7. Business Name Box
-      ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
-      ctx.fillRect(150, 350, 900, 140);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-      ctx.strokeRect(150, 350, 900, 140);
-
-      ctx.fillStyle = "#EF4444";
-      ctx.font = "bold 16px sans-serif";
-      ctx.fillText("OFFICIALLY ISSUED TO:", 600, 385);
-
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "bold 38px sans-serif";
-      ctx.fillText(businessName, 600, 445);
-
-      // 8. Footer Info Blocks (Member ID & Valid Thru)
-      ctx.fillStyle = "rgba(168, 28, 36, 0.15)";
-      ctx.fillRect(150, 530, 420, 160);
-      ctx.strokeStyle = "rgba(168, 28, 36, 0.4)";
-      ctx.strokeRect(150, 530, 420, 160);
-
-      ctx.fillStyle = "#94A3B8";
-      ctx.font = "bold 16px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("MEMBER ID NUMBER", 180, 570);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "900 32px monospace";
-      ctx.fillText(memberId, 180, 620);
-      ctx.fillStyle = "#22C55E";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("✓ VERIFIED ACTIVE", 180, 660);
-
-      ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
-      ctx.fillRect(630, 530, 420, 160);
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-      ctx.strokeRect(630, 530, 420, 160);
-
-      ctx.fillStyle = "#94A3B8";
-      ctx.font = "bold 16px sans-serif";
-      ctx.fillText("MEMBERSHIP TERM", 660, 570);
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "900 32px sans-serif";
-      ctx.fillText("2026 – 2027", 660, 620);
-      ctx.fillStyle = "#94A3B8";
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("Melissa, Collin County, TX", 660, 660);
-
-      // 9. Trigger file download
-      const imageUri = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.download = `CCM-Official-Badge-${memberId}.png`;
-      downloadLink.href = imageUri;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+      const badge = toBadgeRenderData({
+        businessName: receiptData?.businessName,
+        memberId: receiptData?.memberId,
+        tier: receiptData?.tier,
+        ownerName: receiptData?.customerName,
+        createdAt: receiptData?.date,
+      });
+      const blob = await renderBadgePngBlob(badge);
+      triggerPngDownload(blob, badge.memberId);
     } catch (err) {
       console.error("Error exporting badge image:", err);
     } finally {
