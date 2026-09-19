@@ -14,6 +14,7 @@ import {
   Search, 
   MapPin, 
   Phone, 
+  Mail,
   Globe, 
   ShieldCheck, 
   Sparkles, 
@@ -36,6 +37,7 @@ interface DirectoryItem {
   state?: string;
   phone?: string;
   website?: string;
+  email?: string;
   badge?: string;
   tier?: string;
   isTest?: boolean;
@@ -59,11 +61,12 @@ function DirectoryContent() {
             id: m.id || m.businessName,
             name: m.businessName,
             category: m.category || "General Business / Other",
-            description: m.description || "Active community business partner in Melissa, Texas.",
-            city: m.city || "Melissa",
-            state: m.state || "TX",
+            description: m.description || "",
+            city: m.city || "",
+            state: m.state || "",
             phone: m.phone || "",
             website: m.website || "",
+            email: m.email || "",
             badge: m.badge || "Community Partner",
             tier: m.tier || "Community Partner",
             isTest: m.isTest,
@@ -297,18 +300,29 @@ function DirectoryContent() {
 
                       {/* Location & Contact Info */}
                       <div className="pt-3 border-t border-slate-100 space-y-2 text-xs text-slate-600 mt-4">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-red-600 shrink-0" />
-                          <span className="font-bold text-slate-800">
-                            {biz.city || "Melissa"}, {biz.state || "TX"}
-                          </span>
-                        </div>
+                        {(biz.city || biz.state) && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-red-600 shrink-0" />
+                            <span className="font-bold text-slate-800">
+                              {[biz.city, biz.state].filter(Boolean).join(", ")}
+                            </span>
+                          </div>
+                        )}
 
                         {biz.phone && (
                           <div className="flex items-center gap-2">
                             <Phone className="w-4 h-4 text-slate-400 shrink-0" />
                             <a href={`tel:${biz.phone.replace(/[^0-9]/g, "")}`} className="text-slate-700 font-medium hover:text-red-600 transition">
                               {biz.phone}
+                            </a>
+                          </div>
+                        )}
+
+                        {biz.email && (
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                            <a href={`mailto:${biz.email}`} className="text-slate-700 font-medium hover:text-red-600 transition break-all">
+                              {biz.email}
                             </a>
                           </div>
                         )}
