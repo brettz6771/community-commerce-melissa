@@ -15,8 +15,8 @@ describe("site events catalog", () => {
   it("lists Oktoberfest and Tent or Treat with in-house registration links", () => {
     const items = siteEventsAsItems();
     assert.equal(items.length, 2);
-    assert.equal(getSiteEvent("oktoberfest")?.title, "Oktoberfest Meet & Greet");
-    assert.equal(getSiteEvent("tent-or-treat")?.title, "Tent or Treat");
+    assert.equal(getSiteEvent("oktoberfest")?.title, "Oktoberfest Networking Night");
+    assert.equal(getSiteEvent("tent-or-treat")?.title, "Community Tent-or-Treat");
     assert.equal(items[0].registerHref, "/events/oktoberfest");
     assert.equal(items[1].registerHref, "/events/tent-or-treat");
   });

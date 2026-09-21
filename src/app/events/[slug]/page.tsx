@@ -108,14 +108,15 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
             {event.id === "oktoberfest" ? (
               <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
                 <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
-                <p className="text-sm text-slate-700"><strong>Members:</strong> free with a matching membership email.</p>
-                <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} via Stripe.</p>
+                <p className="text-sm text-slate-700"><strong>Members:</strong> free</p>
+                <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL}</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
                 <p className="text-xs font-bold uppercase tracking-widest text-red-700">Two ways to join</p>
-                <p className="text-sm text-slate-700"><strong>Business tent:</strong> interest form only. Staff contacts you about payment.</p>
-                <p className="text-sm text-slate-700"><strong>General attendance:</strong> free for everyone.</p>
+                <a href="#attend" className="block text-sm font-bold text-red-700 hover:text-red-800">Register free to attend →</a>
+                <a href="#business-tent" className="block text-sm font-bold text-red-700 hover:text-red-800">Business tent / sponsorship interest →</a>
+                <p className="text-xs text-slate-500">Business setup 12:30–2:00 PM. Event 2:00–5:00 PM.</p>
               </div>
             )}
           </div>
@@ -248,17 +249,20 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
 function TentOrTreatForms({ event }: { event: SiteEvent }) {
   return (
     <div className="space-y-6">
-      <TentForm
-        event={event}
-        path="attendee"
-        title="General attendance"
-        icon={<Users className="w-4 h-4" />}
-        intro="Free for everyone. An attendee flyer may arrive later — this reserves your spot now."
-        submitLabel="Register to attend"
-      />
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div id="attend">
+        <TentForm
+          event={event}
+          path="attendee"
+          title="Register free to attend"
+          icon={<Users className="w-4 h-4" />}
+          intro="Free for everyone. You’ll be entered into a drawing for prizes."
+          submitLabel="Register to attend"
+          drawing
+        />
+      </div>
+      <div id="business-tent" className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {event.businessImage && (
-          <img src={event.businessImage} alt="Business tent information" className="w-full bg-slate-900" />
+          <img src={event.businessImage} alt="Business tent information" className="w-full bg-white" />
         )}
         <div className="p-6 sm:p-8">
           <TentForm
@@ -266,11 +270,15 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
             path="sponsor"
             title="Business tent / sponsorship"
             icon={<Building2 className="w-4 h-4" />}
-            intro="Share your interest. Staff will contact you about tent details and payment. Nothing is charged here."
+            intro="Interest form only. Staff will follow up about tent space ($150), larger space ($250), or food vendor ($250). Nothing is charged here."
             submitLabel="Send interest form"
             requireCompany
             nested
           />
+          <p className="text-xs text-slate-500 mt-3">
+            Questions: Cindy Karman,{" "}
+            <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a>
+          </p>
         </div>
       </div>
     </div>
@@ -286,6 +294,7 @@ function TentForm({
   submitLabel,
   requireCompany = false,
   nested = false,
+  drawing = false,
 }: {
   event: SiteEvent;
   path: EventRegistrationPath;
@@ -295,8 +304,9 @@ function TentForm({
   submitLabel: string;
   requireCompany?: boolean;
   nested?: boolean;
+  drawing?: boolean;
 }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", guests: "1", notes: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", guests: "1", notes: drawing ? "Enter me in the prize drawing" : "" });
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");

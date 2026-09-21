@@ -25,30 +25,30 @@ export type SiteEvent = {
 };
 
 export function resolveOktoberfestImage(): string {
-  return "/events/oktoberfest.svg";
+  return "/events/oktoberfest-networking-night.png";
 }
 
 export function resolveTentOrTreatImage(): string {
-  return "/events/tent-or-treat.svg";
+  return "/events/community-tent-or-treat-attendees.png";
 }
 
 export function resolveTentOrTreatBusinessImage(): string {
-  return "/events/tent-or-treat-business.svg";
+  return "/events/community-tent-or-treat.png";
 }
 
 export const SITE_EVENTS: SiteEvent[] = [
   {
     id: "oktoberfest",
     slug: "oktoberfest",
-    title: "Oktoberfest Meet & Greet",
+    title: "Oktoberfest Networking Night",
     kicker: "Networking mixer",
-    date: "2026-10-16",
-    dateLabel: "Friday, October 16, 2026",
+    date: "2026-10-26",
+    dateLabel: "Monday, October 26, 2026",
     month: "OCT",
-    day: "16",
+    day: "26",
     time: "6:00 PM - 8:00 PM",
-    location: "The Red Feather",
-    address: "3400 Red Feather Way, Melissa, TX 75454",
+    location: "Texas Republic Bank",
+    address: "2220 Sam Rayburn Hwy Suite 100, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
     description:
       "A casual Oktoberfest mixer for Melissa business owners and neighbors. Meet new partners, say hello, and enjoy the evening.",
@@ -59,18 +59,18 @@ export const SITE_EVENTS: SiteEvent[] = [
   {
     id: "tent-or-treat",
     slug: "tent-or-treat",
-    title: "Tent or Treat",
+    title: "Community Tent-or-Treat",
     kicker: "Community event",
-    date: "2026-10-24",
-    dateLabel: "Saturday, October 24, 2026",
+    date: "2026-10-31",
+    dateLabel: "Saturday, October 31, 2026",
     month: "OCT",
-    day: "24",
-    time: "5:00 PM - 8:00 PM",
-    location: "Melissa, Texas",
-    address: "Details included with your confirmation",
+    day: "31",
+    time: "2:00 PM - 5:00 PM",
+    location: "Melissa Lake Park",
+    address: "4101 Liberty Way, Melissa, TX 75454",
     category: "Community Events",
     description:
-      "A family-friendly community evening. Businesses can host a tent; neighbors are welcome to come celebrate.",
+      "A free family evening at Melissa Lake Park. Register to attend, or tell us you want a business tent.",
     image: resolveTentOrTreatImage(),
     businessImage: resolveTentOrTreatBusinessImage(),
     isFeatured: true,
@@ -184,5 +184,5 @@ export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrat
   if (path === "sponsor") {
     return "Thanks — a team member will contact you about tent or sponsorship details. No payment is collected here.";
   }
-  return "You're registered. We'll follow up if the attendee flyer or location details change.";
+  return "You're registered. Enjoy the afternoon at Melissa Lake Park.";
 }
