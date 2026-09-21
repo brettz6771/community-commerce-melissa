@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Users, TrendingUp, Calendar, Heart, ChevronRight, Play, Mail } from "lucide-react";
+import { Users, TrendingUp, Calendar, Heart, ChevronRight, Mail } from "lucide-react";
 import Link from "next/link";
+import HeroBackgroundVideo from "@/components/HeroBackgroundVideo";
 
 interface HeroSectionProps {
   onOpenJoinModal?: () => void;
@@ -14,19 +15,8 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal, onOpenN
   return (
     <section className="relative bg-[#0B0E14] text-white pt-12 pb-24 md:pb-32 overflow-hidden border-b border-white/10">
       
-      {/* Background Video Layer from makoragency.com */}
-      <div className="absolute inset-0 overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster="/hero-networking.jpg"
-          className="w-full h-full object-cover opacity-75 scale-105"
-        >
-          <source src="https://makoragency.com/makor-agency-vid2.mp4" type="video/mp4" />
-        </video>
-      </div>
+      {/* Background clip from CCM Meet & Greet (0:34–0:44, looping) */}
+      <HeroBackgroundVideo />
       
       {/* Bottom to Top Gradient Overlay (Darker at bottom, clear at top) */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/65 to-[#0B0E14]/20" />
