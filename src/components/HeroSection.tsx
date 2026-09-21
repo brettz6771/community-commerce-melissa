@@ -19,12 +19,12 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal, onOpenN
       <HeroBackgroundVideo />
       
       {/* Bottom to Top Gradient Overlay (Darker at bottom, clear at top) */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/65 to-[#0B0E14]/20" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-slate-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/65 to-[#0B0E14]/20" />
+      <div className="absolute top-0 right-0 z-[1] w-96 h-96 bg-slate-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/3 z-[1] w-96 h-96 bg-red-900/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Hero Content Container */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
         <div className="max-w-3xl space-y-6">
           
           {/* Light Gray Accent Subtitle */}

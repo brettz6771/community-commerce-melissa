@@ -190,7 +190,7 @@ export default function HeroBackgroundVideo() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[#0B0E14]" aria-hidden="true">
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[#0B0E14]" aria-hidden="true">
       <div
         className={`pointer-events-none absolute left-1/2 top-1/2 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0 ${
           isClipPlaying ? "visible opacity-100" : "invisible opacity-0"
