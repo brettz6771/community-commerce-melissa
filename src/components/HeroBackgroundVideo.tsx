@@ -13,6 +13,8 @@ type YouTubePlayer = {
   playVideo: () => void;
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
   getCurrentTime: () => number;
+  getDuration: () => number;
+  getPlayerState: () => number;
 };
 
 type YouTubeNamespace = {
@@ -75,7 +77,9 @@ export default function HeroBackgroundVideo() {
     const keepClipInRange = (player: YouTubePlayer) => {
       try {
         const currentTime = player.getCurrentTime();
-        if (Number.isNaN(currentTime)) {
+        const duration = player.getDuration();
+        const playerState = player.getPlayerState();
+        if (Number.isNaN(currentTime) || Number.isNaN(duration)) {
           return;
         }
 
@@ -85,7 +89,12 @@ export default function HeroBackgroundVideo() {
           return;
         }
 
-        setIsClipPlaying(true);
+        const isRealPlayback =
+          playerState === window.YT?.PlayerState.PLAYING && duration > CLIP_END_SECONDS;
+
+        if (isRealPlayback) {
+          setIsClipPlaying(true);
+        }
       } catch {
         // Player can throw while the iframe is still initializing.
       }
@@ -181,10 +190,10 @@ export default function HeroBackgroundVideo() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div className="absolute inset-0 overflow-hidden bg-[#0B0E14]" aria-hidden="true">
       <div
         className={`pointer-events-none absolute left-1/2 top-1/2 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0 ${
-          isClipPlaying ? "opacity-100" : "opacity-0"
+          isClipPlaying ? "visible opacity-100" : "invisible opacity-0"
         }`}
         style={{
           width: "177.78vh",
@@ -200,7 +209,7 @@ export default function HeroBackgroundVideo() {
         src="/hero-networking.jpg"
         alt=""
         className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-500 ${
-          isClipPlaying ? "opacity-0" : "opacity-80"
+          isClipPlaying ? "opacity-0" : "opacity-100"
         }`}
       />
     </div>
