@@ -10,9 +10,13 @@ import {
   getMemoryMemberByEmail,
   getMemoryMemberById,
   listMemoryMembers,
+  listMemoryMembersForAdmin,
+  saveMemoryEventRegistration,
+  setMemoryMemberPassword,
   updateMemoryProfile,
   updateMemoryVisibility,
 } from "@/lib/member-memory";
+import { memberHasPassword } from "@/lib/member-password";
 import { normalizeMemberEmail } from "@/lib/member-portal-auth";
 
 let pool: Pool | null = null;
@@ -148,7 +152,14 @@ export interface DirectoryMemberRecord {
   showDescription?: boolean;
   showLocation?: boolean;
   showEmail?: boolean;
+  passwordHash?: string | null;
+  passwordSetAt?: string | null;
 }
+
+export type AdminDirectoryMember = Omit<DirectoryMemberRecord, "passwordHash"> & {
+  id: number;
+  hasPassword: boolean;
+};
 
 const DIRECTORY_MEMBER_SELECT = `
   id,
@@ -172,7 +183,9 @@ const DIRECTORY_MEMBER_SELECT = `
   show_website AS "showWebsite",
   show_description AS "showDescription",
   show_location AS "showLocation",
-  show_email AS "showEmail"
+  show_email AS "showEmail",
+  password_hash AS "passwordHash",
+  password_set_at AS "passwordSetAt"
 `;
 
 async function ensureDirectoryMembersTable(dbPool: Pool) {
@@ -203,6 +216,8 @@ async function ensureDirectoryMembersTable(dbPool: Pool) {
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_description BOOLEAN DEFAULT true;`);
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_location BOOLEAN DEFAULT true;`);
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_email BOOLEAN DEFAULT false;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS password_hash TEXT;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS password_set_at TIMESTAMP WITH TIME ZONE;`);
 }
 
 export async function saveDirectoryMember({
@@ -557,6 +572,131 @@ export async function updateDirectoryMemberVisibility(
   } catch (error) {
     console.error("Error updating directory member visibility:", error);
     return null;
+  }
+}
+
+function toAdminDirectoryMember(row: DirectoryMemberRecord): AdminDirectoryMember {
+  const { passwordHash: _ignoredHash, ...safe } = row;
+  void _ignoredHash;
+  return {
+    ...safe,
+    id: Number(row.id),
+    hasPassword: memberHasPassword(row),
+  };
+}
+
+export async function listDirectoryMembersForAdmin(): Promise<{
+  configured: boolean;
+  members: AdminDirectoryMember[];
+}> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    if (!allowDevMemoryStore()) return { configured: false, members: [] };
+    return {
+      configured: true,
+      members: listMemoryMembersForAdmin().map(toAdminDirectoryMember),
+    };
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(`
+      SELECT ${DIRECTORY_MEMBER_SELECT}
+      FROM directory_members
+      ORDER BY is_active DESC, created_at DESC, id DESC;
+    `);
+    return {
+      configured: true,
+      members: res.rows.map((row: DirectoryMemberRecord) => toAdminDirectoryMember(row)),
+    };
+  } catch (error) {
+    console.error("Error listing directory members for admin:", error);
+    return { configured: true, members: [] };
+  }
+}
+
+export async function setDirectoryMemberPassword(
+  id: number,
+  passwordHash: string
+): Promise<DirectoryMemberRecord | null> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? setMemoryMemberPassword(id, passwordHash) : null;
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(
+      `
+      UPDATE directory_members
+      SET password_hash = $1, password_set_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING ${DIRECTORY_MEMBER_SELECT};
+      `,
+      [passwordHash, id]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error("Error setting directory member password:", error);
+    return null;
+  }
+}
+
+export async function isActiveDirectoryMemberEmail(email: string): Promise<boolean> {
+  const row = await getDirectoryMemberByEmail(email);
+  return Boolean(row && row.isActive !== false && row.id);
+}
+
+async function ensureEventRegistrationsTable(dbPool: Pool) {
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS event_registrations (
+      id SERIAL PRIMARY KEY,
+      event_id VARCHAR(80) NOT NULL,
+      path VARCHAR(40) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      name VARCHAR(255),
+      details JSONB,
+      stripe_session_id VARCHAR(255),
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+export async function saveEventRegistration({
+  eventId,
+  path,
+  email,
+  name = "",
+  details = {},
+  stripeSessionId = "",
+}: {
+  eventId: string;
+  path: string;
+  email: string;
+  name?: string;
+  details?: Record<string, unknown>;
+  stripeSessionId?: string;
+}): Promise<boolean> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore()
+      ? saveMemoryEventRegistration({ eventId, path, email, name, details, stripeSessionId })
+      : false;
+  }
+
+  try {
+    await ensureEventRegistrationsTable(dbPool);
+    await dbPool.query(
+      `
+      INSERT INTO event_registrations (event_id, path, email, name, details, stripe_session_id)
+      VALUES ($1, $2, $3, $4, $5, NULLIF($6, ''));
+      `,
+      [eventId, path, normalizeMemberEmail(email), name.trim(), JSON.stringify(details), stripeSessionId]
+    );
+    return true;
+  } catch (error) {
+    console.error("Error saving event registration:", error);
+    return false;
   }
 }
 

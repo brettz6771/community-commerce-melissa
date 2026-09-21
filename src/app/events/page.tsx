@@ -36,7 +36,8 @@ export default function EventsPage() {
   const categories = [
     "All",
     "Monthly Networking Mixers",
-    "Lunch and Learn"
+    "Lunch and Learn",
+    "Community Events"
   ];
 
   const filterFn = (evt: EventItem) => {
@@ -223,7 +224,14 @@ export default function EventsPage() {
                           Directions
                         </a>
 
-                        {evt.registerUrl ? (
+                        {evt.registerHref ? (
+                          <a
+                            href={evt.registerHref}
+                            className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:scale-[1.02] transition inline-flex items-center gap-1.5 text-center shrink-0"
+                          >
+                            <span>REGISTER / RSVP NOW</span>
+                          </a>
+                        ) : evt.registerUrl ? (
                           <a
                             href={evt.registerUrl}
                             target="_blank"

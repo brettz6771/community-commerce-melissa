@@ -13,6 +13,7 @@ export interface EventItem {
   isFeatured?: boolean;
   isPast?: boolean;
   registerUrl?: string;
+  registerHref?: string;
 }
 
 export interface BusinessItem {
@@ -153,6 +154,36 @@ export const MOCK_EVENTS: EventItem[] = [
     image: "/events/networking-night-mountain-mikes-9-21-26.jpg",
     isFeatured: true,
     registerUrl: "https://www.eventbrite.com/e/1998545201497?aff=oddtdtcreator"
+  },
+  {
+    id: "evt-oktoberfest",
+    title: "Oktoberfest Meet & Greet",
+    date: "2026-10-16",
+    month: "OCT",
+    day: "16",
+    time: "6:00 PM - 8:00 PM",
+    location: "The Red Feather",
+    address: "3400 Red Feather Way, Melissa, TX 75454",
+    category: "Monthly Networking Mixers",
+    description: "A casual Oktoberfest mixer for Melissa business owners and neighbors. Meet new partners, say hello, and enjoy the evening.",
+    image: "/events/oktoberfest.svg",
+    isFeatured: true,
+    registerHref: "/events/oktoberfest"
+  },
+  {
+    id: "evt-tent-or-treat",
+    title: "Tent or Treat",
+    date: "2026-10-24",
+    month: "OCT",
+    day: "24",
+    time: "5:00 PM - 8:00 PM",
+    location: "Melissa, Texas",
+    address: "Details included with your confirmation",
+    category: "Community Events",
+    description: "A family-friendly community evening. Businesses can host a tent; neighbors are welcome to come celebrate.",
+    image: "/events/tent-or-treat.svg",
+    isFeatured: true,
+    registerHref: "/events/tent-or-treat"
   }
 ];
 

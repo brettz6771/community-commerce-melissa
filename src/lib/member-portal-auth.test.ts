@@ -4,8 +4,10 @@ import {
   OTP_COOKIE,
   SESSION_COOKIE,
   bumpOtpAttempts,
+  createInviteToken,
   createOtpToken,
   createSessionToken,
+  readInviteToken,
   generateOtpCode,
   hashOtpCode,
   memberIdsMatch,
@@ -72,6 +74,18 @@ describe("member portal OTP", () => {
     assert.deepEqual(verifyOtpAttempt(otp!, "member@example.com", "123456"), { ok: false, reason: "too_many" });
     const bumped = bumpOtpAttempts({ ...otp!, attempts: 1 });
     assert.ok(bumped);
+  });
+});
+
+describe("member invite tokens", () => {
+  it("creates a time-limited invite for an existing member email", () => {
+    process.env.MEMBER_PORTAL_SECRET = "portal-test-secret";
+    const token = createInviteToken("Jane@Example.com");
+    const invite = readInviteToken(token);
+    assert.ok(invite);
+    assert.equal(invite?.email, "jane@example.com");
+    assert.equal(invite?.purpose, "invite");
+    assert.equal(readInviteToken("not-valid"), null);
   });
 });
 

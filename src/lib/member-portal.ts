@@ -1,5 +1,6 @@
 import { isValidEmail, sanitizeHttpUrl } from "./html";
 import { resolveMemberId } from "./member-badge";
+import { memberHasPassword } from "./member-password";
 import { normalizeMemberEmail } from "./member-portal-auth";
 import type { DirectoryMemberRecord } from "./db";
 
@@ -30,6 +31,8 @@ export type MemberPortalRecord = DirectoryMemberRecord &
     memberId: string;
     email: string;
     businessName: string;
+    hasPassword: boolean;
+    passwordHash?: never;
   };
 
 export const DEFAULT_VISIBILITY: DirectoryVisibility = {
@@ -165,8 +168,10 @@ export function applyPublicDirectoryVisibility(
 
 export function toMemberPortalRecord(row: DirectoryMemberRecord & Partial<DirectoryVisibility>): MemberPortalRecord {
   const visibility = visibilityFromRecord(row);
+  const { passwordHash: _ignoredHash, ...safeRow } = row;
+  void _ignoredHash;
   return {
-    ...row,
+    ...safeRow,
     ...visibility,
     id: Number(row.id),
     memberId: resolveMemberId(row),
@@ -182,6 +187,7 @@ export function toMemberPortalRecord(row: DirectoryMemberRecord & Partial<Direct
     tier: row.tier || row.badge || "Community Partner",
     badge: row.badge || row.tier || "Community Partner",
     isActive: row.isActive !== false,
+    hasPassword: memberHasPassword(row),
   };
 }
 

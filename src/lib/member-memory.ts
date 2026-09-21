@@ -2,7 +2,23 @@ import type { DirectoryMemberRecord } from "@/lib/db";
 import { DEFAULT_VISIBILITY, type DirectoryVisibility, type MemberProfileFields } from "@/lib/member-portal";
 import { normalizeMemberEmail } from "@/lib/member-portal-auth";
 
-export type MemoryMember = DirectoryMemberRecord & DirectoryVisibility & { memberId?: string };
+export type MemoryMember = DirectoryMemberRecord & DirectoryVisibility & {
+  memberId?: string;
+  passwordHash?: string | null;
+  passwordSetAt?: string | null;
+};
+
+type MemoryEventRegistration = {
+  eventId: string;
+  path: string;
+  email: string;
+  name: string;
+  details: Record<string, unknown>;
+  stripeSessionId: string;
+  createdAt: string;
+};
+
+const memoryEventRegistrations: MemoryEventRegistration[] = [];
 
 const memoryMembers: MemoryMember[] = [];
 let nextId = 1;
@@ -14,6 +30,7 @@ export function allowDevMemoryStore(): boolean {
 
 export function resetMemberMemoryForTests(): void {
   memoryMembers.length = 0;
+  memoryEventRegistrations.length = 0;
   nextId = 1;
   seeded = false;
 }
@@ -137,4 +154,38 @@ export function memoryEmailInUse(email: string, exceptId?: number): boolean {
   seedDevMemberIfNeeded();
   const needle = normalizeMemberEmail(email);
   return memoryMembers.some((row) => row.id !== exceptId && normalizeMemberEmail(row.email) === needle);
+}
+
+export function listMemoryMembersForAdmin(): MemoryMember[] {
+  return listMemoryMembers();
+}
+
+export function setMemoryMemberPassword(id: number, passwordHash: string): MemoryMember | null {
+  const existing = getMemoryMemberById(id);
+  if (!existing) return null;
+  const stored = memoryMembers.find((row) => row.id === id);
+  if (!stored) return null;
+  stored.passwordHash = passwordHash;
+  stored.passwordSetAt = new Date().toISOString();
+  return { ...stored };
+}
+
+export function saveMemoryEventRegistration(input: {
+  eventId: string;
+  path: string;
+  email: string;
+  name?: string;
+  details?: Record<string, unknown>;
+  stripeSessionId?: string;
+}): boolean {
+  memoryEventRegistrations.push({
+    eventId: input.eventId,
+    path: input.path,
+    email: normalizeMemberEmail(input.email),
+    name: input.name || "",
+    details: input.details || {},
+    stripeSessionId: input.stripeSessionId || "",
+    createdAt: new Date().toISOString(),
+  });
+  return true;
 }

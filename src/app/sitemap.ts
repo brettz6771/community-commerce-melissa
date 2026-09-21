@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/leadership",
     "/directory",
     "/events",
+    "/events/oktoberfest",
+    "/events/tent-or-treat",
     "/give-donate",
     "/donate",
     "/membership",

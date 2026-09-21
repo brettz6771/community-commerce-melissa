@@ -77,5 +77,6 @@ export function memberJson(member: MemberPortalRecord) {
     showDescription: member.showDescription,
     showLocation: member.showLocation,
     showEmail: member.showEmail,
+    hasPassword: Boolean(member.hasPassword),
   };
 }
