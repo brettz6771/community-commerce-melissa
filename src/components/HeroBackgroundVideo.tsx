@@ -1,217 +1,63 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-const YOUTUBE_VIDEO_ID = "un7p_KUez04";
-const CLIP_START_SECONDS = 34;
-const CLIP_END_SECONDS = 44;
-const YOUTUBE_API_SRC = "https://www.youtube.com/iframe_api";
-
-type YouTubePlayer = {
-  destroy: () => void;
-  mute: () => void;
-  playVideo: () => void;
-  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
-  getCurrentTime: () => number;
-  getDuration: () => number;
-  getPlayerState: () => number;
-};
-
-type YouTubeNamespace = {
-  Player: new (
-    element: HTMLElement,
-    options: {
-      videoId: string;
-      host?: string;
-      width?: string | number;
-      height?: string | number;
-      playerVars?: Record<string, string | number>;
-      events?: {
-        onReady?: (event: { target: YouTubePlayer }) => void;
-        onStateChange?: (event: { data: number; target: YouTubePlayer }) => void;
-      };
-    },
-  ) => YouTubePlayer;
-  PlayerState: {
-    ENDED: number;
-    PLAYING: number;
-  };
-};
-
-declare global {
-  interface Window {
-    YT?: YouTubeNamespace;
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-function loadYouTubeIframeApi() {
-  if (document.querySelector(`script[src="${YOUTUBE_API_SRC}"]`)) {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.src = YOUTUBE_API_SRC;
-  script.async = true;
-  document.body.appendChild(script);
-}
+const HERO_VIDEO_SRC = "https://ccm.t3.tigrisfiles.io/hero-banner-vfinal.mp4";
 
 export default function HeroBackgroundVideo() {
-  const mountRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<YouTubePlayer | null>(null);
-  const watchRef = useRef<number | null>(null);
-  const [isClipPlaying, setIsClipPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    const previousReadyHandler = window.onYouTubeIframeAPIReady;
-    const interactionListeners: Array<["click" | "touchstart", () => void]> = [];
+    const video = videoRef.current;
+    if (!video) return;
 
-    const stopWatch = () => {
-      if (watchRef.current != null) {
-        window.clearInterval(watchRef.current);
-        watchRef.current = null;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+
+    const startPlay = () => {
+      const playAttempt = video.play();
+      if (playAttempt !== undefined) {
+        playAttempt.catch(() => {
+          // Browsers may defer autoplay until a user gesture.
+        });
       }
     };
 
-    const keepClipInRange = (player: YouTubePlayer) => {
-      try {
-        const currentTime = player.getCurrentTime();
-        const duration = player.getDuration();
-        const playerState = player.getPlayerState();
-        if (Number.isNaN(currentTime) || Number.isNaN(duration)) {
-          return;
-        }
+    startPlay();
 
-        if (currentTime < CLIP_START_SECONDS - 0.2 || currentTime >= CLIP_END_SECONDS - 0.12) {
-          player.seekTo(CLIP_START_SECONDS, true);
-          player.playVideo();
-          return;
-        }
-
-        const isRealPlayback =
-          playerState === window.YT?.PlayerState.PLAYING && duration > CLIP_END_SECONDS;
-
-        if (isRealPlayback) {
-          setIsClipPlaying(true);
-        }
-      } catch {
-        // Player can throw while the iframe is still initializing.
-      }
+    const handleUserInteraction = () => {
+      startPlay();
     };
 
-    const startWatch = (player: YouTubePlayer) => {
-      if (watchRef.current != null) {
-        return;
-      }
-
-      watchRef.current = window.setInterval(() => {
-        keepClipInRange(player);
-      }, 120);
-    };
-
-    const createPlayer = () => {
-      if (cancelled || !mountRef.current || !window.YT?.Player || playerRef.current) {
-        return;
-      }
-
-      playerRef.current = new window.YT.Player(mountRef.current, {
-        videoId: YOUTUBE_VIDEO_ID,
-        width: "100%",
-        height: "100%",
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          modestbranding: 1,
-          playsinline: 1,
-          rel: 0,
-          cc_load_policy: 0,
-          enablejsapi: 1,
-          start: CLIP_START_SECONDS,
-          origin: window.location.origin,
-        },
-        events: {
-          onReady: (event) => {
-            event.target.mute();
-            event.target.seekTo(CLIP_START_SECONDS, true);
-            event.target.playVideo();
-            startWatch(event.target);
-
-            const resumePlayback = () => {
-              event.target.mute();
-              event.target.seekTo(CLIP_START_SECONDS, true);
-              event.target.playVideo();
-            };
-
-            document.addEventListener("click", resumePlayback, { once: true });
-            document.addEventListener("touchstart", resumePlayback, { once: true });
-            interactionListeners.push(["click", resumePlayback], ["touchstart", resumePlayback]);
-          },
-          onStateChange: (event) => {
-            if (event.data === window.YT?.PlayerState.ENDED) {
-              event.target.seekTo(CLIP_START_SECONDS, true);
-              event.target.playVideo();
-            }
-
-            if (event.data === window.YT?.PlayerState.PLAYING) {
-              startWatch(event.target);
-              keepClipInRange(event.target);
-            }
-          },
-        },
-      });
-    };
-
-    window.onYouTubeIframeAPIReady = () => {
-      previousReadyHandler?.();
-      createPlayer();
-    };
-
-    if (window.YT?.Player) {
-      createPlayer();
-    } else {
-      loadYouTubeIframeApi();
-    }
+    window.addEventListener("touchstart", handleUserInteraction, { passive: true });
+    window.addEventListener("scroll", handleUserInteraction, { passive: true });
+    window.addEventListener("pointerdown", handleUserInteraction, { passive: true });
 
     return () => {
-      cancelled = true;
-      stopWatch();
-      interactionListeners.forEach(([type, listener]) => {
-        document.removeEventListener(type, listener);
-      });
-      window.onYouTubeIframeAPIReady = previousReadyHandler;
-      playerRef.current?.destroy();
-      playerRef.current = null;
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("scroll", handleUserInteraction);
+      window.removeEventListener("pointerdown", handleUserInteraction);
     };
   }, []);
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-[#0B0E14]" aria-hidden="true">
-      <div
-        className={`pointer-events-none absolute left-1/2 top-1/2 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0 ${
-          isClipPlaying ? "visible opacity-100" : "invisible opacity-0"
-        }`}
-        style={{
-          width: "177.78vh",
-          height: "56.25vw",
-          minWidth: "100%",
-          minHeight: "100%",
-          transform: "translate(-50%, -50%) scale(1.45)",
-        }}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster="/hero-networking.jpg"
+        className="h-full w-full object-cover opacity-75 scale-105"
       >
-        <div ref={mountRef} className="h-full w-full" />
-      </div>
-      <img
-        src="/hero-networking.jpg"
-        alt=""
-        className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-500 ${
-          isClipPlaying ? "opacity-0" : "opacity-100"
-        }`}
-      />
+        <source src={HERO_VIDEO_SRC} type="video/mp4" />
+      </video>
     </div>
   );
 }

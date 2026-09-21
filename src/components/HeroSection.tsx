@@ -15,7 +15,7 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal, onOpenN
   return (
     <section className="relative bg-[#0B0E14] text-white pt-12 pb-24 md:pb-32 overflow-hidden border-b border-white/10">
       
-      {/* Background clip from CCM Meet & Greet (0:34–0:44, looping) */}
+      {/* Hosted hero banner video */}
       <HeroBackgroundVideo />
       
       {/* Bottom to Top Gradient Overlay (Darker at bottom, clear at top) */}
