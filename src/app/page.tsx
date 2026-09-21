@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import LaunchBanner from "@/components/LaunchBanner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import HomeEventsBanner from "@/components/HomeEventsBanner";
 import QuoteSection from "@/components/QuoteSection";
 import MembershipCTASection from "@/components/MembershipCTASection";
 import HomeCardsGrid from "@/components/HomeCardsGrid";
@@ -50,6 +51,8 @@ export default function HomePage() {
         onOpenVideoModal={() => setIsVideoModalOpen(true)}
         onOpenNewsletterModal={() => setIsNewsletterModalOpen(true)}
       />
+
+      <HomeEventsBanner />
 
       {/* Quote & Value Proposition Section */}
       <QuoteSection onOpenJoinModal={() => handleOpenJoinWithTier("Community Partner ($390 1st Yr • Renews $490/yr)")} />

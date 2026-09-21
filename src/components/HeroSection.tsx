@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Users, TrendingUp, Calendar, Heart, ChevronRight, Mail } from "lucide-react";
+import { Users, TrendingUp, Calendar, Heart, Mail } from "lucide-react";
 import Link from "next/link";
 import HeroBackgroundVideo from "@/components/HeroBackgroundVideo";
 
@@ -64,15 +64,6 @@ export default function HeroSection({ onOpenJoinModal, onOpenVideoModal, onOpenN
                 <span>STAY CONNECTED</span>
               </Link>
             )}
-
-            <Link
-              href="/events"
-              className="btn-gold-outline px-6 py-3.5 rounded-md font-bold text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-sm"
-            >
-              EXPLORE EVENTS
-              <ChevronRight className="w-4 h-4 text-slate-300" />
-            </Link>
-
           </div>
 
         </div>
