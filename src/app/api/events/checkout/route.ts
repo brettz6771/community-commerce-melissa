@@ -19,7 +19,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const { eventId, path, name, email, phone, company, guests, notes } = parsed.value;
+    const { eventId, path, name, email, phone, company, guests, additionalGuests, notes } = parsed.value;
+    const partySize = Number(guests) || 1;
     if (!isPaidEventPath(eventId, path)) {
       return NextResponse.json({ error: "This registration path does not use checkout." }, { status: 400 });
     }
@@ -50,11 +51,11 @@ export async function POST(request: Request) {
             unit_amount: OKTOBERFEST_PRICE_CENTS,
             product_data: {
               name: `${event.title} — guest ticket`,
-              description: "Non-member admission. Members register free with a matching membership email.",
+              description: "Non-member admission, $20 per guest including yourself. Members register free with a matching membership email.",
               images: [`${origin}/ccm-logo-transparent.png`],
             },
           },
-          quantity: 1,
+          quantity: partySize,
         },
       ],
       metadata: {
@@ -67,6 +68,15 @@ export async function POST(request: Request) {
         company: truncateMeta(company, 200),
         guests: truncateMeta(guests, 20),
         notes: truncateMeta(notes, 450),
+        guest2Name: truncateMeta(additionalGuests[0]?.name, 120),
+        guest2Email: truncateMeta(additionalGuests[0]?.email, 200),
+        guest2Phone: truncateMeta(additionalGuests[0]?.phone, 40),
+        guest3Name: truncateMeta(additionalGuests[1]?.name, 120),
+        guest3Email: truncateMeta(additionalGuests[1]?.email, 200),
+        guest3Phone: truncateMeta(additionalGuests[1]?.phone, 40),
+        guest4Name: truncateMeta(additionalGuests[2]?.name, 120),
+        guest4Email: truncateMeta(additionalGuests[2]?.email, 200),
+        guest4Phone: truncateMeta(additionalGuests[2]?.phone, 40),
       },
       success_url: `${origin}${event.href}?registered=paid&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${event.href}?canceled=true`,

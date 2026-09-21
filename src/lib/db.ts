@@ -23,6 +23,7 @@ import {
   eventSignupKind,
   getSiteEvent,
   type EventMembershipStatus,
+  type EventPartyGuest,
   type EventPaymentStatus,
   type EventPricing,
   type EventRegistrationPath,
@@ -723,6 +724,9 @@ function mapEventRegistrationRow(row: {
     phone: row.phone || String(details.phone || ""),
     company: row.company || String(details.company || ""),
     guests: row.guests || String(details.guests || "1"),
+    additionalGuests: Array.isArray(details.additionalGuests)
+      ? (details.additionalGuests as EventPartyGuest[])
+      : [],
     notes: row.notes || String(details.notes || ""),
     membershipStatus: (row.membership_status || "non_member") as EventMembershipStatus,
     pricing: (row.pricing || "free") as EventPricing,
@@ -812,7 +816,14 @@ export async function saveEventRegistration({
         payload.pricing,
         payload.amountCents,
         payload.paymentStatus,
-        JSON.stringify({ ...details, phone: payload.phone, company: payload.company, guests: payload.guests, notes: payload.notes }),
+        JSON.stringify({
+          ...details,
+          phone: payload.phone,
+          company: payload.company,
+          guests: payload.guests,
+          additionalGuests: details.additionalGuests || [],
+          notes: payload.notes,
+        }),
         payload.stripeSessionId,
       ]
     );

@@ -26,6 +26,7 @@ async function notifyStaffAndGuest({
   phone,
   company,
   guests,
+  additionalGuests,
   notes,
   confirmation,
 }: {
@@ -37,6 +38,7 @@ async function notifyStaffAndGuest({
   phone: string;
   company: string;
   guests: string;
+  additionalGuests?: { name: string; email: string; phone: string }[];
   notes: string;
   confirmation: string;
 }) {
@@ -48,6 +50,9 @@ async function notifyStaffAndGuest({
     Phone: phone || "N/A",
     "Business / Company": company || "N/A",
     Guests: guests,
+    "Additional guests": additionalGuests?.length
+      ? additionalGuests.map((guest, index) => `Guest ${index + 2}: ${guest.name} <${guest.email}>${guest.phone ? ` ${guest.phone}` : ""}`).join("; ")
+      : "None",
     Notes: notes || "None",
   };
 
@@ -92,7 +97,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const { eventId, path, name, email, phone, company, guests, notes } = parsed.value;
+    const { eventId, path, name, email, phone, company, guests, additionalGuests, notes } = parsed.value;
     const event = getSiteEvent(eventId);
     if (!event) {
       return NextResponse.json({ error: "Event not found." }, { status: 404 });
@@ -142,9 +147,9 @@ export async function POST(request: Request) {
       notes,
       membershipStatus: eventMembershipStatus(path, emailIsMember),
       pricing: eventPricing(eventId, path),
-      amountCents: eventCheckoutAmountCents(eventId, path),
+      amountCents: eventCheckoutAmountCents(eventId, path, Number(guests)),
       paymentStatus: eventPaymentStatus(eventId, path),
-      details: { phone, company, guests, notes, pathLabel },
+      details: { phone, company, guests, additionalGuests, notes, pathLabel },
     });
 
     await notifyStaffAndGuest({
@@ -156,6 +161,7 @@ export async function POST(request: Request) {
       phone,
       company,
       guests,
+      additionalGuests,
       notes,
       confirmation,
     });

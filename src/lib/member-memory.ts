@@ -5,6 +5,7 @@ import {
   eventSignupKind,
   getSiteEvent,
   type EventMembershipStatus,
+  type EventPartyGuest,
   type EventPaymentStatus,
   type EventPricing,
   type EventRegistrationPath,
@@ -202,6 +203,9 @@ export function saveMemoryEventRegistration(input: {
     phone: input.phone || String(details.phone || ""),
     company: input.company || String(details.company || ""),
     guests: input.guests || String(details.guests || "1"),
+    additionalGuests: Array.isArray(details.additionalGuests)
+      ? (details.additionalGuests as EventPartyGuest[])
+      : [],
     notes: input.notes || String(details.notes || ""),
     membershipStatus: input.membershipStatus || "non_member",
     pricing: input.pricing || "free",
