@@ -167,6 +167,7 @@ export default function AdminEventsPage() {
                     <th className="px-4 py-3">Event</th>
                     <th className="px-4 py-3">Name</th>
                     <th className="px-4 py-3">Email</th>
+                    <th className="px-4 py-3">Party</th>
                     <th className="px-4 py-3">Kind</th>
                     <th className="px-4 py-3">Member</th>
                     <th className="px-4 py-3">Payment</th>
@@ -175,14 +176,14 @@ export default function AdminEventsPage() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
+                      <td colSpan={7} className="px-4 py-10 text-center text-slate-400">
                         <Loader2 className="w-5 h-5 animate-spin inline-block mr-2" />
                         Loading…
                       </td>
                     </tr>
                   ) : rows.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-10 text-center text-slate-400">No signups yet for this view.</td>
+                      <td colSpan={7} className="px-4 py-10 text-center text-slate-400">No signups yet for this view.</td>
                     </tr>
                   ) : (
                     rows.map((row) => (
@@ -193,6 +194,16 @@ export default function AdminEventsPage() {
                           <div className="text-xs text-slate-400">{row.phone || row.company || "—"}</div>
                         </td>
                         <td className="px-4 py-3 text-slate-200">{row.email}</td>
+                        <td className="px-4 py-3 text-xs">
+                          <div>{row.guests} including registrant</div>
+                          {row.additionalGuests?.length ? (
+                            <div className="text-slate-400 mt-1 space-y-0.5">
+                              {row.additionalGuests.map((guest) => (
+                                <div key={`${row.id}-${guest.email}`}>{guest.name}</div>
+                              ))}
+                            </div>
+                          ) : null}
+                        </td>
                         <td className="px-4 py-3 text-xs">{row.kind === "business_interest" ? "Business interest" : "Attendance"}</td>
                         <td className="px-4 py-3 text-xs">{row.membershipStatus === "member" ? "Member" : "Non-member"}</td>
                         <td className="px-4 py-3 text-xs">

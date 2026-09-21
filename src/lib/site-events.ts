@@ -175,8 +175,108 @@ export function isPaidEventPath(eventId: SiteEventId, path: EventRegistrationPat
   return eventId === "oktoberfest" && path === "guest";
 }
 
-export function eventCheckoutAmountCents(eventId: SiteEventId, path: EventRegistrationPath): number {
-  return isPaidEventPath(eventId, path) ? OKTOBERFEST_PRICE_CENTS : 0;
+export type EventPartyGuest = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export function maxPartySize(eventId: SiteEventId, path: EventRegistrationPath): number {
+  if (path === "sponsor") return 1;
+  if (eventId === "oktoberfest" && path === "member") return 2;
+  return 4;
+}
+
+export function partySizeOptions(eventId: SiteEventId, path: EventRegistrationPath): number[] {
+  return Array.from({ length: maxPartySize(eventId, path) }, (_, index) => index + 1);
+}
+
+export function parsePartySize(raw: unknown): number | null {
+  const text = String(raw ?? "").trim();
+  if (!/^[1-4]$/.test(text)) return null;
+  return Number(text);
+}
+
+export function eventCheckoutAmountCents(
+  eventId: SiteEventId,
+  path: EventRegistrationPath,
+  partySize = 1,
+): number {
+  if (!isPaidEventPath(eventId, path)) return 0;
+  const count = Math.min(4, Math.max(1, Math.round(Number(partySize) || 1)));
+  return OKTOBERFEST_PRICE_CENTS * count;
+}
+
+export function guestTicketPriceLabel(partySize = 1): string {
+  return `$${eventCheckoutAmountCents("oktoberfest", "guest", partySize) / 100}`;
+}
+
+export function emptyPartyGuest(): EventPartyGuest {
+  return { name: "", email: "", phone: "" };
+}
+
+export function resizeAdditionalGuests(
+  current: EventPartyGuest[] | undefined,
+  partySize: number,
+): EventPartyGuest[] {
+  const needed = Math.max(0, partySize - 1);
+  const existing = Array.isArray(current) ? current : [];
+  return Array.from({ length: needed }, (_, index) => existing[index] || emptyPartyGuest());
+}
+
+export function parseAdditionalGuests(
+  raw: unknown,
+  expectedCount: number,
+): { ok: true; value: EventPartyGuest[] } | { ok: false; error: string } {
+  if (expectedCount <= 0) return { ok: true, value: [] };
+
+  const list = Array.isArray(raw) ? raw : [];
+  if (list.length < expectedCount) {
+    return { ok: false, error: "Enter name and email for every guest coming with you." };
+  }
+
+  const guests: EventPartyGuest[] = [];
+  for (let index = 0; index < expectedCount; index += 1) {
+    const item = list[index] && typeof list[index] === "object"
+      ? (list[index] as Record<string, unknown>)
+      : {};
+    const name = String(item.name || "").trim();
+    const email = String(item.email || "").trim().toLowerCase();
+    const phone = String(item.phone || "").trim().slice(0, 40);
+
+    if (!name) return { ok: false, error: `Enter a name for guest ${index + 2}.` };
+    if (name.length > 120) return { ok: false, error: "A guest name is too long." };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+      return { ok: false, error: `Enter a valid email for guest ${index + 2}.` };
+    }
+
+    guests.push({ name, email, phone });
+  }
+
+  return { ok: true, value: guests };
+}
+
+export function formatAdditionalGuests(guests: EventPartyGuest[]): string {
+  return guests
+    .map((guest, index) => {
+      const phone = guest.phone ? ` · ${guest.phone}` : "";
+      return `Guest ${index + 2}: ${guest.name} <${guest.email}>${phone}`;
+    })
+    .join("; ");
+}
+
+export function additionalGuestsFromMetadata(
+  metadata: Record<string, string | undefined | null>,
+): EventPartyGuest[] {
+  const guests: EventPartyGuest[] = [];
+  for (let number = 2; number <= 4; number += 1) {
+    const name = String(metadata[`guest${number}Name`] || "").trim();
+    const email = String(metadata[`guest${number}Email`] || "").trim().toLowerCase();
+    const phone = String(metadata[`guest${number}Phone`] || "").trim();
+    if (!name && !email) continue;
+    guests.push({ name, email, phone });
+  }
+  return guests;
 }
 
 export function validateEventRegistrationInput(input: unknown): {
@@ -189,6 +289,7 @@ export function validateEventRegistrationInput(input: unknown): {
     phone: string;
     company: string;
     guests: string;
+    additionalGuests: EventPartyGuest[];
     notes: string;
   };
 } | { ok: false; error: string } {
@@ -205,7 +306,23 @@ export function validateEventRegistrationInput(input: unknown): {
   const email = String(body.email || "").trim().toLowerCase();
   const phone = String(body.phone || "").trim();
   const company = String(body.company || body.businessName || "").trim();
-  const guests = String(body.guests || "1").trim() || "1";
+  const partySize = parsePartySize(body.guests ?? "1");
+  if (partySize == null) {
+    return { ok: false, error: "Choose 1 to 4 guests, including yourself." };
+  }
+  if (partySize > maxPartySize(event.id, path)) {
+    return {
+      ok: false,
+      error:
+        path === "member"
+          ? "Members can register themselves plus one guest."
+          : "You can register up to 4 guests, including yourself.",
+    };
+  }
+
+  const additional = parseAdditionalGuests(body.additionalGuests, path === "sponsor" ? 0 : partySize - 1);
+  if (!additional.ok) return additional;
+
   const notes = String(body.notes || body.message || "").trim().slice(0, 1000);
 
   if (!name) return { ok: false, error: "Enter your name." };
@@ -226,7 +343,8 @@ export function validateEventRegistrationInput(input: unknown): {
       email,
       phone,
       company,
-      guests,
+      guests: String(partySize),
+      additionalGuests: additional.value,
       notes,
     },
   };
@@ -270,6 +388,7 @@ export type EventRegistrationRecord = {
   phone: string;
   company: string;
   guests: string;
+  additionalGuests: EventPartyGuest[];
   notes: string;
   membershipStatus: EventMembershipStatus;
   pricing: EventPricing;
@@ -287,6 +406,7 @@ export const EVENT_REGISTRATION_CSV_HEADERS = [
   "Phone",
   "Company",
   "Guests",
+  "Additional guests",
   "Member status",
   "Pricing",
   "Amount",
@@ -305,6 +425,7 @@ export function eventRegistrationCsvRows(rows: EventRegistrationRecord[]): Array
     row.phone,
     row.company,
     row.guests,
+    formatAdditionalGuests(row.additionalGuests || []),
     row.membershipStatus,
     row.pricing,
     (row.amountCents / 100).toFixed(2),

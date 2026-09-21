@@ -5,7 +5,13 @@ import { sendEmail, sendMemberWelcomeAndAdminAlert } from "@/lib/email";
 import { escapeHtml } from "@/lib/html";
 import { getStripe } from "@/lib/stripe";
 import { isStripeCheckoutFulfilled } from "@/lib/membership-coupons";
-import { eventConfirmationCopy, eventRegistrationFormType, getSiteEvent } from "@/lib/site-events";
+import {
+  additionalGuestsFromMetadata,
+  eventConfirmationCopy,
+  eventRegistrationFormType,
+  formatAdditionalGuests,
+  getSiteEvent,
+} from "@/lib/site-events";
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -75,6 +81,7 @@ export async function POST(request: Request) {
             const path = (metadata.path || "guest") as "guest";
             const eventId = siteEvent?.id || "oktoberfest";
             const name = metadata.name || "Guest";
+            const additionalGuests = additionalGuestsFromMetadata(metadata);
             await saveEventRegistration({
               eventId,
               path: metadata.path || "guest",
@@ -93,6 +100,7 @@ export async function POST(request: Request) {
                 phone: metadata.phone || "",
                 company: metadata.company || "",
                 guests: metadata.guests || "1",
+                additionalGuests,
                 notes: metadata.notes || "",
                 amount: `$${((session.amount_total || 0) / 100).toFixed(2)}`,
               },
@@ -103,13 +111,14 @@ export async function POST(request: Request) {
               source: "Stripe Event Checkout",
               details: {
                 Event: siteEvent?.title || metadata.eventId || "Event",
-                Path: "Guest ($20)",
+                Path: "Guest ($20 each)",
                 Name: name,
                 "Stripe Session ID": session.id,
                 "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
                 Phone: metadata.phone || "N/A",
                 Company: metadata.company || "N/A",
                 Guests: metadata.guests || "1",
+                "Additional guests": formatAdditionalGuests(additionalGuests) || "None",
               },
             });
             const confirmation = eventConfirmationCopy(eventId, path);

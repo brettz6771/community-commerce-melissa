@@ -23,6 +23,10 @@ import TermsAgreement from "@/components/TermsAgreement";
 import {
   OKTOBERFEST_PRICE_LABEL,
   getSiteEvent,
+  guestTicketPriceLabel,
+  partySizeOptions,
+  resizeAdditionalGuests,
+  type EventPartyGuest,
   type EventRegistrationPath,
   type SiteEvent,
 } from "@/lib/site-events";
@@ -108,69 +112,71 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
       </section>
 
       <main className="py-10 sm:py-12 flex-1">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-5 space-y-4">
-            <img src={event.image} alt={event.title} className="w-full rounded-2xl border border-slate-200 shadow-lg bg-slate-900" />
-            {event.id === "oktoberfest" ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
-                <p className="text-sm text-slate-700"><strong>Members:</strong> free</p>
-                <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL}</p>
-                <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
-              </div>
-            ) : event.id === "lunch-and-learn" ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
-                <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
-                <p className="text-sm text-slate-700">Discover what CCM is about.</p>
-                <p className="text-sm text-slate-700">Connect with other local owners.</p>
-                <p className="text-sm text-slate-700">Get involved — committees and volunteer roles.</p>
-                <p className="text-xs text-slate-500">Lunch thanks to First United Bank.</p>
-              </div>
-            ) : (
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-red-700">Two ways to join</p>
-                <a href="#attend" className="block text-sm font-bold text-red-700 hover:text-red-800">Register free to attend →</a>
-                <a href="#business-tent" className="block text-sm font-bold text-red-700 hover:text-red-800">Business tent / sponsorship interest →</a>
-                <p className="text-xs text-slate-500">Business setup 12:30–2:00 PM. Event 2:00–5:00 PM.</p>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-7 space-y-6">
-            {registered && (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-5 flex items-start gap-3">
-                <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
-                <div>
-                  <p className="font-extrabold font-outfit uppercase">You&apos;re registered</p>
-                  <p className="text-sm mt-1">
-                    {registered === "paid"
-                      ? "Guest ticket payment received. A confirmation is on its way."
-                      : "We saved your registration and emailed a confirmation."}
-                  </p>
+        <div className={`${event.id === "tent-or-treat" ? "max-w-6xl" : "max-w-5xl"} mx-auto px-4 sm:px-6 lg:px-8 space-y-8`}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-5 space-y-4">
+              <img src={event.image} alt={event.title} className="w-full rounded-2xl border border-slate-200 shadow-lg bg-slate-900" />
+              {event.id === "oktoberfest" ? (
+                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
+                  <p className="text-sm text-slate-700"><strong>Members:</strong> free, plus one guest</p>
+                  <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
+                  <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
                 </div>
-              </div>
-            )}
-            {canceled && (
-              <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 text-sm">
-                Checkout was canceled. You can register again below.
-              </div>
-            )}
+              ) : event.id === "lunch-and-learn" ? (
+                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
+                  <p className="text-sm text-slate-700">Discover what CCM is about.</p>
+                  <p className="text-sm text-slate-700">Connect with other local owners.</p>
+                  <p className="text-sm text-slate-700">Get involved — committees and volunteer roles.</p>
+                  <p className="text-xs text-slate-500">Lunch thanks to First United Bank.</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Two ways to join</p>
+                  <a href="#attend" className="block text-sm font-bold text-red-700 hover:text-red-800">Register free to attend →</a>
+                  <a href="#business-tent" className="block text-sm font-bold text-red-700 hover:text-red-800">Business tent / sponsorship interest →</a>
+                  <p className="text-xs text-slate-500">Business setup 12:30–2:00 PM. Event 2:00–5:00 PM.</p>
+                </div>
+              )}
+            </div>
 
-            {event.id === "oktoberfest" ? (
-              <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
-            ) : event.id === "lunch-and-learn" ? (
-              <TentForm
-                event={event}
-                path="attendee"
-                title="Register free"
-                icon={<Users className="w-4 h-4" />}
-                intro="Free for everyone. Lunch is included."
-                submitLabel="Register for Lunch & Learn"
-              />
-            ) : (
-              <TentOrTreatForms event={event} />
-            )}
+            <div className="lg:col-span-7 space-y-6">
+              {registered && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-5 flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+                  <div>
+                    <p className="font-extrabold font-outfit uppercase">You&apos;re registered</p>
+                    <p className="text-sm mt-1">
+                      {registered === "paid"
+                        ? "Guest ticket payment received. A confirmation is on its way."
+                        : "We saved your registration and emailed a confirmation."}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {canceled && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 text-sm">
+                  Checkout was canceled. You can register again below.
+                </div>
+              )}
+
+              {event.id === "oktoberfest" ? (
+                <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
+              ) : event.id === "lunch-and-learn" ? (
+                <TentForm
+                  event={event}
+                  path="attendee"
+                  title="Register free"
+                  icon={<Users className="w-4 h-4" />}
+                  intro="Free for everyone. Lunch is included."
+                  submitLabel="Register for Lunch & Learn"
+                />
+              ) : null}
+            </div>
           </div>
+
+          {event.id === "tent-or-treat" ? <TentOrTreatForms event={event} /> : null}
         </div>
       </main>
 
@@ -183,15 +189,26 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
 const inputClass =
   "w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500";
 
+type EventFormFields = {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  guests: string;
+  additionalGuests: EventPartyGuest[];
+  notes: string;
+};
+
 function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalState }) {
   const signedIn = portal.status === "ok";
   const [path, setPath] = useState<EventRegistrationPath>(signedIn ? "member" : "guest");
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<EventFormFields>({
     name: portal.member?.ownerName || "",
     email: portal.member?.email || "",
     phone: "",
     company: portal.member?.businessName || "",
     guests: "1",
+    additionalGuests: [],
     notes: "",
   });
   const [agreed, setAgreed] = useState(false);
@@ -246,19 +263,34 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
         Register
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <PathButton active={path === "member"} onClick={() => setPath("member")} label="I'm a member — free" />
-        <PathButton active={path === "guest"} onClick={() => setPath("guest")} label={`Guest — ${OKTOBERFEST_PRICE_LABEL}`} />
+        <PathButton
+          active={path === "member"}
+          onClick={() => {
+            setPath("member");
+            setForm((current) => ({
+              ...current,
+              guests: "1",
+              additionalGuests: [],
+            }));
+          }}
+          label="I'm a member — free"
+        />
+        <PathButton
+          active={path === "guest"}
+          onClick={() => setPath("guest")}
+          label={`Guest — ${OKTOBERFEST_PRICE_LABEL} each`}
+        />
       </div>
       {signedIn && path === "member" && (
         <p className="text-xs text-emerald-700 font-semibold">Signed in as {portal.member?.email}. Member admission is complimentary.</p>
       )}
-      <SharedFields form={form} setForm={setForm} />
+      <SharedFields form={form} setForm={setForm} eventId={event.id} path={path} />
       <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" includeRefund={path === "guest"} />
       {error && <p className="text-sm text-red-700">{error}</p>}
       {done && <p className="text-sm text-emerald-700 font-semibold">{done}</p>}
       <button type="submit" disabled={busy || !agreed} className="btn-red px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center gap-2">
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-        {path === "guest" ? `Pay ${OKTOBERFEST_PRICE_LABEL} and register` : "Register as member"}
+        {path === "guest" ? `Pay ${guestTicketPriceLabel(Number(form.guests) || 1)} and register` : "Register as member"}
       </button>
       {!signedIn && path === "member" && (
         <p className="text-[11px] text-slate-500">
@@ -272,7 +304,7 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
 
 function TentOrTreatForms({ event }: { event: SiteEvent }) {
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       <div id="attend">
         <TentForm
           event={event}
@@ -330,7 +362,15 @@ function TentForm({
   nested?: boolean;
   drawing?: boolean;
 }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", guests: "1", notes: drawing ? "Enter me in the prize drawing" : "" });
+  const [form, setForm] = useState<EventFormFields>({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    guests: "1",
+    additionalGuests: [],
+    notes: drawing ? "Enter me in the prize drawing" : "",
+  });
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -367,7 +407,14 @@ function TentForm({
         {title}
       </div>
       <p className="text-sm text-slate-600">{intro}</p>
-      <SharedFields form={form} setForm={setForm} requireCompany={requireCompany} showNotes={path === "sponsor"} />
+      <SharedFields
+        form={form}
+        setForm={setForm}
+        eventId={event.id}
+        path={path}
+        requireCompany={requireCompany}
+        showNotes={path === "sponsor"}
+      />
       <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" id={`agree-${path}`} />
       {error && <p className="text-sm text-red-700">{error}</p>}
       {done && <p className="text-sm text-emerald-700 font-semibold">{done}</p>}
@@ -379,26 +426,30 @@ function TentForm({
   );
 }
 
-type EventFormFields = {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  guests: string;
-  notes: string;
-};
-
 function SharedFields({
   form,
   setForm,
+  eventId,
+  path,
   requireCompany = false,
   showNotes = false,
 }: {
   form: EventFormFields;
   setForm: React.Dispatch<React.SetStateAction<EventFormFields>>;
+  eventId: SiteEvent["id"];
+  path: EventRegistrationPath;
   requireCompany?: boolean;
   showNotes?: boolean;
 }) {
+  const sizes = partySizeOptions(eventId, path);
+  const showGuestParty = path !== "sponsor";
+  const updateAdditionalGuest = (index: number, field: keyof EventPartyGuest, value: string) => {
+    const next = form.additionalGuests.map((guest, guestIndex) =>
+      guestIndex === index ? { ...guest, [field]: value } : guest
+    );
+    setForm({ ...form, additionalGuests: next });
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <label className="block space-y-1 sm:col-span-2">
@@ -417,15 +468,64 @@ function SharedFields({
         <span className="block text-xs font-bold text-slate-600 uppercase">{requireCompany ? "Business name *" : "Business / company"}</span>
         <input className={inputClass} required={requireCompany} value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
       </label>
-      <label className="block space-y-1">
-        <span className="block text-xs font-bold text-slate-600 uppercase">Guests</span>
-        <select className={inputClass} value={form.guests} onChange={(e) => setForm({ ...form, guests: e.target.value })}>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4+">4+</option>
-        </select>
-      </label>
+      {showGuestParty && (
+        <label className="block space-y-1">
+          <span className="block text-xs font-bold text-slate-600 uppercase">Guests (including yourself)</span>
+          <select
+            className={inputClass}
+            value={form.guests}
+            onChange={(e) => {
+              const guests = e.target.value;
+              setForm({
+                ...form,
+                guests,
+                additionalGuests: resizeAdditionalGuests(form.additionalGuests, Number(guests) || 1),
+              });
+            }}
+          >
+            {sizes.map((size) => (
+              <option key={size} value={String(size)}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      {showGuestParty && form.additionalGuests.map((guest, index) => (
+        <div key={`guest-${index + 2}`} className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <p className="sm:col-span-2 text-xs font-bold uppercase tracking-wider text-slate-600">
+            Guest {index + 2} details
+          </p>
+          <label className="block space-y-1 sm:col-span-2">
+            <span className="block text-xs font-bold text-slate-600 uppercase">Full name *</span>
+            <input
+              className={inputClass}
+              required
+              value={guest.name}
+              onChange={(e) => updateAdditionalGuest(index, "name", e.target.value)}
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="block text-xs font-bold text-slate-600 uppercase">Email *</span>
+            <input
+              type="email"
+              className={inputClass}
+              required
+              value={guest.email}
+              onChange={(e) => updateAdditionalGuest(index, "email", e.target.value)}
+            />
+          </label>
+          <label className="block space-y-1">
+            <span className="block text-xs font-bold text-slate-600 uppercase">Phone</span>
+            <input
+              type="tel"
+              className={inputClass}
+              value={guest.phone}
+              onChange={(e) => updateAdditionalGuest(index, "phone", e.target.value)}
+            />
+          </label>
+        </div>
+      ))}
       {showNotes && (
         <label className="block space-y-1 sm:col-span-2">
           <span className="block text-xs font-bold text-slate-600 uppercase">Notes for staff</span>

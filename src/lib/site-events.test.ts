@@ -12,6 +12,8 @@ import {
   getSiteEvent,
   isPaidEventPath,
   isPastEvent,
+  maxPartySize,
+  partySizeOptions,
   siteEventsAsItems,
   validateEventRegistrationInput,
 } from "./site-events.ts";
@@ -34,7 +36,11 @@ describe("site events catalog", () => {
     assert.equal(isPaidEventPath("oktoberfest", "guest"), true);
     assert.equal(eventCheckoutAmountCents("oktoberfest", "member"), 0);
     assert.equal(eventCheckoutAmountCents("oktoberfest", "guest"), OKTOBERFEST_PRICE_CENTS);
+    assert.equal(eventCheckoutAmountCents("oktoberfest", "guest", 3), OKTOBERFEST_PRICE_CENTS * 3);
     assert.equal(OKTOBERFEST_PRICE_CENTS, 2000);
+    assert.deepEqual(partySizeOptions("oktoberfest", "member"), [1, 2]);
+    assert.deepEqual(partySizeOptions("oktoberfest", "guest"), [1, 2, 3, 4]);
+    assert.equal(maxPartySize("lunch-and-learn", "attendee"), 4);
   });
 
   it("keeps Tent or Treat paths off Stripe", () => {
@@ -61,6 +67,47 @@ describe("site events catalog", () => {
       email: "jordan@example.com",
     });
     assert.equal(guest.ok, true);
+
+    const plusRejected = validateEventRegistrationInput({
+      eventId: "lunch-and-learn",
+      path: "attendee",
+      name: "Jordan Hale",
+      email: "jordan@example.com",
+      guests: "4+",
+    });
+    assert.equal(plusRejected.ok, false);
+
+    const memberTooMany = validateEventRegistrationInput({
+      eventId: "oktoberfest",
+      path: "member",
+      name: "Jordan Hale",
+      email: "jordan@example.com",
+      guests: "3",
+    });
+    assert.equal(memberTooMany.ok, false);
+
+    const missingCompanion = validateEventRegistrationInput({
+      eventId: "oktoberfest",
+      path: "guest",
+      name: "Jordan Hale",
+      email: "jordan@example.com",
+      guests: "2",
+    });
+    assert.equal(missingCompanion.ok, false);
+
+    const paidParty = validateEventRegistrationInput({
+      eventId: "oktoberfest",
+      path: "guest",
+      name: "Jordan Hale",
+      email: "jordan@example.com",
+      guests: "2",
+      additionalGuests: [{ name: "Sam Hale", email: "sam@example.com", phone: "555-0100" }],
+    });
+    assert.equal(paidParty.ok, true);
+    if (paidParty.ok) {
+      assert.equal(paidParty.value.guests, "2");
+      assert.equal(paidParty.value.additionalGuests[0].email, "sam@example.com");
+    }
 
     const sponsorMissing = validateEventRegistrationInput({
       eventId: "tent-or-treat",
@@ -99,6 +146,7 @@ describe("site events catalog", () => {
         phone: "",
         company: "",
         guests: "1",
+        additionalGuests: [],
         notes: "",
         membershipStatus: "non_member",
         pricing: "paid",
@@ -109,6 +157,6 @@ describe("site events catalog", () => {
       },
     ]);
     assert.equal(EVENT_REGISTRATION_CSV_HEADERS.includes("Stripe session"), true);
-    assert.equal(csv[0][9], "20.00");
+    assert.equal(csv[0][10], "20.00");
   });
 });
