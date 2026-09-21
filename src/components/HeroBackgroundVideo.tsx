@@ -82,9 +82,10 @@ export default function HeroBackgroundVideo() {
         if (currentTime < CLIP_START_SECONDS - 0.2 || currentTime >= CLIP_END_SECONDS - 0.12) {
           player.seekTo(CLIP_START_SECONDS, true);
           player.playVideo();
-        } else {
-          setIsClipPlaying(true);
+          return;
         }
+
+        setIsClipPlaying(true);
       } catch {
         // Player can throw while the iframe is still initializing.
       }
@@ -107,7 +108,6 @@ export default function HeroBackgroundVideo() {
 
       playerRef.current = new window.YT.Player(mountRef.current, {
         videoId: YOUTUBE_VIDEO_ID,
-        host: "https://www.youtube-nocookie.com",
         width: "100%",
         height: "100%",
         playerVars: {
@@ -182,25 +182,27 @@ export default function HeroBackgroundVideo() {
 
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-      <img
-        src="/hero-networking.jpg"
-        alt=""
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-          isClipPlaying ? "opacity-0" : "opacity-80"
-        }`}
-      />
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0"
+        className={`pointer-events-none absolute left-1/2 top-1/2 [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full [&_iframe]:border-0 ${
+          isClipPlaying ? "opacity-100" : "opacity-0"
+        }`}
         style={{
           width: "177.78vh",
           height: "56.25vw",
           minWidth: "100%",
           minHeight: "100%",
-          transform: "translate(-50%, -50%) scale(1.6)",
+          transform: "translate(-50%, -50%) scale(1.45)",
         }}
       >
         <div ref={mountRef} className="h-full w-full" />
       </div>
+      <img
+        src="/hero-networking.jpg"
+        alt=""
+        className={`absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-500 ${
+          isClipPlaying ? "opacity-0" : "opacity-80"
+        }`}
+      />
     </div>
   );
 }
