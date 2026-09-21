@@ -112,71 +112,66 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
       </section>
 
       <main className="py-10 sm:py-12 flex-1">
-        <div className={`${event.id === "tent-or-treat" ? "max-w-6xl" : "max-w-5xl"} mx-auto px-4 sm:px-6 lg:px-8 space-y-8`}>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-5 space-y-4">
-              <img src={event.image} alt={event.title} className="w-full rounded-2xl border border-slate-200 shadow-lg bg-slate-900" />
-              {event.id === "oktoberfest" ? (
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
-                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
-                  <p className="text-sm text-slate-700"><strong>Members:</strong> free, plus one guest</p>
-                  <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
-                  <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
-                </div>
-              ) : event.id === "lunch-and-learn" ? (
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
-                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
-                  <p className="text-sm text-slate-700">Discover what CCM is about.</p>
-                  <p className="text-sm text-slate-700">Connect with other local owners.</p>
-                  <p className="text-sm text-slate-700">Get involved — committees and volunteer roles.</p>
-                  <p className="text-xs text-slate-500">Lunch thanks to First United Bank.</p>
-                </div>
-              ) : (
-                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-widest text-red-700">Two ways to join</p>
-                  <a href="#attend" className="block text-sm font-bold text-red-700 hover:text-red-800">Register free to attend →</a>
-                  <a href="#business-tent" className="block text-sm font-bold text-red-700 hover:text-red-800">Business tent / sponsorship interest →</a>
-                  <p className="text-xs text-slate-500">Business setup 12:30–2:00 PM. Event 2:00–5:00 PM.</p>
-                </div>
-              )}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {registered && (
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-5 flex items-start gap-3">
+              <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+              <div>
+                <p className="font-extrabold font-outfit uppercase">You&apos;re registered</p>
+                <p className="text-sm mt-1">
+                  {registered === "paid"
+                    ? "Guest ticket payment received. A confirmation is on its way."
+                    : "We saved your registration and emailed a confirmation."}
+                </p>
+              </div>
             </div>
+          )}
+          {canceled && (
+            <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 text-sm">
+              Checkout was canceled. You can register again below.
+            </div>
+          )}
 
-            <div className="lg:col-span-7 space-y-6">
-              {registered && (
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-5 flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
-                  <div>
-                    <p className="font-extrabold font-outfit uppercase">You&apos;re registered</p>
-                    <p className="text-sm mt-1">
-                      {registered === "paid"
-                        ? "Guest ticket payment received. A confirmation is on its way."
-                        : "We saved your registration and emailed a confirmation."}
-                    </p>
+          {event.id === "tent-or-treat" ? (
+            <TentOrTreatForms event={event} />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-5 space-y-4">
+                <img src={event.image} alt={event.title} className="w-full rounded-2xl border border-slate-200 shadow-lg bg-slate-900" />
+                {event.id === "oktoberfest" ? (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+                    <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
+                    <p className="text-sm text-slate-700"><strong>Members:</strong> free, plus one guest</p>
+                    <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
+                    <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
                   </div>
-                </div>
-              )}
-              {canceled && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 text-sm">
-                  Checkout was canceled. You can register again below.
-                </div>
-              )}
+                ) : (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+                    <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
+                    <p className="text-sm text-slate-700">Discover what CCM is about.</p>
+                    <p className="text-sm text-slate-700">Connect with other local owners.</p>
+                    <p className="text-sm text-slate-700">Get involved — committees and volunteer roles.</p>
+                    <p className="text-xs text-slate-500">Lunch thanks to First United Bank.</p>
+                  </div>
+                )}
+              </div>
 
-              {event.id === "oktoberfest" ? (
-                <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
-              ) : event.id === "lunch-and-learn" ? (
-                <TentForm
-                  event={event}
-                  path="attendee"
-                  title="Register free"
-                  icon={<Users className="w-4 h-4" />}
-                  intro="Free for everyone. Lunch is included."
-                  submitLabel="Register for Lunch & Learn"
-                />
-              ) : null}
+              <div className="lg:col-span-7 space-y-6">
+                {event.id === "oktoberfest" ? (
+                  <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
+                ) : (
+                  <TentForm
+                    event={event}
+                    path="attendee"
+                    title="Register free"
+                    icon={<Users className="w-4 h-4" />}
+                    intro="Free for everyone. Lunch is included."
+                    submitLabel="Register for Lunch & Learn"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-
-          {event.id === "tent-or-treat" ? <TentOrTreatForms event={event} /> : null}
+          )}
         </div>
       </main>
 
@@ -304,39 +299,59 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
 
 function TentOrTreatForms({ event }: { event: SiteEvent }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-      <div id="attend">
-        <TentForm
-          event={event}
-          path="attendee"
-          title="Register free to attend"
-          icon={<Users className="w-4 h-4" />}
-          intro="Free for everyone. You’ll be entered into a drawing for prizes."
-          submitLabel="Register to attend"
-          drawing
-        />
-      </div>
-      <div id="business-tent" className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {event.businessImage && (
-          <img src={event.businessImage} alt="Business tent information" className="w-full bg-white" />
-        )}
-        <div className="p-6 sm:p-8">
+    <div className="space-y-12">
+      <section id="attend" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-5 space-y-4">
+          <img src={event.image} alt={event.title} className="w-full rounded-2xl border border-slate-200 shadow-lg bg-slate-900" />
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-red-700">Attendee signup</p>
+            <p className="text-sm text-slate-700">Free for everyone. Register on the right, then jump to business tents if you want a booth.</p>
+            <a href="#business-tent" className="block text-sm font-bold text-red-700 hover:text-red-800">Business tent / sponsorship →</a>
+            <p className="text-xs text-slate-500">Business setup 12:30–2:00 PM. Event 2:00–5:00 PM.</p>
+          </div>
+        </div>
+        <div className="lg:col-span-7">
           <TentForm
             event={event}
-            path="sponsor"
-            title="Business tent / sponsorship"
-            icon={<Building2 className="w-4 h-4" />}
-            intro="Interest form only. Staff will follow up about tent space ($150), larger space ($250), or food vendor ($250). Nothing is charged here."
-            submitLabel="Send interest form"
-            requireCompany
-            nested
+            path="attendee"
+            title="Register free to attend"
+            icon={<Users className="w-4 h-4" />}
+            intro="Free for everyone. You’ll be entered into a drawing for prizes."
+            submitLabel="Register to attend"
+            drawing
           />
-          <p className="text-xs text-slate-500 mt-3">
-            Questions: Cindy Karman,{" "}
-            <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a>
-          </p>
         </div>
-      </div>
+      </section>
+
+      <section id="business-tent" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-5">
+          {event.businessImage ? (
+            <img
+              src={event.businessImage}
+              alt="Business tent and sponsorship information"
+              className="w-full rounded-2xl border border-slate-200 shadow-lg bg-white"
+            />
+          ) : null}
+        </div>
+        <div className="lg:col-span-7">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+            <TentForm
+              event={event}
+              path="sponsor"
+              title="Business tent / sponsorship"
+              icon={<Building2 className="w-4 h-4" />}
+              intro="Interest form only. Staff will follow up about tent space ($150), larger space ($250), or food vendor ($250). Nothing is charged here."
+              submitLabel="Send interest form"
+              requireCompany
+              nested
+            />
+            <p className="text-xs text-slate-500 mt-3">
+              Questions: Cindy Karman,{" "}
+              <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
