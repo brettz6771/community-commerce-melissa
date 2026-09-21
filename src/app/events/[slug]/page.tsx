@@ -110,6 +110,7 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
                 <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission</p>
                 <p className="text-sm text-slate-700"><strong>Members:</strong> free</p>
                 <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL}</p>
+                <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">

@@ -3,10 +3,12 @@ import assert from "node:assert/strict";
 import {
   OKTOBERFEST_PRICE_CENTS,
   allowedPathsForEvent,
+  chicagoCalendarDate,
   eventCheckoutAmountCents,
   eventConfirmationCopy,
   getSiteEvent,
   isPaidEventPath,
+  isPastEvent,
   siteEventsAsItems,
   validateEventRegistrationInput,
 } from "./site-events.ts";
@@ -36,6 +38,14 @@ describe("site events catalog", () => {
     assert.equal(isPaidEventPath("tent-or-treat", "sponsor"), false);
     assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor"), 0);
     assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /No payment/i);
+  });
+
+  it("moves events to Past the Chicago calendar day after they end", () => {
+    const event = { date: "2026-09-14" };
+    assert.equal(isPastEvent(event, new Date("2026-09-14T22:00:00-05:00")), false);
+    assert.equal(isPastEvent(event, new Date("2026-09-15T00:30:00-05:00")), true);
+    assert.equal(isPastEvent({ date: "2026-09-21" }, new Date("2026-09-21T18:00:00-05:00")), false);
+    assert.match(chicagoCalendarDate(new Date("2026-09-21T10:00:00-05:00")), /^\d{4}-\d{2}-\d{2}$/);
   });
 
   it("validates registration payloads and requires a business name on the tent interest path", () => {

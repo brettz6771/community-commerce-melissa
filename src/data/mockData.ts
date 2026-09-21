@@ -14,6 +14,7 @@ export interface EventItem {
   isPast?: boolean;
   registerUrl?: string;
   registerHref?: string;
+  endDate?: string;
 }
 
 export interface BusinessItem {
@@ -165,7 +166,7 @@ export const MOCK_EVENTS: EventItem[] = [
     location: "Texas Republic Bank",
     address: "2220 Sam Rayburn Hwy Suite 100, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
-    description: "A casual Oktoberfest mixer for Melissa business owners and neighbors. Meet new partners, say hello, and enjoy the evening.",
+    description: "Networking night with complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.",
     image: "/events/oktoberfest-networking-night.png",
     isFeatured: true,
     registerHref: "/events/oktoberfest"

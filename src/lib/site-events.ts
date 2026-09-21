@@ -51,7 +51,7 @@ export const SITE_EVENTS: SiteEvent[] = [
     address: "2220 Sam Rayburn Hwy Suite 100, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
     description:
-      "A casual Oktoberfest mixer for Melissa business owners and neighbors. Meet new partners, say hello, and enjoy the evening.",
+      "Networking night with complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.",
     image: resolveOktoberfestImage(),
     isFeatured: true,
     href: "/events/oktoberfest",
@@ -77,6 +77,26 @@ export const SITE_EVENTS: SiteEvent[] = [
     href: "/events/tent-or-treat",
   },
 ];
+
+const CHICAGO_DATE = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Chicago",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+export function chicagoCalendarDate(now = new Date()): string {
+  return CHICAGO_DATE.format(now);
+}
+
+export function eventEndDate(event: { date: string; endDate?: string }): string {
+  return event.endDate || event.date;
+}
+
+/** True the calendar day after the event ends, using America/Chicago. */
+export function isPastEvent(event: { date: string; endDate?: string; isPast?: boolean }, now = new Date()): boolean {
+  return eventEndDate(event) < chicagoCalendarDate(now);
+}
 
 export function getSiteEvent(slug: string | undefined | null): SiteEvent | null {
   return SITE_EVENTS.find((event) => event.slug === slug) || null;
