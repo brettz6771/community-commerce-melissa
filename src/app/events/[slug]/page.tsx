@@ -96,7 +96,13 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
           <div className="flex flex-wrap gap-4 text-sm text-slate-200 pt-2">
             <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4 text-red-400" />{event.dateLabel}</span>
             <span className="inline-flex items-center gap-2"><Clock className="w-4 h-4 text-red-400" />{event.time}</span>
-            <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-red-400" />{event.location}</span>
+            <span className="inline-flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-red-400 shrink-0" />
+              <span>
+                {event.location}
+                {event.address ? ` · ${event.address}` : ""}
+              </span>
+            </span>
           </div>
         </div>
       </section>
