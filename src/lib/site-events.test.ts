@@ -1,11 +1,14 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  EVENT_REGISTRATION_CSV_HEADERS,
   OKTOBERFEST_PRICE_CENTS,
   allowedPathsForEvent,
   chicagoCalendarDate,
   eventCheckoutAmountCents,
   eventConfirmationCopy,
+  eventRegistrationCsvRows,
+  eventSignupKind,
   getSiteEvent,
   isPaidEventPath,
   isPastEvent,
@@ -14,13 +17,15 @@ import {
 } from "./site-events.ts";
 
 describe("site events catalog", () => {
-  it("lists Oktoberfest and Tent or Treat with in-house registration links", () => {
+  it("lists Lunch & Learn, Oktoberfest, and Tent or Treat with in-house registration links", () => {
     const items = siteEventsAsItems();
-    assert.equal(items.length, 2);
+    assert.equal(items.length, 3);
+    assert.equal(getSiteEvent("lunch-and-learn")?.title, "Lunch & Learn: Building a Stronger Community");
     assert.equal(getSiteEvent("oktoberfest")?.title, "Oktoberfest Networking Night");
     assert.equal(getSiteEvent("tent-or-treat")?.title, "Community Tent-or-Treat");
-    assert.equal(items[0].registerHref, "/events/oktoberfest");
-    assert.equal(items[1].registerHref, "/events/tent-or-treat");
+    assert.equal(getSiteEvent("lunch-and-learn")?.href, "/events/lunch-and-learn");
+    assert.equal(items.find((item) => item.id === "evt-oktoberfest")?.registerHref, "/events/oktoberfest");
+    assert.equal(items.find((item) => item.id === "evt-tent-or-treat")?.registerHref, "/events/tent-or-treat");
   });
 
   it("makes Oktoberfest free for members and $20 for guests", () => {
@@ -74,5 +79,36 @@ describe("site events catalog", () => {
     });
     assert.equal(sponsor.ok, true);
     if (sponsor.ok) assert.equal(sponsor.value.path, "sponsor");
+  });
+
+  it("keeps Lunch & Learn free and marks tent business forms as interest", () => {
+    assert.deepEqual(allowedPathsForEvent("lunch-and-learn"), ["attendee"]);
+    assert.equal(isPaidEventPath("lunch-and-learn", "attendee"), false);
+    assert.equal(eventSignupKind("sponsor"), "business_interest");
+    assert.equal(eventSignupKind("attendee"), "attendance");
+    assert.match(eventConfirmationCopy("lunch-and-learn", "attendee"), /complimentary/i);
+    const csv = eventRegistrationCsvRows([
+      {
+        id: 1,
+        eventId: "oktoberfest",
+        eventTitle: "Oktoberfest Networking Night",
+        path: "guest",
+        kind: "attendance",
+        name: "Guest Tester",
+        email: "guest@example.com",
+        phone: "",
+        company: "",
+        guests: "1",
+        notes: "",
+        membershipStatus: "non_member",
+        pricing: "paid",
+        amountCents: 2000,
+        paymentStatus: "paid",
+        stripeSessionId: "cs_test",
+        createdAt: "2026-09-21T12:00:00.000Z",
+      },
+    ]);
+    assert.equal(EVENT_REGISTRATION_CSV_HEADERS.includes("Stripe session"), true);
+    assert.equal(csv[0][9], "20.00");
   });
 });

@@ -128,6 +128,7 @@ export default function AdminMembersPage() {
             <p className="text-[11px] text-slate-400 uppercase tracking-widest">Portal accounts</p>
           </div>
           <div className="flex gap-4 text-xs">
+            <Link href="/admin/events" className="text-slate-300 hover:text-white">Event signups</Link>
             <Link href="/admin/newsletter" className="text-slate-300 hover:text-white">Newsletter</Link>
             <Link href="/" className="text-slate-300 hover:text-white">Back to site</Link>
           </div>

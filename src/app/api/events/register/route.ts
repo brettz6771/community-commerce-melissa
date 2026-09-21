@@ -4,7 +4,11 @@ import { sendEmail } from "@/lib/email";
 import { escapeHtml } from "@/lib/html";
 import { resolvePortalAuth } from "@/lib/member-portal-session";
 import {
+  eventCheckoutAmountCents,
   eventConfirmationCopy,
+  eventMembershipStatus,
+  eventPaymentStatus,
+  eventPricing,
   eventRegistrationFormType,
   getSiteEvent,
   isPaidEventPath,
@@ -101,21 +105,19 @@ export async function POST(request: Request) {
       );
     }
 
-    if (eventId === "oktoberfest" && path === "member") {
-      const auth = await resolvePortalAuth(request);
-      const signedInMatch =
-        auth.status === "ok" && auth.member.email === email;
-      const emailIsMember = signedInMatch || (await isActiveDirectoryMemberEmail(email));
-      if (!emailIsMember) {
-        return NextResponse.json(
-          {
-            error:
-              "We could not match that email to an active membership. Use the guest $20 checkout, or sign in to the member portal.",
-            needsPayment: true,
-          },
-          { status: 403 }
-        );
-      }
+    const auth = await resolvePortalAuth(request);
+    const signedInMatch = auth.status === "ok" && auth.member.email === email;
+    const emailIsMember = signedInMatch || (await isActiveDirectoryMemberEmail(email));
+
+    if (eventId === "oktoberfest" && path === "member" && !emailIsMember) {
+      return NextResponse.json(
+        {
+          error:
+            "We could not match that email to an active membership. Use the guest $20 checkout, or sign in to the member portal.",
+          needsPayment: true,
+        },
+        { status: 403 }
+      );
     }
 
     const formType = eventRegistrationFormType(eventId, path);
@@ -134,6 +136,14 @@ export async function POST(request: Request) {
       path,
       email,
       name,
+      phone,
+      company,
+      guests,
+      notes,
+      membershipStatus: eventMembershipStatus(path, emailIsMember),
+      pricing: eventPricing(eventId, path),
+      amountCents: eventCheckoutAmountCents(eventId, path),
+      paymentStatus: eventPaymentStatus(eventId, path),
       details: { phone, company, guests, notes, pathLabel },
     });
 

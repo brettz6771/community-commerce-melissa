@@ -157,6 +157,21 @@ export const MOCK_EVENTS: EventItem[] = [
     registerUrl: "https://www.eventbrite.com/e/1998545201497?aff=oddtdtcreator"
   },
   {
+    id: "evt-lunch-and-learn-oct",
+    title: "Lunch & Learn: Building a Stronger Community",
+    date: "2026-10-12",
+    month: "OCT",
+    day: "12",
+    time: "11:00 AM - 12:30 PM",
+    location: "First United Bank",
+    address: "1700 Redbud Blvd. Suite 130, McKinney, TX 75069",
+    category: "Lunch and Learn",
+    description: "Discover CCM, connect with local owners, and get involved. Free lunch for attendees, thanks to First United Bank.",
+    image: "/events/lunch-and-learn-10-12-26.png",
+    isFeatured: true,
+    registerHref: "/events/lunch-and-learn"
+  },
+  {
     id: "evt-oktoberfest",
     title: "Oktoberfest Networking Night",
     date: "2026-10-26",

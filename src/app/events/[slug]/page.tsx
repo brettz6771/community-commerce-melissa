@@ -118,6 +118,14 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
                 <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL}</p>
                 <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
               </div>
+            ) : event.id === "lunch-and-learn" ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+                <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
+                <p className="text-sm text-slate-700">Discover what CCM is about.</p>
+                <p className="text-sm text-slate-700">Connect with other local owners.</p>
+                <p className="text-sm text-slate-700">Get involved — committees and volunteer roles.</p>
+                <p className="text-xs text-slate-500">Lunch thanks to First United Bank.</p>
+              </div>
             ) : (
               <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
                 <p className="text-xs font-bold uppercase tracking-widest text-red-700">Two ways to join</p>
@@ -150,6 +158,15 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
 
             {event.id === "oktoberfest" ? (
               <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
+            ) : event.id === "lunch-and-learn" ? (
+              <TentForm
+                event={event}
+                path="attendee"
+                title="Register free"
+                icon={<Users className="w-4 h-4" />}
+                intro="Free for everyone. Lunch is included."
+                submitLabel="Register for Lunch & Learn"
+              />
             ) : (
               <TentOrTreatForms event={event} />
             )}

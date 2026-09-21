@@ -1,6 +1,16 @@
 import type { DirectoryMemberRecord } from "@/lib/db";
 import { DEFAULT_VISIBILITY, type DirectoryVisibility, type MemberProfileFields } from "@/lib/member-portal";
 import { normalizeMemberEmail } from "@/lib/member-portal-auth";
+import {
+  eventSignupKind,
+  getSiteEvent,
+  type EventMembershipStatus,
+  type EventPaymentStatus,
+  type EventPricing,
+  type EventRegistrationPath,
+  type EventRegistrationRecord,
+  type EventSignupKind,
+} from "@/lib/site-events";
 
 export type MemoryMember = DirectoryMemberRecord & DirectoryVisibility & {
   memberId?: string;
@@ -8,15 +18,7 @@ export type MemoryMember = DirectoryMemberRecord & DirectoryVisibility & {
   passwordSetAt?: string | null;
 };
 
-type MemoryEventRegistration = {
-  eventId: string;
-  path: string;
-  email: string;
-  name: string;
-  details: Record<string, unknown>;
-  stripeSessionId: string;
-  createdAt: string;
-};
+type MemoryEventRegistration = EventRegistrationRecord;
 
 const memoryEventRegistrations: MemoryEventRegistration[] = [];
 
@@ -173,19 +175,48 @@ export function setMemoryMemberPassword(id: number, passwordHash: string): Memor
 export function saveMemoryEventRegistration(input: {
   eventId: string;
   path: string;
+  kind?: EventSignupKind;
   email: string;
   name?: string;
+  phone?: string;
+  company?: string;
+  guests?: string;
+  notes?: string;
+  membershipStatus?: EventMembershipStatus;
+  pricing?: EventPricing;
+  amountCents?: number;
+  paymentStatus?: EventPaymentStatus;
   details?: Record<string, unknown>;
   stripeSessionId?: string;
 }): boolean {
+  const path = input.path as EventRegistrationPath;
+  const details = input.details || {};
   memoryEventRegistrations.push({
+    id: memoryEventRegistrations.length + 1,
     eventId: input.eventId,
-    path: input.path,
+    eventTitle: getSiteEvent(input.eventId)?.title || input.eventId,
+    path,
+    kind: input.kind || eventSignupKind(path),
     email: normalizeMemberEmail(input.email),
     name: input.name || "",
-    details: input.details || {},
+    phone: input.phone || String(details.phone || ""),
+    company: input.company || String(details.company || ""),
+    guests: input.guests || String(details.guests || "1"),
+    notes: input.notes || String(details.notes || ""),
+    membershipStatus: input.membershipStatus || "non_member",
+    pricing: input.pricing || "free",
+    amountCents: input.amountCents || 0,
+    paymentStatus: input.paymentStatus || "complimentary",
     stripeSessionId: input.stripeSessionId || "",
     createdAt: new Date().toISOString(),
   });
   return true;
+}
+
+export function listMemoryEventRegistrations(eventId?: string): EventRegistrationRecord[] {
+  return memoryEventRegistrations
+    .filter((row) => !eventId || row.eventId === eventId)
+    .slice()
+    .reverse()
+    .map((row) => ({ ...row }));
 }

@@ -1,8 +1,12 @@
 export const OKTOBERFEST_PRICE_CENTS = 2000;
 export const OKTOBERFEST_PRICE_LABEL = "$20";
 
-export type SiteEventId = "oktoberfest" | "tent-or-treat";
+export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn";
 export type EventRegistrationPath = "member" | "guest" | "attendee" | "sponsor";
+export type EventSignupKind = "attendance" | "business_interest";
+export type EventMembershipStatus = "member" | "non_member";
+export type EventPricing = "free" | "paid";
+export type EventPaymentStatus = "complimentary" | "paid" | "interest";
 
 export type SiteEvent = {
   id: SiteEventId;
@@ -36,7 +40,29 @@ export function resolveTentOrTreatBusinessImage(): string {
   return "/events/community-tent-or-treat.png";
 }
 
+export function resolveLunchAndLearnImage(): string {
+  return "/events/lunch-and-learn-10-12-26.png";
+}
+
 export const SITE_EVENTS: SiteEvent[] = [
+  {
+    id: "lunch-and-learn",
+    slug: "lunch-and-learn",
+    title: "Lunch & Learn: Building a Stronger Community",
+    kicker: "Lunch and Learn",
+    date: "2026-10-12",
+    dateLabel: "Monday, October 12, 2026",
+    month: "OCT",
+    day: "12",
+    time: "11:00 AM - 12:30 PM",
+    location: "First United Bank",
+    address: "1700 Redbud Blvd. Suite 130, McKinney, TX 75069",
+    category: "Lunch and Learn",
+    description: "Discover CCM, connect with local owners, and get involved. Free lunch for attendees, thanks to First United Bank.",
+    image: resolveLunchAndLearnImage(),
+    isFeatured: true,
+    href: "/events/lunch-and-learn",
+  },
   {
     id: "oktoberfest",
     slug: "oktoberfest",
@@ -122,7 +148,27 @@ export function siteEventsAsItems() {
 
 export function allowedPathsForEvent(eventId: SiteEventId): EventRegistrationPath[] {
   if (eventId === "oktoberfest") return ["member", "guest"];
-  return ["attendee", "sponsor"];
+  if (eventId === "tent-or-treat") return ["attendee", "sponsor"];
+  return ["attendee"];
+}
+
+export function eventSignupKind(path: EventRegistrationPath): EventSignupKind {
+  return path === "sponsor" ? "business_interest" : "attendance";
+}
+
+export function eventMembershipStatus(path: EventRegistrationPath, emailIsMember = false): EventMembershipStatus {
+  if (path === "member" || emailIsMember) return "member";
+  return "non_member";
+}
+
+export function eventPaymentStatus(eventId: SiteEventId, path: EventRegistrationPath): EventPaymentStatus {
+  if (path === "sponsor") return "interest";
+  if (isPaidEventPath(eventId, path)) return "paid";
+  return "complimentary";
+}
+
+export function eventPricing(eventId: SiteEventId, path: EventRegistrationPath): EventPricing {
+  return isPaidEventPath(eventId, path) ? "paid" : "free";
 }
 
 export function isPaidEventPath(eventId: SiteEventId, path: EventRegistrationPath): boolean {
@@ -190,6 +236,9 @@ export function eventRegistrationFormType(eventId: SiteEventId, path: EventRegis
   if (eventId === "oktoberfest") {
     return path === "member" ? "Oktoberfest Registration (Member)" : "Oktoberfest Registration (Guest)";
   }
+  if (eventId === "lunch-and-learn") {
+    return "Lunch & Learn Registration";
+  }
   return path === "sponsor"
     ? "Tent or Treat Business Tent Interest"
     : "Tent or Treat Attendance";
@@ -201,8 +250,67 @@ export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrat
       ? "You're registered — member admission is complimentary."
       : "You're registered. Thank you for supporting Community Commerce Melissa.";
   }
+  if (eventId === "lunch-and-learn") {
+    return "You're registered. See you at Lunch & Learn — lunch is complimentary.";
+  }
   if (path === "sponsor") {
     return "Thanks — a team member will contact you about tent or sponsorship details. No payment is collected here.";
   }
   return "You're registered. Enjoy the afternoon at Melissa Lake Park.";
+}
+
+export type EventRegistrationRecord = {
+  id: number;
+  eventId: string;
+  eventTitle: string;
+  path: EventRegistrationPath | string;
+  kind: EventSignupKind;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  guests: string;
+  notes: string;
+  membershipStatus: EventMembershipStatus;
+  pricing: EventPricing;
+  amountCents: number;
+  paymentStatus: EventPaymentStatus;
+  stripeSessionId: string;
+  createdAt: string;
+};
+
+export const EVENT_REGISTRATION_CSV_HEADERS = [
+  "Event",
+  "Kind",
+  "Name",
+  "Email",
+  "Phone",
+  "Company",
+  "Guests",
+  "Member status",
+  "Pricing",
+  "Amount",
+  "Payment status",
+  "Stripe session",
+  "Registered at",
+  "Notes",
+];
+
+export function eventRegistrationCsvRows(rows: EventRegistrationRecord[]): Array<Array<unknown>> {
+  return rows.map((row) => [
+    row.eventTitle || row.eventId,
+    row.kind,
+    row.name,
+    row.email,
+    row.phone,
+    row.company,
+    row.guests,
+    row.membershipStatus,
+    row.pricing,
+    (row.amountCents / 100).toFixed(2),
+    row.paymentStatus,
+    row.stripeSessionId,
+    row.createdAt,
+    row.notes,
+  ]);
 }

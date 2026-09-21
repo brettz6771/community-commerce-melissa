@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/events",
     "/events/oktoberfest",
     "/events/tent-or-treat",
+    "/events/lunch-and-learn",
     "/give-donate",
     "/donate",
     "/membership",
