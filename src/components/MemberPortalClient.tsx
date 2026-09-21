@@ -46,6 +46,7 @@ type PortalMember = {
   showDescription: boolean;
   showLocation: boolean;
   showEmail: boolean;
+  hasPassword?: boolean;
 };
 
 type ProfileForm = {
@@ -94,7 +95,14 @@ export default function MemberPortalClient() {
   const [member, setMember] = useState<PortalMember | null>(null);
   const [email, setEmail] = useState("");
   const [memberId, setMemberId] = useState("");
+  const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [passwordBusy, setPasswordBusy] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [debugCode, setDebugCode] = useState("");
   const [authMessage, setAuthMessage] = useState("");
   const [authError, setAuthError] = useState("");
@@ -161,7 +169,12 @@ export default function MemberPortalClient() {
       const res = await fetch("/api/member-portal/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, memberId }),
+        body: JSON.stringify({
+          email,
+          memberId,
+          password: password || undefined,
+          sendCode: !password,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (data?.status === "membership_required") {
@@ -220,8 +233,41 @@ export default function MemberPortalClient() {
     setStatus("guest");
     setCode("");
     setMemberId("");
+    setPassword("");
     setAuthMessage("");
     setAuthError("");
+  };
+
+  const handlePasswordSave = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setPasswordBusy(true);
+    setPasswordError("");
+    setPasswordMessage("");
+    try {
+      const res = await fetch("/api/member-portal/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: newPassword,
+          confirmPassword,
+          currentPassword,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setPasswordError(data?.error || "Could not save the password.");
+        return;
+      }
+      if (data.member) applyMember(data.member);
+      setPasswordMessage(data.message || "Password saved.");
+      setNewPassword("");
+      setConfirmPassword("");
+      setCurrentPassword("");
+    } catch {
+      setPasswordError("Could not save the password.");
+    } finally {
+      setPasswordBusy(false);
+    }
   };
 
   const handleProfileSave = async (event: React.FormEvent) => {
@@ -376,6 +422,7 @@ export default function MemberPortalClient() {
               status={status}
               email={email}
               memberId={memberId}
+              password={password}
               code={code}
               debugCode={debugCode}
               message={authMessage}
@@ -383,6 +430,7 @@ export default function MemberPortalClient() {
               busy={authBusy}
               onEmail={setEmail}
               onMemberId={setMemberId}
+              onPassword={setPassword}
               onCode={setCode}
               onLogin={handleLogin}
               onVerify={handleVerify}
@@ -412,6 +460,35 @@ export default function MemberPortalClient() {
                   Sign out
                 </button>
               </div>
+
+              <form onSubmit={handlePasswordSave} className="bg-white rounded-2xl border border-slate-300 shadow-sm p-6 sm:p-8 space-y-5">
+                <div>
+                  <h2 className="font-outfit font-extrabold text-xl text-slate-900 uppercase">
+                    {member.hasPassword ? "Change password" : "Create a password"}
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Your badge is already linked to this email. A password lets you open the portal without a one-time code.
+                  </p>
+                </div>
+                {member.hasPassword && (
+                  <Field label="Current password">
+                    <input type="password" className={inputClass} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                  </Field>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="New password *">
+                    <input type="password" className={inputClass} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} minLength={10} required />
+                  </Field>
+                  <Field label="Confirm password *">
+                    <input type="password" className={inputClass} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} minLength={10} required />
+                  </Field>
+                </div>
+                {passwordError && <Notice tone="error">{passwordError}</Notice>}
+                {passwordMessage && <Notice tone="success">{passwordMessage}</Notice>}
+                <button type="submit" disabled={passwordBusy} className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50">
+                  {passwordBusy ? "Saving…" : member.hasPassword ? "Update password" : "Save password"}
+                </button>
+              </form>
 
               <form onSubmit={handleProfileSave} className="bg-white rounded-2xl border border-slate-300 shadow-sm p-6 sm:p-8 space-y-5">
                 <div>
@@ -662,6 +739,7 @@ function AuthCard({
   status,
   email,
   memberId,
+  password,
   code,
   debugCode,
   message,
@@ -669,6 +747,7 @@ function AuthCard({
   busy,
   onEmail,
   onMemberId,
+  onPassword,
   onCode,
   onLogin,
   onVerify,
@@ -677,6 +756,7 @@ function AuthCard({
   status: "guest" | "awaiting_code" | "membership_required";
   email: string;
   memberId: string;
+  password: string;
   code: string;
   debugCode: string;
   message: string;
@@ -684,6 +764,7 @@ function AuthCard({
   busy: boolean;
   onEmail: (value: string) => void;
   onMemberId: (value: string) => void;
+  onPassword: (value: string) => void;
   onCode: (value: string) => void;
   onLogin: (event: React.FormEvent) => void;
   onVerify: (event: React.FormEvent) => void;
@@ -756,17 +837,20 @@ function AuthCard({
       </div>
       <h2 className="font-outfit font-extrabold text-2xl text-slate-900 uppercase">Sign in to continue</h2>
       <p className="text-sm text-slate-600">
-        Use the email on your membership. If you have your Member ID from your receipt or welcome email, enter it to skip the email code.
+        Use the email on your membership. Invited members can set a password. Leave the password blank to receive a sign-in code, or use your Member ID.
       </p>
       <Field label="Membership email *">
         <input type="email" className={inputClass} value={email} onChange={(e) => onEmail(e.target.value)} required />
+      </Field>
+      <Field label="Password">
+        <input type="password" className={inputClass} value={password} onChange={(e) => onPassword(e.target.value)} autoComplete="current-password" />
       </Field>
       <Field label="Member ID (optional)">
         <input className={inputClass} value={memberId} onChange={(e) => onMemberId(e.target.value)} placeholder="CCM-2026-XXXXXX" />
       </Field>
       {error && <Notice tone="error">{error}</Notice>}
       <button type="submit" disabled={busy} className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50">
-        {busy ? "Checking…" : "Continue"}
+        {busy ? "Checking…" : password ? "Sign in" : "Email me a code"}
       </button>
     </form>
   );

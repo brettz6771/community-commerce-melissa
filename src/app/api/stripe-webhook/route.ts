@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { saveContactToDb, saveDirectoryMember } from "@/lib/db";
-import { sendMemberWelcomeAndAdminAlert } from "@/lib/email";
+import { saveContactToDb, saveDirectoryMember, saveEventRegistration } from "@/lib/db";
+import { sendEmail, sendMemberWelcomeAndAdminAlert } from "@/lib/email";
+import { escapeHtml } from "@/lib/html";
 import { getStripe } from "@/lib/stripe";
 import { isStripeCheckoutFulfilled } from "@/lib/membership-coupons";
+import { eventConfirmationCopy, eventRegistrationFormType, getSiteEvent } from "@/lib/site-events";
 
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -51,22 +53,81 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session;
         const metadata = session.metadata || {};
         const isDonation = metadata.type === "donation";
+        const isEvent = metadata.type === "event";
 
         console.log("Stripe Checkout Completed:", {
           id: session.id,
-          type: isDonation ? "donation" : "subscription",
+          type: isDonation ? "donation" : isEvent ? "event" : "subscription",
           subscriptionId: session.subscription,
           customerId: session.customer,
           customerEmail: session.customer_email || metadata.donorEmail || metadata.email,
           amount: session.amount_total,
           tier: metadata.tier,
           isTest: metadata.isTest,
+          eventId: metadata.eventId,
         });
 
         // Save to database
         const targetEmail = session.customer_email || metadata.donorEmail || metadata.email;
         if (targetEmail) {
-          if (isDonation) {
+          if (isEvent) {
+            const siteEvent = getSiteEvent(metadata.eventId);
+            const path = (metadata.path || "guest") as "guest";
+            const eventId = siteEvent?.id || "oktoberfest";
+            const name = metadata.name || "Guest";
+            await saveEventRegistration({
+              eventId,
+              path: metadata.path || "guest",
+              email: String(targetEmail),
+              name,
+              phone: metadata.phone || "",
+              company: metadata.company || "",
+              guests: metadata.guests || "1",
+              notes: metadata.notes || "",
+              membershipStatus: "non_member",
+              pricing: "paid",
+              amountCents: session.amount_total || 0,
+              paymentStatus: "paid",
+              stripeSessionId: session.id,
+              details: {
+                phone: metadata.phone || "",
+                company: metadata.company || "",
+                guests: metadata.guests || "1",
+                notes: metadata.notes || "",
+                amount: `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+              },
+            });
+            await saveContactToDb({
+              email: String(targetEmail),
+              formType: eventRegistrationFormType(eventId, path),
+              source: "Stripe Event Checkout",
+              details: {
+                Event: siteEvent?.title || metadata.eventId || "Event",
+                Path: "Guest ($20)",
+                Name: name,
+                "Stripe Session ID": session.id,
+                "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+                Phone: metadata.phone || "N/A",
+                Company: metadata.company || "N/A",
+                Guests: metadata.guests || "1",
+              },
+            });
+            const confirmation = eventConfirmationCopy(eventId, path);
+            await Promise.allSettled([
+              sendEmail({
+                to: String(targetEmail),
+                replyTo: "info@communitycommercemelissa.org",
+                subject: `You're registered — ${siteEvent?.title || "Community Commerce event"}`,
+                html: `<p>Hello ${escapeHtml(name)},</p><p>${escapeHtml(confirmation)}</p>`,
+              }),
+              sendEmail({
+                to: "info@communitycommercemelissa.org",
+                replyTo: String(targetEmail),
+                subject: `Oktoberfest guest ticket: ${name}`,
+                html: `<p>${escapeHtml(name)} paid for Oktoberfest guest admission.</p>`,
+              }),
+            ]);
+          } else if (isDonation) {
             await saveContactToDb({
               email: targetEmail as string,
               formType: "Donation Contribution (Stripe)",

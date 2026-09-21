@@ -163,6 +163,29 @@ export function normalizeMemberEmail(email: unknown): string {
   return String(email || "").trim().toLowerCase();
 }
 
+export const INVITE_MAX_AGE_SEC = 60 * 60 * 24 * 14;
+
+export type MemberInvitePayload = {
+  email: string;
+  purpose: "invite";
+  exp: number;
+};
+
+export function createInviteToken(email: string, now = Date.now()): string {
+  const payload: MemberInvitePayload = {
+    email: normalizeMemberEmail(email),
+    purpose: "invite",
+    exp: now + INVITE_MAX_AGE_SEC * 1000,
+  };
+  return signPayload(payload);
+}
+
+export function readInviteToken(token: string | undefined | null): MemberInvitePayload | null {
+  const invite = verifyPayload<MemberInvitePayload>(token);
+  if (!invite?.email || invite.purpose !== "invite") return null;
+  return invite;
+}
+
 export function normalizeMemberId(memberId: unknown): string {
   return String(memberId || "").trim().toUpperCase();
 }

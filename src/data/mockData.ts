@@ -13,6 +13,8 @@ export interface EventItem {
   isFeatured?: boolean;
   isPast?: boolean;
   registerUrl?: string;
+  registerHref?: string;
+  endDate?: string;
 }
 
 export interface BusinessItem {
@@ -153,6 +155,51 @@ export const MOCK_EVENTS: EventItem[] = [
     image: "/events/networking-night-mountain-mikes-9-21-26.jpg",
     isFeatured: true,
     registerUrl: "https://www.eventbrite.com/e/1998545201497?aff=oddtdtcreator"
+  },
+  {
+    id: "evt-lunch-and-learn-oct",
+    title: "Lunch & Learn: Building a Stronger Community",
+    date: "2026-10-12",
+    month: "OCT",
+    day: "12",
+    time: "11:00 AM - 12:30 PM",
+    location: "First United Bank",
+    address: "1700 Redbud Blvd. Suite 130, McKinney, TX 75069",
+    category: "Lunch and Learn",
+    description: "Discover CCM, connect with local owners, and get involved. Free lunch for attendees, thanks to First United Bank.",
+    image: "/events/lunch-and-learn-10-12-26.png",
+    isFeatured: true,
+    registerHref: "/events/lunch-and-learn"
+  },
+  {
+    id: "evt-oktoberfest",
+    title: "Oktoberfest Networking Night",
+    date: "2026-10-26",
+    month: "OCT",
+    day: "26",
+    time: "6:00 PM - 8:00 PM",
+    location: "Texas Republic Bank",
+    address: "2220 Sam Rayburn Hwy Suite 100, Melissa, TX 75454",
+    category: "Monthly Networking Mixers",
+    description: "Networking night with complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.",
+    image: "/events/oktoberfest-networking-night.png",
+    isFeatured: true,
+    registerHref: "/events/oktoberfest"
+  },
+  {
+    id: "evt-tent-or-treat",
+    title: "Community Tent-or-Treat",
+    date: "2026-10-31",
+    month: "OCT",
+    day: "31",
+    time: "2:00 PM - 5:00 PM",
+    location: "Melissa Lake Park",
+    address: "4101 Liberty Way, Melissa, TX 75454",
+    category: "Community Events",
+    description: "A free family evening at Melissa Lake Park. Register to attend, or tell us you want a business tent.",
+    image: "/events/community-tent-or-treat-attendees.png",
+    isFeatured: true,
+    registerHref: "/events/tent-or-treat"
   }
 ];
 

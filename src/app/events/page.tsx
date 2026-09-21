@@ -7,6 +7,7 @@ import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import { MOCK_EVENTS } from "@/data/mockData";
+import { isPastEvent } from "@/lib/site-events";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { 
   Calendar, 
@@ -36,7 +37,8 @@ export default function EventsPage() {
   const categories = [
     "All",
     "Monthly Networking Mixers",
-    "Lunch and Learn"
+    "Lunch and Learn",
+    "Community Events"
   ];
 
   const filterFn = (evt: EventItem) => {
@@ -49,8 +51,8 @@ export default function EventsPage() {
     return matchesCat && matchesQuery;
   };
 
-  const upcomingEvents = MOCK_EVENTS.filter((evt) => !evt.isPast);
-  const pastEvents = MOCK_EVENTS.filter((evt) => evt.isPast);
+  const upcomingEvents = MOCK_EVENTS.filter((evt) => !isPastEvent(evt));
+  const pastEvents = MOCK_EVENTS.filter((evt) => isPastEvent(evt));
 
   const filteredUpcomingEvents = upcomingEvents.filter(filterFn);
   const filteredPastEvents = pastEvents.filter(filterFn);
@@ -223,7 +225,14 @@ export default function EventsPage() {
                           Directions
                         </a>
 
-                        {evt.registerUrl ? (
+                        {evt.registerHref ? (
+                          <a
+                            href={evt.registerHref}
+                            className="btn-red px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:scale-[1.02] transition inline-flex items-center gap-1.5 text-center shrink-0"
+                          >
+                            <span>REGISTER / RSVP NOW</span>
+                          </a>
+                        ) : evt.registerUrl ? (
                           <a
                             href={evt.registerUrl}
                             target="_blank"

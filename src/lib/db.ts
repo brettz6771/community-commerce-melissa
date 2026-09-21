@@ -9,11 +9,26 @@ import {
   allowDevMemoryStore,
   getMemoryMemberByEmail,
   getMemoryMemberById,
+  listMemoryEventRegistrations,
   listMemoryMembers,
+  listMemoryMembersForAdmin,
+  saveMemoryEventRegistration,
+  setMemoryMemberPassword,
   updateMemoryProfile,
   updateMemoryVisibility,
 } from "@/lib/member-memory";
+import { memberHasPassword } from "@/lib/member-password";
 import { normalizeMemberEmail } from "@/lib/member-portal-auth";
+import {
+  eventSignupKind,
+  getSiteEvent,
+  type EventMembershipStatus,
+  type EventPaymentStatus,
+  type EventPricing,
+  type EventRegistrationPath,
+  type EventRegistrationRecord,
+  type EventSignupKind,
+} from "@/lib/site-events";
 
 let pool: Pool | null = null;
 
@@ -148,7 +163,14 @@ export interface DirectoryMemberRecord {
   showDescription?: boolean;
   showLocation?: boolean;
   showEmail?: boolean;
+  passwordHash?: string | null;
+  passwordSetAt?: string | null;
 }
+
+export type AdminDirectoryMember = Omit<DirectoryMemberRecord, "passwordHash"> & {
+  id: number;
+  hasPassword: boolean;
+};
 
 const DIRECTORY_MEMBER_SELECT = `
   id,
@@ -172,7 +194,9 @@ const DIRECTORY_MEMBER_SELECT = `
   show_website AS "showWebsite",
   show_description AS "showDescription",
   show_location AS "showLocation",
-  show_email AS "showEmail"
+  show_email AS "showEmail",
+  password_hash AS "passwordHash",
+  password_set_at AS "passwordSetAt"
 `;
 
 async function ensureDirectoryMembersTable(dbPool: Pool) {
@@ -203,6 +227,8 @@ async function ensureDirectoryMembersTable(dbPool: Pool) {
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_description BOOLEAN DEFAULT true;`);
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_location BOOLEAN DEFAULT true;`);
   await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS show_email BOOLEAN DEFAULT false;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS password_hash TEXT;`);
+  await dbPool.query(`ALTER TABLE directory_members ADD COLUMN IF NOT EXISTS password_set_at TIMESTAMP WITH TIME ZONE;`);
 }
 
 export async function saveDirectoryMember({
@@ -557,6 +583,277 @@ export async function updateDirectoryMemberVisibility(
   } catch (error) {
     console.error("Error updating directory member visibility:", error);
     return null;
+  }
+}
+
+function toAdminDirectoryMember(row: DirectoryMemberRecord): AdminDirectoryMember {
+  const { passwordHash: _ignoredHash, ...safe } = row;
+  void _ignoredHash;
+  return {
+    ...safe,
+    id: Number(row.id),
+    hasPassword: memberHasPassword(row),
+  };
+}
+
+export async function listDirectoryMembersForAdmin(): Promise<{
+  configured: boolean;
+  members: AdminDirectoryMember[];
+}> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    if (!allowDevMemoryStore()) return { configured: false, members: [] };
+    return {
+      configured: true,
+      members: listMemoryMembersForAdmin().map(toAdminDirectoryMember),
+    };
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(`
+      SELECT ${DIRECTORY_MEMBER_SELECT}
+      FROM directory_members
+      ORDER BY is_active DESC, created_at DESC, id DESC;
+    `);
+    return {
+      configured: true,
+      members: res.rows.map((row: DirectoryMemberRecord) => toAdminDirectoryMember(row)),
+    };
+  } catch (error) {
+    console.error("Error listing directory members for admin:", error);
+    return { configured: true, members: [] };
+  }
+}
+
+export async function setDirectoryMemberPassword(
+  id: number,
+  passwordHash: string
+): Promise<DirectoryMemberRecord | null> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? setMemoryMemberPassword(id, passwordHash) : null;
+  }
+
+  try {
+    await ensureDirectoryMembersTable(dbPool);
+    const res = await dbPool.query(
+      `
+      UPDATE directory_members
+      SET password_hash = $1, password_set_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING ${DIRECTORY_MEMBER_SELECT};
+      `,
+      [passwordHash, id]
+    );
+    return res.rows[0] || null;
+  } catch (error) {
+    console.error("Error setting directory member password:", error);
+    return null;
+  }
+}
+
+export async function isActiveDirectoryMemberEmail(email: string): Promise<boolean> {
+  const row = await getDirectoryMemberByEmail(email);
+  return Boolean(row && row.isActive !== false && row.id);
+}
+
+async function ensureEventRegistrationsTable(dbPool: Pool) {
+  await dbPool.query(`
+    CREATE TABLE IF NOT EXISTS event_registrations (
+      id SERIAL PRIMARY KEY,
+      event_id VARCHAR(80) NOT NULL,
+      path VARCHAR(40) NOT NULL,
+      kind VARCHAR(40) NOT NULL DEFAULT 'attendance',
+      email VARCHAR(255) NOT NULL,
+      name VARCHAR(255),
+      phone VARCHAR(80),
+      company VARCHAR(255),
+      guests VARCHAR(20),
+      notes TEXT,
+      membership_status VARCHAR(40) NOT NULL DEFAULT 'non_member',
+      pricing VARCHAR(20) NOT NULL DEFAULT 'free',
+      amount_cents INTEGER NOT NULL DEFAULT 0,
+      payment_status VARCHAR(40) NOT NULL DEFAULT 'complimentary',
+      details JSONB,
+      stripe_session_id VARCHAR(255),
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS kind VARCHAR(40) NOT NULL DEFAULT 'attendance'`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS phone VARCHAR(80)`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS company VARCHAR(255)`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS guests VARCHAR(20)`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS notes TEXT`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS membership_status VARCHAR(40) NOT NULL DEFAULT 'non_member'`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS pricing VARCHAR(20) NOT NULL DEFAULT 'free'`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS amount_cents INTEGER NOT NULL DEFAULT 0`);
+  await dbPool.query(`ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS payment_status VARCHAR(40) NOT NULL DEFAULT 'complimentary'`);
+}
+
+function mapEventRegistrationRow(row: {
+  id: number;
+  event_id: string;
+  path: string;
+  kind?: string;
+  email: string;
+  name?: string | null;
+  phone?: string | null;
+  company?: string | null;
+  guests?: string | null;
+  notes?: string | null;
+  membership_status?: string;
+  pricing?: string;
+  amount_cents?: number;
+  payment_status?: string;
+  stripe_session_id?: string | null;
+  details?: Record<string, unknown> | null;
+  created_at?: string | Date;
+}): EventRegistrationRecord {
+  const details = row.details && typeof row.details === "object" ? row.details : {};
+  const path = String(row.path || "attendee") as EventRegistrationPath;
+  return {
+    id: row.id,
+    eventId: row.event_id,
+    eventTitle: getSiteEvent(row.event_id)?.title || row.event_id,
+    path,
+    kind: (row.kind || eventSignupKind(path)) as EventSignupKind,
+    name: row.name || String(details.name || ""),
+    email: row.email,
+    phone: row.phone || String(details.phone || ""),
+    company: row.company || String(details.company || ""),
+    guests: row.guests || String(details.guests || "1"),
+    notes: row.notes || String(details.notes || ""),
+    membershipStatus: (row.membership_status || "non_member") as EventMembershipStatus,
+    pricing: (row.pricing || "free") as EventPricing,
+    amountCents: Number(row.amount_cents || 0),
+    paymentStatus: (row.payment_status || "complimentary") as EventPaymentStatus,
+    stripeSessionId: row.stripe_session_id || "",
+    createdAt: row.created_at ? new Date(row.created_at).toISOString() : "",
+  };
+}
+
+export async function saveEventRegistration({
+  eventId,
+  path,
+  email,
+  name = "",
+  phone = "",
+  company = "",
+  guests = "1",
+  notes = "",
+  membershipStatus = "non_member",
+  pricing = "free",
+  amountCents = 0,
+  paymentStatus = "complimentary",
+  details = {},
+  stripeSessionId = "",
+}: {
+  eventId: string;
+  path: string;
+  email: string;
+  name?: string;
+  phone?: string;
+  company?: string;
+  guests?: string;
+  notes?: string;
+  membershipStatus?: EventMembershipStatus;
+  pricing?: EventPricing;
+  amountCents?: number;
+  paymentStatus?: EventPaymentStatus;
+  details?: Record<string, unknown>;
+  stripeSessionId?: string;
+}): Promise<boolean> {
+  const kind = eventSignupKind(path as EventRegistrationPath);
+  const payload = {
+    eventId,
+    path,
+    kind,
+    email: normalizeMemberEmail(email),
+    name: name.trim(),
+    phone: phone.trim(),
+    company: company.trim(),
+    guests: guests.trim() || "1",
+    notes: notes.trim(),
+    membershipStatus,
+    pricing,
+    amountCents,
+    paymentStatus,
+    details,
+    stripeSessionId,
+  };
+
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? saveMemoryEventRegistration(payload) : false;
+  }
+
+  try {
+    await ensureEventRegistrationsTable(dbPool);
+    await dbPool.query(
+      `
+      INSERT INTO event_registrations (
+        event_id, path, kind, email, name, phone, company, guests, notes,
+        membership_status, pricing, amount_cents, payment_status, details, stripe_session_id
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NULLIF($15, ''));
+      `,
+      [
+        payload.eventId,
+        payload.path,
+        payload.kind,
+        payload.email,
+        payload.name,
+        payload.phone,
+        payload.company,
+        payload.guests,
+        payload.notes,
+        payload.membershipStatus,
+        payload.pricing,
+        payload.amountCents,
+        payload.paymentStatus,
+        JSON.stringify({ ...details, phone: payload.phone, company: payload.company, guests: payload.guests, notes: payload.notes }),
+        payload.stripeSessionId,
+      ]
+    );
+    return true;
+  } catch (error) {
+    console.error("Error saving event registration:", error);
+    return false;
+  }
+}
+
+export async function listEventRegistrations(eventId?: string): Promise<EventRegistrationRecord[]> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? listMemoryEventRegistrations(eventId) : [];
+  }
+
+  try {
+    await ensureEventRegistrationsTable(dbPool);
+    const res = eventId
+      ? await dbPool.query(
+          `
+          SELECT id, event_id, path, kind, email, name, phone, company, guests, notes,
+                 membership_status, pricing, amount_cents, payment_status, details, stripe_session_id, created_at
+          FROM event_registrations
+          WHERE event_id = $1
+          ORDER BY created_at DESC, id DESC;
+          `,
+          [eventId]
+        )
+      : await dbPool.query(
+          `
+          SELECT id, event_id, path, kind, email, name, phone, company, guests, notes,
+                 membership_status, pricing, amount_cents, payment_status, details, stripe_session_id, created_at
+          FROM event_registrations
+          ORDER BY created_at DESC, id DESC;
+          `
+        );
+    return res.rows.map(mapEventRegistrationRow);
+  } catch (error) {
+    console.error("Error listing event registrations:", error);
+    return [];
   }
 }
 

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   applyPublicDirectoryVisibility,
   parseVisibility,
+  toMemberPortalRecord,
   validateMemberProfile,
   visibilityFromRecord,
 } from "./member-portal.ts";
@@ -45,6 +46,24 @@ describe("validateMemberProfile", () => {
     assert.equal(parsed.errors.email, "Enter a valid email address.");
     assert.equal(parsed.errors.website, "Enter a valid website URL (https://…).");
     assert.ok(parsed.errors.description);
+  });
+});
+
+describe("portal record", () => {
+  it("links the badge record by email and never exposes a password hash", () => {
+    const record = toMemberPortalRecord({
+      id: 9,
+      businessName: "Melissa Demo Partners",
+      category: "Professional & Business Consulting",
+      email: "Member@Example.com",
+      ownerName: "Jordan Hale",
+      passwordHash: "scrypt$salt$hash",
+      isActive: true,
+    });
+    assert.equal(record.email, "member@example.com");
+    assert.equal(record.hasPassword, true);
+    assert.equal(record.memberId, "CCM-2026-000009");
+    assert.equal(record.passwordHash, undefined);
   });
 });
 

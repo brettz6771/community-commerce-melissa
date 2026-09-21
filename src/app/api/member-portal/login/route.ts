@@ -3,6 +3,7 @@ import { getDirectoryMemberByEmail, isMemberDirectoryConfigured } from "@/lib/db
 import { sendEmail } from "@/lib/email";
 import { escapeHtml, isValidEmail } from "@/lib/html";
 import { resolveMemberId } from "@/lib/member-badge";
+import { memberHasPassword, verifyMemberPassword } from "@/lib/member-password";
 import {
   createOtpToken,
   createSessionToken,
@@ -32,6 +33,8 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const email = normalizeMemberEmail(body?.email);
     const memberId = normalizeMemberId(body?.memberId);
+    const password = typeof body?.password === "string" ? body.password : "";
+    const sendCode = body?.sendCode === true || body?.mode === "code";
 
     if (!isValidEmail(email)) {
       return NextResponse.json({ error: "Enter the email address on your membership." }, { status: 400 });
@@ -47,6 +50,27 @@ export async function POST(request: Request) {
 
     const member = toMemberPortalRecord(row);
     const storedMemberId = resolveMemberId(member);
+
+    if (password && !sendCode) {
+      if (!memberHasPassword(row)) {
+        return NextResponse.json(
+          {
+            error:
+              "This membership does not have a portal password yet. Use your invite link, or leave the password blank and we will email a sign-in code.",
+          },
+          { status: 401 }
+        );
+      }
+      const matches = await verifyMemberPassword(password, row.passwordHash);
+      if (!matches) {
+        return NextResponse.json({ error: "That password does not match this membership email." }, { status: 401 });
+      }
+      const response = NextResponse.json({
+        status: "logged_in",
+        member: memberJson(member),
+      });
+      return withSessionCookie(response, createSessionToken(member.email, Number(member.id)));
+    }
 
     if (memberId && memberIdsMatch(storedMemberId, memberId)) {
       const response = NextResponse.json({
