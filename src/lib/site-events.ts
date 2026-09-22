@@ -29,7 +29,7 @@ export type SiteEvent = {
 };
 
 export function resolveOktoberfestImage(): string {
-  return "/events/oktoberfest-networking-night.png";
+  return "/events/oktoberfest-networking-night.jpg";
 }
 
 export function resolveTentOrTreatImage(): string {

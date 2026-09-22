@@ -182,7 +182,7 @@ export const MOCK_EVENTS: EventItem[] = [
     address: "2220 Sam Rayburn Hwy Suite 100, Melissa, TX 75454",
     category: "Monthly Networking Mixers",
     description: "Networking night with complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.",
-    image: "/events/oktoberfest-networking-night.png",
+    image: "/events/oktoberfest-networking-night.jpg",
     isFeatured: true,
     registerHref: "/events/oktoberfest"
   },
