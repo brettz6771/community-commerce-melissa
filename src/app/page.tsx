@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import LaunchBanner from "@/components/LaunchBanner";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import HomeEventsBanner from "@/components/HomeEventsBanner";
+import HomeUpcomingEvents from "@/components/HomeUpcomingEvents";
 import QuoteSection from "@/components/QuoteSection";
 import MembershipCTASection from "@/components/MembershipCTASection";
 import HomeCardsGrid from "@/components/HomeCardsGrid";
@@ -12,8 +12,10 @@ import MobileLogoBanner from "@/components/MobileLogoBanner";
 import Footer from "@/components/Footer";
 import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
+import EventRegistrationModal from "@/components/EventRegistrationModal";
 import NewsletterModal from "@/components/NewsletterModal";
 import { Play } from "lucide-react";
+import type { EventRegistrationPath, SiteEvent } from "@/lib/site-events";
 
 export default function HomePage() {
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -22,10 +24,19 @@ export default function HomePage() {
   const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
+  const [selectedEventForModal, setSelectedEventForModal] = useState<SiteEvent | null>(null);
+  const [modalInitialPath, setModalInitialPath] = useState<EventRegistrationPath | undefined>(undefined);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
   const handleOpenJoinWithTier = (tier?: string) => {
     setSelectedTier(tier || "Community Partner ($390 1st Yr • Renews $490/yr)");
     setIsJoinModalOpen(true);
+  };
+
+  const handleOpenRegistration = (event: SiteEvent, path?: EventRegistrationPath) => {
+    setSelectedEventForModal(event);
+    setModalInitialPath(path);
+    setIsEventModalOpen(true);
   };
 
   const handleOpenRSVP = (title: string) => {
@@ -52,7 +63,8 @@ export default function HomePage() {
         onOpenNewsletterModal={() => setIsNewsletterModalOpen(true)}
       />
 
-      <HomeEventsBanner />
+      {/* Upcoming Events Under Hero in exact chronological order */}
+      <HomeUpcomingEvents onOpenRegistration={handleOpenRegistration} />
 
       {/* Quote & Value Proposition Section */}
       <QuoteSection onOpenJoinModal={() => handleOpenJoinWithTier("Community Partner ($390 1st Yr • Renews $490/yr)")} />
@@ -81,6 +93,13 @@ export default function HomePage() {
         isOpen={isRSVPModalOpen}
         onClose={() => setIsRSVPModalOpen(false)}
         eventTitle={selectedEventTitle}
+      />
+
+      <EventRegistrationModal
+        isOpen={isEventModalOpen}
+        onClose={() => setIsEventModalOpen(false)}
+        event={selectedEventForModal}
+        initialPath={modalInitialPath}
       />
 
       <NewsletterModal
