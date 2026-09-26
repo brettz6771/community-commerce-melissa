@@ -167,7 +167,7 @@ export default function Footer() {
                   formEl.reset();
                 } catch (err) {
                   console.error("Error subscribing:", err);
-                  alert("Sorry, we could not complete your subscription. Please try again or email info@communitycommercemelissa.org.");
+                  alert("Sorry, we could not complete your subscription. Please try again or use the contact form.");
                 }
               }} 
               className="space-y-2"
