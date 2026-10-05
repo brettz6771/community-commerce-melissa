@@ -4,7 +4,9 @@ import {
   EVENT_REGISTRATION_CSV_HEADERS,
   OKTOBERFEST_PRICE_CENTS,
   allowedPathsForEvent,
+  calculateEventRegistrationsSummary,
   chicagoCalendarDate,
+  eventCheckinRosterCsvRows,
   eventCheckoutAmountCents,
   eventConfirmationCopy,
   eventRegistrationCsvRows,
@@ -159,4 +161,98 @@ describe("site events catalog", () => {
     assert.equal(EVENT_REGISTRATION_CSV_HEADERS.includes("Stripe session"), true);
     assert.equal(csv[0][10], "20.00");
   });
+
+  it("calculates live guest counts and creates individual check-in roster rows", () => {
+    const sampleRows = [
+      {
+        id: 1,
+        eventId: "oktoberfest",
+        eventTitle: "Oktoberfest Networking Night",
+        path: "member",
+        kind: "attendance" as const,
+        name: "Alice Member",
+        email: "alice@example.com",
+        phone: "555-1111",
+        company: "Alice Corp",
+        guests: "2",
+        additionalGuests: [{ name: "Bob Guest", email: "bob@example.com", phone: "555-2222" }],
+        notes: "Excited to come",
+        membershipStatus: "member" as const,
+        pricing: "free" as const,
+        amountCents: 0,
+        paymentStatus: "complimentary" as const,
+        stripeSessionId: "",
+        createdAt: "2026-10-01T12:00:00.000Z",
+      },
+      {
+        id: 2,
+        eventId: "oktoberfest",
+        eventTitle: "Oktoberfest Networking Night",
+        path: "guest",
+        kind: "attendance" as const,
+        name: "Charlie Nonmember",
+        email: "charlie@example.com",
+        phone: "555-3333",
+        company: "Charlie LLC",
+        guests: "3",
+        additionalGuests: [
+          { name: "Dave Guest", email: "dave@example.com", phone: "" },
+          { name: "Eve Guest", email: "eve@example.com", phone: "" },
+        ],
+        notes: "",
+        membershipStatus: "non_member" as const,
+        pricing: "paid" as const,
+        amountCents: 6000,
+        paymentStatus: "paid" as const,
+        stripeSessionId: "cs_123",
+        createdAt: "2026-10-02T14:00:00.000Z",
+      },
+      {
+        id: 3,
+        eventId: "tent-or-treat",
+        eventTitle: "Community Tent-or-Treat",
+        path: "sponsor",
+        kind: "business_interest" as const,
+        name: "Fiona Vendor",
+        email: "fiona@example.com",
+        phone: "555-4444",
+        company: "Fiona Treats",
+        guests: "1",
+        additionalGuests: [],
+        notes: "Want a double tent",
+        membershipStatus: "non_member" as const,
+        pricing: "free" as const,
+        amountCents: 0,
+        paymentStatus: "complimentary" as const,
+        stripeSessionId: "",
+        createdAt: "2026-10-03T09:00:00.000Z",
+      },
+    ];
+
+    const stats = calculateEventRegistrationsSummary(sampleRows);
+    assert.equal(stats.totalSignups, 3);
+    // 2 (Alice party) + 3 (Charlie party) + 1 (Fiona) = 6 total headcount
+    assert.equal(stats.totalGuests, 6);
+    assert.equal(stats.memberSignups, 1);
+    assert.equal(stats.memberGuests, 2);
+    assert.equal(stats.nonMemberSignups, 2);
+    assert.equal(stats.nonMemberGuests, 4);
+    assert.equal(stats.paidSignups, 1);
+    assert.equal(stats.paidGuests, 3);
+    assert.equal(stats.businessInterestSignups, 1);
+    assert.equal(stats.totalAmountCents, 6000);
+
+    const roster = eventCheckinRosterCsvRows(sampleRows);
+    // Row 1 primary + 1 companion + Row 2 primary + 2 companions + Row 3 primary = 6 rows
+    assert.equal(roster.length, 6);
+    assert.equal(roster[0][2], "Alice Member");
+    assert.equal(roster[0][5], "Primary Registrant");
+    assert.equal(roster[1][2], "Bob Guest");
+    assert.equal(roster[1][5], "Companion (Guest 2)");
+    assert.equal(roster[2][2], "Charlie Nonmember");
+    assert.equal(roster[3][2], "Dave Guest");
+    assert.equal(roster[4][2], "Eve Guest");
+    assert.equal(roster[5][2], "Fiona Vendor");
+  });
 });
+

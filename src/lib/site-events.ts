@@ -435,3 +435,144 @@ export function eventRegistrationCsvRows(rows: EventRegistrationRecord[]): Array
     row.notes,
   ]);
 }
+
+export type EventRegistrationsSummary = {
+  totalSignups: number;
+  totalGuests: number;
+  memberSignups: number;
+  memberGuests: number;
+  nonMemberSignups: number;
+  nonMemberGuests: number;
+  paidSignups: number;
+  paidGuests: number;
+  complimentarySignups: number;
+  complimentaryGuests: number;
+  businessInterestSignups: number;
+  totalAmountCents: number;
+};
+
+export function calculateEventRegistrationGuests(row: EventRegistrationRecord): number {
+  const parsedGuests = parseInt(String(row.guests || "1"), 10);
+  const baseCount = Number.isFinite(parsedGuests) && parsedGuests > 0 ? parsedGuests : 1;
+  const companionCount = Array.isArray(row.additionalGuests) ? row.additionalGuests.length : 0;
+  return Math.max(baseCount, 1 + companionCount);
+}
+
+export function calculateEventRegistrationsSummary(rows: EventRegistrationRecord[]): EventRegistrationsSummary {
+  let totalGuests = 0;
+  let memberSignups = 0;
+  let memberGuests = 0;
+  let nonMemberSignups = 0;
+  let nonMemberGuests = 0;
+  let paidSignups = 0;
+  let paidGuests = 0;
+  let complimentarySignups = 0;
+  let complimentaryGuests = 0;
+  let businessInterestSignups = 0;
+  let totalAmountCents = 0;
+
+  for (const row of rows) {
+    const guests = calculateEventRegistrationGuests(row);
+    totalGuests += guests;
+    totalAmountCents += Number(row.amountCents || 0);
+
+    if (row.kind === "business_interest") {
+      businessInterestSignups += 1;
+    }
+
+    if (row.membershipStatus === "member") {
+      memberSignups += 1;
+      memberGuests += guests;
+    } else {
+      nonMemberSignups += 1;
+      nonMemberGuests += guests;
+    }
+
+    if (row.paymentStatus === "paid" || row.pricing === "paid") {
+      paidSignups += 1;
+      paidGuests += guests;
+    } else {
+      complimentarySignups += 1;
+      complimentaryGuests += guests;
+    }
+  }
+
+  return {
+    totalSignups: rows.length,
+    totalGuests,
+    memberSignups,
+    memberGuests,
+    nonMemberSignups,
+    nonMemberGuests,
+    paidSignups,
+    paidGuests,
+    complimentarySignups,
+    complimentaryGuests,
+    businessInterestSignups,
+    totalAmountCents,
+  };
+}
+
+export const EVENT_CHECKIN_ROSTER_CSV_HEADERS = [
+  "Event",
+  "Check-In",
+  "Attendee Name",
+  "Attendee Email",
+  "Attendee Phone",
+  "Role",
+  "Party Host",
+  "Company",
+  "Member Status",
+  "Payment Status",
+  "Amount Paid",
+  "Registered At",
+  "Notes",
+];
+
+export function eventCheckinRosterCsvRows(rows: EventRegistrationRecord[]): Array<Array<unknown>> {
+  const roster: Array<Array<unknown>> = [];
+  for (const row of rows) {
+    const eventName = row.eventTitle || row.eventId;
+    const amountStr = (row.amountCents / 100).toFixed(2);
+
+    // Primary attendee
+    roster.push([
+      eventName,
+      "[ ]",
+      row.name || row.email,
+      row.email,
+      row.phone || "",
+      "Primary Registrant",
+      row.name || row.email,
+      row.company || "",
+      row.membershipStatus === "member" ? "Member" : "Non-member",
+      row.paymentStatus,
+      amountStr,
+      row.createdAt,
+      row.notes || "",
+    ]);
+
+    // Additional guests
+    if (Array.isArray(row.additionalGuests)) {
+      row.additionalGuests.forEach((guest, index) => {
+        roster.push([
+          eventName,
+          "[ ]",
+          guest.name || `Guest ${index + 2}`,
+          guest.email || "",
+          guest.phone || "",
+          `Companion (Guest ${index + 2})`,
+          row.name || row.email,
+          row.company || "",
+          row.membershipStatus === "member" ? "Member Party" : "Non-member Party",
+          row.paymentStatus,
+          "Included in ticket",
+          row.createdAt,
+          row.notes || "",
+        ]);
+      });
+    }
+  }
+  return roster;
+}
+

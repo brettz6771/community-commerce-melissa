@@ -133,6 +133,22 @@ export default function NewsletterAdminPage() {
     window.setTimeout(() => setCopyLabel("Copy emails"), 1600);
   };
 
+  React.useEffect(() => {
+    const saved = typeof window !== "undefined" ? window.sessionStorage.getItem(STORAGE_KEY) || "" : "";
+    if (saved) {
+      void loadSubscribers(saved);
+    }
+  }, []);
+
+  const handleSignOut = () => {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    }
+    setUnlocked(false);
+    setActiveSecret("");
+    setSubscribers([]);
+  };
+
   return (
     <div className="min-h-screen bg-[#0B0E14] text-white">
       <header className="border-b border-white/10">
@@ -141,9 +157,25 @@ export default function NewsletterAdminPage() {
             <p className="font-outfit font-extrabold text-sm uppercase tracking-wider">Newsletter Subscribers</p>
             <p className="text-[11px] text-slate-400 uppercase tracking-widest">Admin export</p>
           </div>
-          <Link href="/" className="text-xs text-slate-300 hover:text-white transition">
-            Back to site
-          </Link>
+          <div className="flex items-center gap-4 text-xs">
+            <Link href="/admin" className="text-slate-300 hover:text-white transition">
+              Admin Events
+            </Link>
+            <Link href="/admin/members" className="text-slate-300 hover:text-white transition">
+              Members
+            </Link>
+            <Link href="/" className="text-slate-300 hover:text-white transition">
+              Back to site
+            </Link>
+            {unlocked && (
+              <button
+                onClick={handleSignOut}
+                className="text-red-400 hover:text-red-300 font-semibold cursor-pointer"
+              >
+                Sign out
+              </button>
+            )}
+          </div>
         </div>
       </header>
 

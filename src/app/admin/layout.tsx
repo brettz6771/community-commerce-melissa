@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Newsletter Subscribers",
+  title: "Admin Area | Community Commerce Melissa",
   robots: {
     index: false,
     follow: false,
