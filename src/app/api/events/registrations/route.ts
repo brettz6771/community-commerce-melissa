@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { toCsv } from "@/lib/csv";
-import { listEventRegistrations } from "@/lib/db";
+import { deleteEventRegistration, listEventRegistrations } from "@/lib/db";
 import { isInternalAuthorized } from "@/lib/internal-auth";
 import {
   EVENT_CHECKIN_ROSTER_CSV_HEADERS,
@@ -108,3 +108,25 @@ export async function GET(request: Request) {
     registrations,
   });
 }
+
+export async function DELETE(request: Request) {
+  if (!isInternalAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
+  const idStr = url.searchParams.get("id");
+  const id = parseInt(idStr || "", 10);
+
+  if (!Number.isFinite(id) || id <= 0) {
+    return NextResponse.json({ error: "Valid registration ID is required." }, { status: 400 });
+  }
+
+  const success = await deleteEventRegistration(id);
+  if (!success) {
+    return NextResponse.json({ error: "Registration not found or could not be removed." }, { status: 404 });
+  }
+
+  return NextResponse.json({ ok: true, deletedId: id });
+}
+

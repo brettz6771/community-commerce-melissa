@@ -224,3 +224,24 @@ export function listMemoryEventRegistrations(eventId?: string): EventRegistratio
     .reverse()
     .map((row) => ({ ...row }));
 }
+
+export function findMemoryEventRegistration(
+  eventId: string,
+  email: string
+): EventRegistrationRecord | null {
+  const normalized = email.trim().toLowerCase();
+  const row = memoryEventRegistrations.find(
+    (r) => r.eventId === eventId && r.email.toLowerCase() === normalized
+  );
+  return row ? { ...row } : null;
+}
+
+export function deleteMemoryEventRegistration(id: number): boolean {
+  const index = memoryEventRegistrations.findIndex((r) => r.id === id);
+  if (index !== -1) {
+    memoryEventRegistrations.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+

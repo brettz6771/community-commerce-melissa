@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { isActiveDirectoryMemberEmail, saveContactToDb, saveEventRegistration } from "@/lib/db";
+import {
+  findExistingEventRegistration,
+  isActiveDirectoryMemberEmail,
+  saveContactToDb,
+  saveEventRegistration,
+} from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { escapeHtml } from "@/lib/html";
 import { resolvePortalAuth } from "@/lib/member-portal-session";
@@ -135,6 +140,19 @@ export async function POST(request: Request) {
           : path === "sponsor"
             ? "Business tent / sponsorship interest"
             : "General attendance";
+
+    // Prevent duplicate registrations for free/complimentary events
+    const existing = await findExistingEventRegistration(eventId, email);
+    if (existing) {
+      return NextResponse.json(
+        {
+          error: `This email (${email}) is already registered for ${event.title}! If you need to make changes to your party or guests, please contact us at info@communitycommercemelissa.org.`,
+          alreadyRegistered: true,
+        },
+        { status: 409 }
+      );
+    }
+
 
     await saveEventRegistration({
       eventId,

@@ -28,6 +28,7 @@ import {
   Shield,
   Sparkles,
   Ticket,
+  Trash2,
   UserCheck,
   Users,
   X,
@@ -81,6 +82,39 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterKind, setFilterKind] = useState<string>("all");
   const [activeModalRecord, setActiveModalRecord] = useState<EventRegistrationRecord | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteRegistration = async (record: EventRegistrationRecord) => {
+    const nameStr = record.name || record.email;
+    const confirmed = window.confirm(
+      `Remove registration for "${nameStr}" from ${record.eventTitle || record.eventId}?\n\nThis will permanently delete this record and deduct it from the live guest headcount.`
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/events/registrations?id=${record.id}`, {
+        method: "DELETE",
+        headers: activeSecret ? { Authorization: `Bearer ${activeSecret}` } : {},
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || "Failed to remove registration.");
+        return;
+      }
+
+      setRegistrations((prev) => prev.filter((r) => r.id !== record.id));
+      if (activeModalRecord?.id === record.id) {
+        setActiveModalRecord(null);
+      }
+      void loadData(activeSecret, true);
+    } catch {
+      alert("Network error while removing registration.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
 
   // Fetch registrations and events
   const loadData = useCallback(
@@ -1174,12 +1208,21 @@ export default function AdminPage() {
 
                           {/* Action Button */}
                           <td className="px-4 py-3.5 text-right">
-                            <button
-                              onClick={() => setActiveModalRecord(row)}
-                              className="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white text-xs font-medium transition-colors cursor-pointer"
-                            >
-                              Inspect
-                            </button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => setActiveModalRecord(row)}
+                                className="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white text-xs font-medium transition-colors cursor-pointer"
+                              >
+                                Inspect
+                              </button>
+                              <button
+                                onClick={() => handleDeleteRegistration(row)}
+                                title="Remove registration"
+                                className="p-1.5 rounded-lg hover:bg-red-950/60 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -1340,7 +1383,15 @@ export default function AdminPage() {
               </div>
             )}
 
-            <div className="flex justify-end pt-2">
+            <div className="flex items-center justify-between pt-2 border-t border-white/5">
+              <button
+                onClick={() => handleDeleteRegistration(activeModalRecord)}
+                disabled={isDeleting}
+                className="px-3 py-2 rounded-xl text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-950/50 border border-red-500/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {isDeleting ? "Removing…" : "Delete Registration"}
+              </button>
               <button
                 onClick={() => setActiveModalRecord(null)}
                 className="btn-gold-outline px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"

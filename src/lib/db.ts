@@ -7,6 +7,8 @@ import {
 } from "@/lib/member-portal";
 import {
   allowDevMemoryStore,
+  deleteMemoryEventRegistration,
+  findMemoryEventRegistration,
   getMemoryMemberByEmail,
   getMemoryMemberById,
   listMemoryEventRegistrations,
@@ -867,6 +869,57 @@ export async function listEventRegistrations(eventId?: string): Promise<EventReg
     return [];
   }
 }
+
+export async function findExistingEventRegistration(
+  eventId: string,
+  email: string
+): Promise<EventRegistrationRecord | null> {
+  const normalizedEmail = normalizeMemberEmail(email);
+  if (!normalizedEmail) return null;
+
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? findMemoryEventRegistration(eventId, normalizedEmail) : null;
+  }
+
+  try {
+    await ensureEventRegistrationsTable(dbPool);
+    const res = await dbPool.query(
+      `
+      SELECT id, event_id, path, kind, email, name, phone, company, guests, notes,
+             membership_status, pricing, amount_cents, payment_status, details, stripe_session_id, created_at
+      FROM event_registrations
+      WHERE event_id = $1 AND LOWER(TRIM(email)) = $2
+      ORDER BY id DESC
+      LIMIT 1;
+      `,
+      [eventId, normalizedEmail]
+    );
+
+    if (!res.rows.length) return null;
+    return mapEventRegistrationRow(res.rows[0]);
+  } catch (error) {
+    console.error("Error finding existing event registration:", error);
+    return null;
+  }
+}
+
+export async function deleteEventRegistration(id: number): Promise<boolean> {
+  const dbPool = getDbPool();
+  if (!dbPool) {
+    return allowDevMemoryStore() ? deleteMemoryEventRegistration(id) : false;
+  }
+
+  try {
+    await ensureEventRegistrationsTable(dbPool);
+    const res = await dbPool.query(`DELETE FROM event_registrations WHERE id = $1;`, [id]);
+    return (res.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error("Error deleting event registration:", error);
+    return false;
+  }
+}
+
 
 export async function hasDispatchedEmailForSession(sessionId: string): Promise<boolean> {
   if (!sessionId || sessionId.startsWith("cs_test_sim_")) return false;
