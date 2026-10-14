@@ -54,7 +54,7 @@ export default function ContactPage() {
       setIsSent(true);
     } catch (err) {
       console.error("Error submitting contact form:", err);
-      alert("Sorry, we could not send your message. Please try again or email info@communitycommercemelissa.org.");
+      alert("Sorry, we could not send your message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -345,10 +345,6 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
               requireCompany
               nested
             />
-            <p className="text-xs text-slate-500 mt-3">
-              Questions: Cindy Karman,{" "}
-              <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a>
-            </p>
           </div>
         </div>
       </section>

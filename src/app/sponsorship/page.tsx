@@ -53,7 +53,7 @@ export default function SponsorshipPage() {
       setIsSubmitted(true);
     } catch (err) {
       console.error("Error submitting sponsorship inquiry:", err);
-      alert("Sorry, we could not send your inquiry. Please try again or email info@communitycommercemelissa.org.");
+      alert("Sorry, we could not send your inquiry. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

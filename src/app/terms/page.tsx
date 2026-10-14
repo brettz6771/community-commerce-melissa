@@ -139,17 +139,17 @@ export default function TermsPage() {
                 Membership benefits—such as directory listing, digital badge, event access, and promotional features—are offered as available. We may modify, pause, or discontinue a benefit as programs change. Membership does not create an employment, partnership, or agency relationship, and does not guarantee business results, leads, or referrals.
               </p>
               <p>
-                You may cancel future renewals by emailing{" "}
-                <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
-                  info@communitycommercemelissa.org
-                </a>{" "}
+                You may cancel future renewals by submitting a request on our{" "}
+                <Link href="/contact" className="text-red-700 font-semibold">
+                  contact form
+                </Link>{" "}
                 before the next billing date. Cancellation stops future charges; it does not refund amounts already paid for the current term.
               </p>
               <p>
-                Complimentary memberships, when granted by staff, stay active at no charge with no automatic conversion to paid billing. They remain in effect until the member asks us to cancel or Community Commerce Melissa staff cancel the membership in Stripe. Complimentary members cancel the same way as paid members: email{" "}
-                <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
-                  info@communitycommercemelissa.org
-                </a>
+                Complimentary memberships, when granted by staff, stay active at no charge with no automatic conversion to paid billing. They remain in effect until the member asks us to cancel or Community Commerce Melissa staff cancel the membership in Stripe.                 Complimentary members cancel the same way as paid members: through the{" "}
+                <Link href="/contact" className="text-red-700 font-semibold">
+                  contact form
+                </Link>
                 . Staff cancel in the Stripe Dashboard by opening the customer&apos;s subscription and choosing Cancel subscription.
               </p>
             </section>
@@ -272,10 +272,10 @@ export default function TermsPage() {
             <section id="contact" className="scroll-mt-28 space-y-3">
               <h2 className="text-xl font-extrabold font-outfit uppercase text-slate-900">19. Contact</h2>
               <p>
-                Questions about these Terms may be sent to{" "}
-                <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
-                  info@communitycommercemelissa.org
-                </a>
+                Questions about these Terms may be sent through our{" "}
+                <Link href="/contact" className="text-red-700 font-semibold">
+                  contact form
+                </Link>
                 . Community Commerce Melissa, Melissa, Texas 75454.
               </p>
               <p>

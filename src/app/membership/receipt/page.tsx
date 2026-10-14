@@ -167,10 +167,10 @@ function ReceiptBadgeContent() {
           <div className="text-center space-y-3 max-w-md">
             <h2 className="text-lg font-bold text-slate-800">Receipt not found</h2>
             <p className="text-sm text-slate-600">
-              We could not verify this membership receipt. Please use the link from your Stripe confirmation email, or contact{" "}
-              <a href="mailto:info@communitycommercemelissa.org" className="text-red-700 font-semibold">
-                info@communitycommercemelissa.org
-              </a>
+              We could not verify this membership receipt. Please use the link from your Stripe confirmation email, or{" "}
+              <Link href="/contact" className="text-red-700 font-semibold">
+                send a message through the contact form
+              </Link>
               .
             </p>
             <Link href="/membership" className="inline-block text-sm font-bold text-red-700">

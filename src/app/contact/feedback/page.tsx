@@ -14,7 +14,6 @@ import {
   Users, 
   HeartHandshake,
   Loader2,
-  Mail,
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
@@ -66,7 +65,7 @@ export default function FeedbackPage() {
       setIsSent(true);
     } catch (err) {
       console.error("Error submitting feedback form:", err);
-      alert("Sorry, we could not send your feedback. Please try again or email info@communitycommercemelissa.org.");
+      alert("Sorry, we could not send your feedback. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -362,22 +361,13 @@ export default function FeedbackPage() {
                 </div>
               </div>
 
-              {/* Direct Contact Card */}
               <div className="bg-white rounded-2xl p-6 border border-slate-300 shadow-sm space-y-4">
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                  PREFER TO REACH OUT DIRECTLY?
+                  OTHER QUESTIONS?
                 </h4>
-                
-                <div className="space-y-3 text-xs text-slate-600">
-                  <a 
-                    href="mailto:info@communitycommercemelissa.org" 
-                    className="flex items-center gap-2.5 hover:text-red-700 transition"
-                  >
-                    <Mail className="w-4 h-4 text-red-600 shrink-0" />
-                    <span className="font-semibold text-slate-800">info@communitycommercemelissa.org</span>
-                  </a>
-                </div>
-
+                <p className="text-xs text-slate-600">
+                  Use the general contact form so the team can follow up. Inquiries go to Community Commerce Melissa staff.
+                </p>
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
                   <Link 
                     href="/contact" 

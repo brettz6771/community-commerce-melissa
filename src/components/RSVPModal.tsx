@@ -52,7 +52,7 @@ export default function RSVPModal({ isOpen, onClose, eventTitle = "Meet & Greet 
       setIsRegistered(true);
     } catch (err) {
       console.error("Error submitting RSVP:", err);
-      alert("Sorry, we could not complete your RSVP. Please try again or email info@communitycommercemelissa.org.");
+      alert("Sorry, we could not complete your RSVP. Please try again or use the contact form.");
     } finally {
       setIsSubmitting(false);
     }

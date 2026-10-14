@@ -61,7 +61,7 @@ export default function VolunteerPage() {
       setIsSubmitted(true);
     } catch (err) {
       console.error("Error submitting volunteer form:", err);
-      alert("Sorry, we could not send your application. Please try again or email info@communitycommercemelissa.org.");
+      alert("Sorry, we could not send your application. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

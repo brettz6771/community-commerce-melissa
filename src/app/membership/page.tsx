@@ -379,13 +379,13 @@ function MembershipContent() {
                 <Handshake className="w-4 h-4" />
                 <span>INQUIRE NOW</span>
               </button>
-              <a
-                href="mailto:info@communitycommercemelissa.org"
+              <Link
+                href="/contact"
                 className="px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider border border-white/20 hover:bg-white/10 text-slate-200 transition flex items-center gap-2"
               >
                 <Mail className="w-4 h-4 text-red-400" />
-                <span>EMAIL US</span>
-              </a>
+                <span>CONTACT US</span>
+              </Link>
             </div>
           </div>
 

@@ -229,7 +229,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             error:
-              "The $100 first-year membership discount could not be applied. Please try again or email info@communitycommercemelissa.org.",
+              "The $100 first-year membership discount could not be applied. Please try again or use the contact form.",
           },
           { status: 503 }
         );
