@@ -243,7 +243,17 @@ export default function Footer() {
               </Link>
               {" • "}All payments are non-refundable
             </div>
-            <div>MELISSA, TEXAS • &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved.</div>
+            <div>
+              &copy; {new Date().getFullYear()} Community Commerce Melissa. All rights reserved. Website Designed by{" "}
+              <a
+                href="https://makoragency.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white transition"
+              >
+                Makor Agency
+              </a>
+            </div>
           </div>
 
         </div>
