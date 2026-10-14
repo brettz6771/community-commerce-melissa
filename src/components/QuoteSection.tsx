@@ -147,67 +147,15 @@ export default function QuoteSection({ onOpenJoinModal }: { onOpenJoinModal?: ()
             </div>
           </div>
 
-          {/* Right White Card: Featured Community Video */}
-          <div className="lg:col-span-4 bg-white text-slate-900 rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-200 flex flex-col justify-between min-h-[380px]">
-            <div className="space-y-3">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-base sm:text-lg font-extrabold font-outfit uppercase tracking-wide text-slate-900 leading-tight">
-                    BUILT FOR CONNECTION. <br />
-                    DESIGNED FOR GROWTH.
-                  </h3>
-                  <div className="h-1 w-10 bg-red-600 rounded mt-2"></div>
-                </div>
-                <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider bg-red-50 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
-                  Featured Video
-                </span>
-              </div>
-
-              {/* YouTube Video Player Embed */}
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-md bg-black border border-slate-200">
-                <iframe
-                  src="https://www.youtube-nocookie.com/embed/un7p_KUez04?rel=0"
-                  title="CCM Monthly Networking Event: Meet & Greet at The Red Feather, Melissa"
-                  className="absolute inset-0 w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 space-y-2.5">
-              <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold text-slate-700 truncate pr-2">
-                  Meet &amp; Greet at The Red Feather
-                </span>
-                <a
-                  href="https://www.youtube.com/watch?v=un7p_KUez04"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-red-700 hover:text-red-800 font-bold shrink-0 transition hover:underline"
-                >
-                  YouTube &rarr;
-                </a>
-              </div>
-
-              {onOpenJoinModal ? (
-                <button
-                  onClick={onOpenJoinModal}
-                  className="w-full btn-red py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] transition"
-                >
-                  <span>Join Community Commerce</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <Link
-                  href="/membership"
-                  className="w-full btn-red py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] transition text-center"
-                >
-                  <span>Join Community Commerce</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              )}
-            </div>
+          {/* Right Card: Featured Community Video */}
+          <div className="lg:col-span-4 rounded-2xl shadow-lg border border-slate-200 overflow-hidden aspect-video lg:aspect-auto min-h-[220px] lg:min-h-[380px] bg-black relative">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/un7p_KUez04?rel=0"
+              title="CCM Monthly Networking Event: Meet & Greet at The Red Feather, Melissa"
+              className="absolute inset-0 w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
           </div>
 
         </div>
