@@ -23,6 +23,7 @@ import {
   guestTicketPriceLabel,
   isPaidEventPath,
   tentPromoCodeMatches,
+  tentSpaceChargeLabel,
   partySizeOptions,
   resizeAdditionalGuests,
   type EventPartyGuest,
@@ -67,6 +68,8 @@ export default function EventRegistrationModal({
   const [activePath, setActivePath] = useState<EventRegistrationPath>("attendee");
   const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
   const [promoCode, setPromoCode] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState("");
+  const [promoNotice, setPromoNotice] = useState("");
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -161,6 +164,28 @@ export default function EventRegistrationModal({
     setForm({ ...form, additionalGuests: updated });
   };
 
+  const promoApplied = tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const tentPriceLabel = (optionId: TentSpaceOptionId) =>
+    promoApplied ? tentSpaceChargeLabel(optionId, appliedPromoCode) : TENT_SPACE_OPTIONS[optionId].priceLabel;
+
+  const applyPromoCode = () => {
+    if (tentPromoCodeMatches(promoCode)) {
+      setAppliedPromoCode(promoCode.trim());
+      setPromoNotice("Code applied.");
+      return;
+    }
+    setAppliedPromoCode("");
+    setPromoNotice(promoCode.trim() ? "That code is not recognized. Flyer prices still apply." : "");
+  };
+
+  const changePromoCode = (value: string) => {
+    setPromoCode(value);
+    if (appliedPromoCode && !tentPromoCodeMatches(value)) {
+      setAppliedPromoCode("");
+      setPromoNotice("");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
@@ -175,7 +200,7 @@ export default function EventRegistrationModal({
             eventId: event.id,
             path: activePath,
             spaceOption: isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined,
-            promoCode: isTentOrTreat && activePath === "sponsor" ? promoCode : undefined,
+            promoCode: isTentOrTreat && activePath === "sponsor" && promoApplied ? promoCode : undefined,
             ...form,
           }),
         });
@@ -397,7 +422,9 @@ export default function EventRegistrationModal({
                       <div className="flex items-center gap-1.5 font-bold">
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
                         <span>Business Tent Sign Up</span>
-                        <span className="ml-auto text-amber-300 text-[10px] font-black uppercase">From $150</span>
+                        <span className="ml-auto text-amber-300 text-[10px] font-black uppercase">
+                          {promoApplied ? `From ${tentPriceLabel("standard")}` : "From $150"}
+                        </span>
                       </div>
                       <span className="text-[11px] text-slate-400">
                         Canopy, larger space, or food truck space
@@ -436,7 +463,7 @@ export default function EventRegistrationModal({
                                 </p>
                               </div>
                               <div className="pt-2 flex items-center justify-between border-t border-white/5">
-                                <span className="text-amber-400 font-extrabold text-sm">{opt.priceLabel}</span>
+                                <span className="text-amber-400 font-extrabold text-sm">{tentPriceLabel(opt.id)}</span>
                                 {isSelected ? (
                                   <span className="text-[10px] uppercase font-bold text-red-400">Selected</span>
                                 ) : (
@@ -451,18 +478,33 @@ export default function EventRegistrationModal({
                         <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
                           Promotion code
                         </span>
-                        <input
-                          type="text"
-                          value={promoCode}
-                          autoComplete="off"
-                          spellCheck={false}
-                          onChange={(e) => setPromoCode(e.target.value)}
-                          placeholder="Optional"
-                          className={inputClass}
-                        />
-                        {promoCode.trim() && !tentPromoCodeMatches(promoCode) ? (
-                          <p className="text-[11px] text-slate-400">
-                            That code is not recognized. Checkout uses the flyer price.
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={promoCode}
+                            autoComplete="off"
+                            spellCheck={false}
+                            onChange={(e) => changePromoCode(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                applyPromoCode();
+                              }
+                            }}
+                            placeholder="Optional"
+                            className={inputClass}
+                          />
+                          <button
+                            type="button"
+                            onClick={applyPromoCode}
+                            className="shrink-0 px-3 rounded-xl border border-slate-600 text-[11px] font-bold uppercase tracking-wider text-white hover:border-red-500"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                        {promoNotice ? (
+                          <p className={`text-[11px] ${promoApplied ? "text-emerald-400" : "text-slate-400"}`}>
+                            {promoNotice}
                           </p>
                         ) : null}
                       </label>
@@ -679,7 +721,7 @@ export default function EventRegistrationModal({
                   {activePath === "guest"
                     ? `Proceed to Checkout (${guestTicketPriceLabel(Number(form.guests) || 1)})`
                     : isTentOrTreat && activePath === "sponsor"
-                    ? `Proceed to Checkout (${TENT_SPACE_OPTIONS[spaceOption]?.priceLabel || "$150"})`
+                    ? `Proceed to Checkout (${tentPriceLabel(spaceOption)})`
                     : isOktoberfest && activePath === "member"
                     ? "Confirm Free Member Registration"
                     : "Confirm Registration & RSVP"}

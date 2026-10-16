@@ -367,6 +367,8 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
 function TentSpaceForm({ event }: { event: SiteEvent }) {
   const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
   const [promoCode, setPromoCode] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState("");
+  const [promoNotice, setPromoNotice] = useState("");
   const [form, setForm] = useState<EventFormFields>({
     name: "",
     email: "",
@@ -380,8 +382,28 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const promoApplied = tentPromoCodeMatches(promoCode);
-  const chargeLabel = tentSpaceChargeLabel(spaceOption, promoCode);
+  const promoApplied = tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const chargeLabel = promoApplied
+    ? tentSpaceChargeLabel(spaceOption, appliedPromoCode)
+    : TENT_SPACE_OPTIONS[spaceOption].priceLabel;
+
+  const applyPromoCode = () => {
+    if (tentPromoCodeMatches(promoCode)) {
+      setAppliedPromoCode(promoCode.trim());
+      setPromoNotice("Code applied.");
+      return;
+    }
+    setAppliedPromoCode("");
+    setPromoNotice(promoCode.trim() ? "That code is not recognized. Flyer prices still apply." : "");
+  };
+
+  const changePromoCode = (value: string) => {
+    setPromoCode(value);
+    if (appliedPromoCode && !tentPromoCodeMatches(value)) {
+      setAppliedPromoCode("");
+      setPromoNotice("");
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -395,7 +417,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
           eventId: event.id,
           path: "sponsor",
           spaceOption,
-          promoCode,
+          promoCode: promoApplied ? promoCode : "",
           ...form,
         }),
       });
@@ -446,7 +468,9 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
                   <p className="text-[11px] text-slate-500 mt-1 leading-snug">{opt.description}</p>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-red-700 font-extrabold text-sm">{opt.priceLabel}</span>
+                  <span className="text-red-700 font-extrabold text-sm">
+                    {promoApplied ? tentSpaceChargeLabel(opt.id, appliedPromoCode) : opt.priceLabel}
+                  </span>
                   {isSelected ? (
                     <span className="text-[10px] font-bold text-red-700 uppercase">Selected</span>
                   ) : (
@@ -459,20 +483,35 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
         </div>
       </div>
 
-      <label className="block space-y-1">
+      <div className="space-y-1">
         <span className="block text-xs font-bold text-slate-700 uppercase">Promotion code</span>
-        <input
-          className={inputClass}
-          value={promoCode}
-          autoComplete="off"
-          spellCheck={false}
-          onChange={(e) => setPromoCode(e.target.value)}
-          placeholder="Optional"
-        />
-        {promoCode.trim() && !promoApplied ? (
-          <p className="text-xs text-slate-500">That code is not recognized. Checkout uses the flyer price.</p>
+        <div className="flex gap-2">
+          <input
+            className={inputClass}
+            value={promoCode}
+            autoComplete="off"
+            spellCheck={false}
+            onChange={(e) => changePromoCode(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                applyPromoCode();
+              }
+            }}
+            placeholder="Optional"
+          />
+          <button
+            type="button"
+            onClick={applyPromoCode}
+            className="shrink-0 px-4 rounded-xl border border-slate-300 text-xs font-bold uppercase tracking-wider text-slate-800 hover:border-red-600"
+          >
+            Apply
+          </button>
+        </div>
+        {promoNotice ? (
+          <p className={`text-xs ${promoApplied ? "text-emerald-700" : "text-slate-500"}`}>{promoNotice}</p>
         ) : null}
-      </label>
+      </div>
 
       <SharedFields
         form={form}
