@@ -109,8 +109,12 @@ export async function POST(request: Request) {
     }
 
     if (isPaidEventPath(eventId, path)) {
+      const checkoutMsg =
+        eventId === "tent-or-treat"
+          ? "Tent spaces are paid registrations ($150 - $250). Please continue through checkout."
+          : "Guest Oktoberfest tickets are $20. Continue through checkout.";
       return NextResponse.json(
-        { error: "Guest Oktoberfest tickets are $20. Continue through checkout." },
+        { error: checkoutMsg },
         { status: 402 }
       );
     }

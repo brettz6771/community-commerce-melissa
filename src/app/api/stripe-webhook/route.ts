@@ -11,6 +11,7 @@ import {
   eventRegistrationFormType,
   formatAdditionalGuests,
   getSiteEvent,
+  type EventRegistrationPath,
 } from "@/lib/site-events";
 
 export async function POST(request: Request) {
@@ -78,13 +79,18 @@ export async function POST(request: Request) {
         if (targetEmail) {
           if (isEvent) {
             const siteEvent = getSiteEvent(metadata.eventId);
-            const path = (metadata.path || "guest") as "guest";
+            const path = (metadata.path || "guest") as EventRegistrationPath;
             const eventId = siteEvent?.id || "oktoberfest";
             const name = metadata.name || "Guest";
-            const additionalGuests = additionalGuestsFromMetadata(metadata);
+            const isTentSpace = eventId === "tent-or-treat" && path === "sponsor";
+            const additionalGuests = isTentSpace ? [] : additionalGuestsFromMetadata(metadata);
+            const spaceName = metadata.spaceName || (isTentSpace ? "Tent Space" : "");
+            const spacePrice = metadata.spacePrice || (session.amount_total ? `$${(session.amount_total / 100).toFixed(2)}` : "");
+            const amountFormatted = `$${((session.amount_total || 0) / 100).toFixed(2)}`;
+
             await saveEventRegistration({
               eventId,
-              path: metadata.path || "guest",
+              path,
               email: String(targetEmail),
               name,
               phone: metadata.phone || "",
@@ -102,38 +108,78 @@ export async function POST(request: Request) {
                 guests: metadata.guests || "1",
                 additionalGuests,
                 notes: metadata.notes || "",
-                amount: `$${((session.amount_total || 0) / 100).toFixed(2)}`,
+                amount: amountFormatted,
+                ...(isTentSpace ? { spaceOption: metadata.spaceOption, spaceName, spacePrice } : {}),
               },
             });
+
+            const contactDetails: Record<string, string> = {
+              Event: siteEvent?.title || metadata.eventId || "Event",
+              Path: isTentSpace ? `Tent Space (${spaceName} — ${spacePrice})` : "Guest ($20 each)",
+              Name: name,
+              "Stripe Session ID": session.id,
+              "Amount Paid": amountFormatted,
+              Phone: metadata.phone || "N/A",
+              Company: metadata.company || "N/A",
+              Guests: metadata.guests || "1",
+            };
+            if (isTentSpace) {
+              contactDetails["Space Type"] = spaceName;
+              contactDetails["Notes / Requests"] = metadata.notes || "None";
+            } else {
+              contactDetails["Additional guests"] = formatAdditionalGuests(additionalGuests) || "None";
+            }
+
             await saveContactToDb({
               email: String(targetEmail),
               formType: eventRegistrationFormType(eventId, path),
               source: "Stripe Event Checkout",
-              details: {
-                Event: siteEvent?.title || metadata.eventId || "Event",
-                Path: "Guest ($20 each)",
-                Name: name,
-                "Stripe Session ID": session.id,
-                "Amount Paid": `$${((session.amount_total || 0) / 100).toFixed(2)}`,
-                Phone: metadata.phone || "N/A",
-                Company: metadata.company || "N/A",
-                Guests: metadata.guests || "1",
-                "Additional guests": formatAdditionalGuests(additionalGuests) || "None",
-              },
+              details: contactDetails,
             });
+
             const confirmation = eventConfirmationCopy(eventId, path);
+            const userSubject = isTentSpace
+              ? `Tent Space Confirmed — ${siteEvent?.title || "Community Tent-or-Treat"}`
+              : `You're registered — ${siteEvent?.title || "Community Commerce event"}`;
+
+            const userHtml = isTentSpace
+              ? `
+                <p>Hello ${escapeHtml(name)},</p>
+                <p>Thank you for purchasing tent space for <strong>${escapeHtml(siteEvent?.title || "Community Tent-or-Treat")}</strong>!</p>
+                <p><strong>Space Reserved:</strong> ${escapeHtml(spaceName)} (${escapeHtml(spacePrice)})</p>
+                <p><strong>Business:</strong> ${escapeHtml(metadata.company || name)}</p>
+                <p><strong>Amount Paid:</strong> ${escapeHtml(amountFormatted)}</p>
+                <p><strong>Date & Time:</strong> Saturday, October 31, 2026 · 2:00 PM – 5:00 PM</p>
+                <p><strong>Business Setup:</strong> 12:30 PM – 2:00 PM</p>
+                <p><strong>Location:</strong> Melissa Lake Park (4101 Liberty Way, Melissa, TX 75454)</p>
+                <p>Questions? Contact Cindy Karman at <a href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a> or reply to this email.</p>
+              `
+              : `<p>Hello ${escapeHtml(name)},</p><p>${escapeHtml(confirmation)}</p>`;
+
+            const staffSubject = isTentSpace
+              ? `Tent Space Purchase (${spaceName}): ${metadata.company || name}`
+              : `Oktoberfest guest ticket: ${name}`;
+
+            const staffHtml = isTentSpace
+              ? `<p><strong>${escapeHtml(metadata.company || name)}</strong> purchased tent space for Tent or Treat.</p>
+                 <p><strong>Contact:</strong> ${escapeHtml(name)} &lt;${escapeHtml(String(targetEmail))}&gt; ${escapeHtml(metadata.phone || "")}</p>
+                 <p><strong>Space:</strong> ${escapeHtml(spaceName)} (${escapeHtml(spacePrice)})</p>
+                 <p><strong>Amount:</strong> ${escapeHtml(amountFormatted)}</p>
+                 <p><strong>Notes:</strong> ${escapeHtml(metadata.notes || "None")}</p>`
+              : `<p>${escapeHtml(name)} paid for Oktoberfest guest admission.</p>`;
+
             await Promise.allSettled([
               sendEmail({
                 to: String(targetEmail),
-                replyTo: "info@communitycommercemelissa.org",
-                subject: `You're registered — ${siteEvent?.title || "Community Commerce event"}`,
-                html: `<p>Hello ${escapeHtml(name)},</p><p>${escapeHtml(confirmation)}</p>`,
+                replyTo: isTentSpace ? "cindy@barefootnaturals.com" : "info@communitycommercemelissa.org",
+                subject: userSubject,
+                html: userHtml,
               }),
               sendEmail({
                 to: "info@communitycommercemelissa.org",
                 replyTo: String(targetEmail),
-                subject: `Oktoberfest guest ticket: ${name}`,
-                html: `<p>${escapeHtml(name)} paid for Oktoberfest guest admission.</p>`,
+                subject: staffSubject,
+                html: staffHtml,
               }),
             ]);
           } else if (isDonation) {

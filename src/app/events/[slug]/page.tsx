@@ -21,7 +21,9 @@ import MemberModal from "@/components/MemberModal";
 import PageTitle from "@/components/PageTitle";
 import TermsAgreement from "@/components/TermsAgreement";
 import {
+  DEFAULT_TENT_SPACE_OPTION,
   OKTOBERFEST_PRICE_LABEL,
+  TENT_SPACE_OPTIONS,
   getSiteEvent,
   guestTicketPriceLabel,
   partySizeOptions,
@@ -29,6 +31,7 @@ import {
   type EventPartyGuest,
   type EventRegistrationPath,
   type SiteEvent,
+  type TentSpaceOptionId,
 } from "@/lib/site-events";
 
 interface EventPageProps {
@@ -117,10 +120,16 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
             <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl p-5 flex items-start gap-3">
               <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
               <div>
-                <p className="font-extrabold font-outfit uppercase">You&apos;re registered</p>
+                <p className="font-extrabold font-outfit uppercase">
+                  {event.id === "tent-or-treat" && registered === "paid"
+                    ? "Tent Space Confirmed"
+                    : "You're registered"}
+                </p>
                 <p className="text-sm mt-1">
                   {registered === "paid"
-                    ? "Guest ticket payment received. A confirmation is on its way."
+                    ? event.id === "tent-or-treat"
+                      ? "Tent space payment received. Your booth space is reserved and a confirmation email has been sent."
+                      : "Guest ticket payment received. A confirmation is on its way."
                     : "We saved your registration and emailed a confirmation."}
                 </p>
               </div>
@@ -324,7 +333,7 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
       </section>
 
       <section id="business-tent" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 space-y-4">
           {event.businessImage ? (
             <img
               src={event.businessImage}
@@ -332,27 +341,148 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
               className="w-full rounded-2xl border border-slate-200 shadow-lg bg-white"
             />
           ) : null}
-        </div>
-        <div className="lg:col-span-7">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <TentForm
-              event={event}
-              path="sponsor"
-              title="Business tent / sponsorship"
-              icon={<Building2 className="w-4 h-4" />}
-              intro="Interest form only. Staff will follow up about tent space ($150), larger space ($250), or food vendor ($250). Nothing is charged here."
-              submitLabel="Send interest form"
-              requireCompany
-              nested
-            />
-            <p className="text-xs text-slate-500 mt-3">
-              Questions: Cindy Karman,{" "}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
+            <p className="text-xs font-bold uppercase tracking-widest text-red-700">Vendor Schedule & Info</p>
+            <p className="text-sm text-slate-700"><strong>Business Setup:</strong> 12:30 PM – 2:00 PM</p>
+            <p className="text-sm text-slate-700"><strong>Event Hours:</strong> 2:00 PM – 5:00 PM</p>
+            <p className="text-sm text-slate-700"><strong>Location:</strong> Melissa Lake Park</p>
+            <p className="text-xs text-slate-500 pt-2 border-t border-slate-100">
+              Questions or sponsorships: Cindy Karman,{" "}
               <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">cindy@barefootnaturals.com</a>
             </p>
           </div>
         </div>
+        <div className="lg:col-span-7">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+            <TentSpaceForm event={event} />
+          </div>
+        </div>
       </section>
     </div>
+  );
+}
+
+function TentSpaceForm({ event }: { event: SiteEvent }) {
+  const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
+  const [form, setForm] = useState<EventFormFields>({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    guests: "1",
+    additionalGuests: [],
+    notes: "",
+  });
+  const [agreed, setAgreed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const selectedTier = TENT_SPACE_OPTIONS[spaceOption];
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch("/api/events/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId: event.id,
+          path: "sponsor",
+          spaceOption,
+          ...form,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setError(data.error || "Could not start checkout.");
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setError("Could not start checkout. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="space-y-4">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-700">
+        <Building2 className="w-4 h-4" />
+        Reserve Business Tent Space
+      </div>
+      <p className="text-sm text-slate-600">
+        Select your tent space tier below and proceed through checkout to secure your spot at Melissa Lake Park.
+      </p>
+
+      {/* Tier Selector */}
+      <div className="space-y-2">
+        <label className="block text-xs font-bold text-slate-700 uppercase">
+          Select Space Tier (Flyer Pricing) *
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {Object.values(TENT_SPACE_OPTIONS).map((opt) => {
+            const isSelected = spaceOption === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => setSpaceOption(opt.id)}
+                className={`p-3.5 rounded-xl text-left border transition text-xs flex flex-col justify-between gap-2 ${
+                  isSelected
+                    ? "bg-red-50 border-red-600 ring-2 ring-red-500/20 text-slate-900"
+                    : "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300"
+                }`}
+              >
+                <div>
+                  <div className="font-bold text-slate-900 text-xs">{opt.name}</div>
+                  <p className="text-[11px] text-slate-500 mt-1 leading-snug">{opt.description}</p>
+                </div>
+                <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-red-700 font-extrabold text-sm">{opt.priceLabel}</span>
+                  {isSelected ? (
+                    <span className="text-[10px] font-bold text-red-700 uppercase">Selected</span>
+                  ) : (
+                    <span className="text-[10px] font-semibold text-slate-500">Choose</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <SharedFields
+        form={form}
+        setForm={setForm}
+        eventId={event.id}
+        path="sponsor"
+        requireCompany={true}
+        showNotes={true}
+      />
+
+      <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" id="agree-sponsor" includeRefund={true} />
+
+      {error && <p className="text-sm text-red-700">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={busy || !agreed}
+        className="btn-red px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center gap-2 shadow-md hover:scale-[1.01] transition"
+      >
+        {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+        Pay {selectedTier.priceLabel} and reserve tent space
+      </button>
+
+      <p className="text-xs text-slate-500 pt-1">
+        Questions about tent spaces or sponsorships? Contact Cindy Karman,{" "}
+        <a className="text-red-700 font-bold" href="mailto:cindy@barefootnaturals.com">
+          cindy@barefootnaturals.com
+        </a>
+      </p>
+    </form>
   );
 }
 

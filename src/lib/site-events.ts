@@ -1,6 +1,55 @@
 export const OKTOBERFEST_PRICE_CENTS = 2000;
 export const OKTOBERFEST_PRICE_LABEL = "$20";
 
+export type TentSpaceOptionId = "standard" | "larger" | "food-vendor";
+
+export type TentSpaceOption = {
+  id: TentSpaceOptionId;
+  name: string;
+  priceCents: number;
+  priceLabel: string;
+  description: string;
+};
+
+export const TENT_SPACE_OPTIONS: Record<TentSpaceOptionId, TentSpaceOption> = {
+  standard: {
+    id: "standard",
+    name: "Standard Space (10' x 10')",
+    priceCents: 15000,
+    priceLabel: "$150",
+    description: "10' x 10' canopy or tent space to promote your business and hand out treats.",
+  },
+  larger: {
+    id: "larger",
+    name: "Larger Space",
+    priceCents: 25000,
+    priceLabel: "$250",
+    description: "Expanded footprint for larger displays, multi-canopy setups, or interactive activities.",
+  },
+  "food-vendor": {
+    id: "food-vendor",
+    name: "Food Vendor / Truck",
+    priceCents: 25000,
+    priceLabel: "$250",
+    description: "Dedicated parking/space for food trucks, trailers, or prepared food vendors.",
+  },
+};
+
+export const DEFAULT_TENT_SPACE_OPTION: TentSpaceOptionId = "standard";
+
+export function getTentSpaceOption(raw: unknown): TentSpaceOption {
+  const key = String(raw ?? "").trim().toLowerCase();
+  if (key === "larger" || key === "large") return TENT_SPACE_OPTIONS.larger;
+  if (key === "food-vendor" || key === "food_vendor" || key === "food" || key === "truck") {
+    return TENT_SPACE_OPTIONS["food-vendor"];
+  }
+  return TENT_SPACE_OPTIONS.standard;
+}
+
+export function tentSpacePriceLabel(spaceOption?: TentSpaceOptionId): string {
+  return getTentSpaceOption(spaceOption).priceLabel;
+}
+
 export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn";
 export type EventRegistrationPath = "member" | "guest" | "attendee" | "sponsor";
 export type EventSignupKind = "attendance" | "business_interest";
@@ -162,8 +211,8 @@ export function eventMembershipStatus(path: EventRegistrationPath, emailIsMember
 }
 
 export function eventPaymentStatus(eventId: SiteEventId, path: EventRegistrationPath): EventPaymentStatus {
-  if (path === "sponsor") return "interest";
   if (isPaidEventPath(eventId, path)) return "paid";
+  if (path === "sponsor") return "interest";
   return "complimentary";
 }
 
@@ -172,7 +221,9 @@ export function eventPricing(eventId: SiteEventId, path: EventRegistrationPath):
 }
 
 export function isPaidEventPath(eventId: SiteEventId, path: EventRegistrationPath): boolean {
-  return eventId === "oktoberfest" && path === "guest";
+  if (eventId === "oktoberfest" && path === "guest") return true;
+  if (eventId === "tent-or-treat" && path === "sponsor") return true;
+  return false;
 }
 
 export type EventPartyGuest = {
@@ -201,8 +252,12 @@ export function eventCheckoutAmountCents(
   eventId: SiteEventId,
   path: EventRegistrationPath,
   partySize = 1,
+  spaceOption?: TentSpaceOptionId,
 ): number {
   if (!isPaidEventPath(eventId, path)) return 0;
+  if (eventId === "tent-or-treat" && path === "sponsor") {
+    return getTentSpaceOption(spaceOption).priceCents;
+  }
   const count = Math.min(4, Math.max(1, Math.round(Number(partySize) || 1)));
   return OKTOBERFEST_PRICE_CENTS * count;
 }
@@ -291,6 +346,7 @@ export function validateEventRegistrationInput(input: unknown): {
     guests: string;
     additionalGuests: EventPartyGuest[];
     notes: string;
+    spaceOption?: TentSpaceOptionId;
   };
 } | { ok: false; error: string } {
   const body = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
@@ -331,8 +387,13 @@ export function validateEventRegistrationInput(input: unknown): {
     return { ok: false, error: "Enter a valid email address." };
   }
   if (path === "sponsor" && !company) {
-    return { ok: false, error: "Enter the business name for the tent or sponsorship inquiry." };
+    return { ok: false, error: "Enter the business name for your tent space." };
   }
+
+  const spaceOption =
+    event.id === "tent-or-treat" && path === "sponsor"
+      ? getTentSpaceOption(body.spaceOption).id
+      : undefined;
 
   return {
     ok: true,
@@ -346,6 +407,7 @@ export function validateEventRegistrationInput(input: unknown): {
       guests: String(partySize),
       additionalGuests: additional.value,
       notes,
+      spaceOption,
     },
   };
 }
@@ -358,7 +420,7 @@ export function eventRegistrationFormType(eventId: SiteEventId, path: EventRegis
     return "Lunch & Learn Registration";
   }
   return path === "sponsor"
-    ? "Tent or Treat Business Tent Interest"
+    ? "Tent or Treat Business Tent Registration"
     : "Tent or Treat Attendance";
 }
 
@@ -372,7 +434,7 @@ export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrat
     return "You're registered. See you at Lunch & Learn — lunch is complimentary.";
   }
   if (path === "sponsor") {
-    return "Thanks — a team member will contact you about tent or sponsorship details. No payment is collected here.";
+    return "Your tent space registration has been received. Setup is Saturday, October 31, 2026 from 12:30 PM to 2:00 PM at Melissa Lake Park.";
   }
   return "You're registered. Enjoy the afternoon at Melissa Lake Park.";
 }

@@ -17,13 +17,17 @@ import {
 } from "lucide-react";
 import TermsAgreement from "@/components/TermsAgreement";
 import {
+  DEFAULT_TENT_SPACE_OPTION,
   OKTOBERFEST_PRICE_LABEL,
+  TENT_SPACE_OPTIONS,
   guestTicketPriceLabel,
+  isPaidEventPath,
   partySizeOptions,
   resizeAdditionalGuests,
   type EventPartyGuest,
   type EventRegistrationPath,
   type SiteEvent,
+  type TentSpaceOptionId,
 } from "@/lib/site-events";
 
 interface EventRegistrationModalProps {
@@ -60,6 +64,7 @@ export default function EventRegistrationModal({
 }: EventRegistrationModalProps) {
   const [portal, setPortal] = useState<PortalState>({ status: "guest" });
   const [activePath, setActivePath] = useState<EventRegistrationPath>("attendee");
+  const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -105,6 +110,7 @@ export default function EventRegistrationModal({
     }
 
     setActivePath(path);
+    setSpaceOption(DEFAULT_TENT_SPACE_OPTION);
     setError("");
     setSuccess(null);
     setAgreed(false);
@@ -159,11 +165,16 @@ export default function EventRegistrationModal({
     setError("");
 
     try {
-      if (activePath === "guest") {
+      if (isPaidEventPath(event.id, activePath)) {
         const res = await fetch("/api/events/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ eventId: event.id, path: activePath, ...form }),
+          body: JSON.stringify({
+            eventId: event.id,
+            path: activePath,
+            spaceOption: isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined,
+            ...form,
+          }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.url) {
@@ -347,7 +358,7 @@ export default function EventRegistrationModal({
               )}
 
               {isTentOrTreat && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Registration Type
                   </span>
@@ -382,13 +393,65 @@ export default function EventRegistrationModal({
                     >
                       <div className="flex items-center gap-1.5 font-bold">
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Booth / Table / Sponsor</span>
+                        <span>Business Tent Sign Up</span>
+                        <span className="ml-auto text-amber-300 text-[10px] font-black uppercase">From $150</span>
                       </div>
                       <span className="text-[11px] text-slate-400">
-                        Interest form for business tents & tables
+                        Canopy, larger space, or food truck space
                       </span>
                     </button>
                   </div>
+
+                  {activePath === "sponsor" && (
+                    <div className="space-y-2 pt-1">
+                      <div className="flex items-center justify-between">
+                        <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                          Select Tent Space Tier
+                        </span>
+                        <span className="text-[11px] text-slate-400">Setup 12:30–2:00 PM</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {Object.values(TENT_SPACE_OPTIONS).map((opt) => {
+                          const isSelected = spaceOption === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setSpaceOption(opt.id)}
+                              className={`p-3 rounded-xl text-left border transition text-xs flex flex-col justify-between gap-1.5 ${
+                                isSelected
+                                  ? "bg-red-700/25 border-red-500 text-white shadow-md shadow-red-950/40"
+                                  : "bg-[#151922] border-slate-700 text-slate-300 hover:border-slate-500"
+                              }`}
+                            >
+                              <div>
+                                <div className="flex items-center justify-between font-bold">
+                                  <span className="text-white text-xs leading-tight">{opt.name}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                                  {opt.description}
+                                </p>
+                              </div>
+                              <div className="pt-2 flex items-center justify-between border-t border-white/5">
+                                <span className="text-amber-400 font-extrabold text-sm">{opt.priceLabel}</span>
+                                {isSelected ? (
+                                  <span className="text-[10px] uppercase font-bold text-red-400">Selected</span>
+                                ) : (
+                                  <span className="text-[10px] uppercase text-slate-500">Choose</span>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        Questions? Contact Cindy Karman at{" "}
+                        <a href="mailto:cindy@barefootnaturals.com" className="text-red-400 underline">
+                          cindy@barefootnaturals.com
+                        </a>
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -573,7 +636,7 @@ export default function EventRegistrationModal({
                   onChange={setAgreed}
                   variant="dark"
                   id={`modal-agree-${event.id}-${activePath}`}
-                  includeRefund={activePath === "guest"}
+                  includeRefund={activePath === "guest" || (isTentOrTreat && activePath === "sponsor")}
                 />
               </div>
 
@@ -593,8 +656,8 @@ export default function EventRegistrationModal({
                 <span>
                   {activePath === "guest"
                     ? `Proceed to Checkout (${guestTicketPriceLabel(Number(form.guests) || 1)})`
-                    : activePath === "sponsor"
-                    ? "Submit Business Booth Interest"
+                    : isTentOrTreat && activePath === "sponsor"
+                    ? `Proceed to Checkout (${TENT_SPACE_OPTIONS[spaceOption]?.priceLabel || "$150"})`
                     : isOktoberfest && activePath === "member"
                     ? "Confirm Free Member Registration"
                     : "Confirm Registration & RSVP"}

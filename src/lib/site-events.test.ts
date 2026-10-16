@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   EVENT_REGISTRATION_CSV_HEADERS,
   OKTOBERFEST_PRICE_CENTS,
+  TENT_SPACE_OPTIONS,
   allowedPathsForEvent,
   calculateEventRegistrationsSummary,
   chicagoCalendarDate,
@@ -45,12 +46,26 @@ describe("site events catalog", () => {
     assert.equal(maxPartySize("lunch-and-learn", "attendee"), 4);
   });
 
-  it("keeps Tent or Treat paths off Stripe", () => {
+  it("makes Tent or Treat business tent spaces purchaseable per flyer pricing", () => {
     assert.deepEqual(allowedPathsForEvent("tent-or-treat"), ["attendee", "sponsor"]);
     assert.equal(isPaidEventPath("tent-or-treat", "attendee"), false);
-    assert.equal(isPaidEventPath("tent-or-treat", "sponsor"), false);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor"), 0);
-    assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /No payment/i);
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor"), true);
+    // Standard space: $150
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor"), 15000);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard"), 15000);
+    assert.equal(TENT_SPACE_OPTIONS.standard.priceCents, 15000);
+    assert.equal(TENT_SPACE_OPTIONS.standard.priceLabel, "$150");
+    // Larger space: $250
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger"), 25000);
+    assert.equal(TENT_SPACE_OPTIONS.larger.priceCents, 25000);
+    assert.equal(TENT_SPACE_OPTIONS.larger.priceLabel, "$250");
+    // Food vendor / truck: $250
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor"), 25000);
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceCents, 25000);
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceLabel, "$250");
+    // Confirmation copy mentions setup time and location
+    assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /tent space registration/i);
+    assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /12:30 PM to 2:00 PM/i);
   });
 
   it("moves events to Past the Chicago calendar day after they end", () => {
