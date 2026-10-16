@@ -4,9 +4,13 @@ import { getCheckoutOrigin, truncateMeta } from "@/lib/site";
 import { isValidEmail } from "@/lib/html";
 import {
   OKTOBERFEST_PRICE_CENTS,
+  TENT_OR_TREAT_PROMO_CODE,
   getSiteEvent,
   getTentSpaceOption,
   isPaidEventPath,
+  tentPromoCodeMatches,
+  tentSpaceChargeCents,
+  tentSpaceChargeLabel,
   validateEventRegistrationInput,
 } from "@/lib/site-events";
 
@@ -44,13 +48,18 @@ export async function POST(request: Request) {
     const origin = getCheckoutOrigin(request);
     const isTentSpace = eventId === "tent-or-treat" && path === "sponsor";
     const selectedTentSpace = isTentSpace ? getTentSpaceOption(spaceOption) : undefined;
+    const rawPromo = isTentSpace ? (body.promoCode ?? body.couponCode) : undefined;
+    const promoApplied = isTentSpace && tentPromoCodeMatches(rawPromo);
+    const tentChargeCents = selectedTentSpace
+      ? tentSpaceChargeCents(selectedTentSpace.id, rawPromo)
+      : 0;
 
     const lineItems = isTentSpace && selectedTentSpace
       ? [
           {
             price_data: {
               currency: "usd",
-              unit_amount: selectedTentSpace.priceCents,
+              unit_amount: tentChargeCents,
               product_data: {
                 name: `${event.title} — ${selectedTentSpace.name}`,
                 description: `${selectedTentSpace.description} Setup: Saturday, Oct 31, 2026, 12:30 PM - 2:00 PM at Melissa Lake Park.`,
@@ -90,7 +99,9 @@ export async function POST(request: Request) {
     if (isTentSpace && selectedTentSpace) {
       sessionMetadata.spaceOption = selectedTentSpace.id;
       sessionMetadata.spaceName = truncateMeta(selectedTentSpace.name, 100);
-      sessionMetadata.spacePrice = selectedTentSpace.priceLabel;
+      sessionMetadata.listPrice = selectedTentSpace.priceLabel;
+      sessionMetadata.spacePrice = tentSpaceChargeLabel(selectedTentSpace.id, rawPromo);
+      if (promoApplied) sessionMetadata.promoCode = TENT_OR_TREAT_PROMO_CODE;
     } else {
       sessionMetadata.guest2Name = truncateMeta(additionalGuests[0]?.name, 120);
       sessionMetadata.guest2Email = truncateMeta(additionalGuests[0]?.email, 200);

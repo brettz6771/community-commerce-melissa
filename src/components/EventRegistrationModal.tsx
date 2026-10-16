@@ -22,6 +22,7 @@ import {
   TENT_SPACE_OPTIONS,
   guestTicketPriceLabel,
   isPaidEventPath,
+  tentPromoCodeMatches,
   partySizeOptions,
   resizeAdditionalGuests,
   type EventPartyGuest,
@@ -65,6 +66,7 @@ export default function EventRegistrationModal({
   const [portal, setPortal] = useState<PortalState>({ status: "guest" });
   const [activePath, setActivePath] = useState<EventRegistrationPath>("attendee");
   const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
+  const [promoCode, setPromoCode] = useState("");
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -173,6 +175,7 @@ export default function EventRegistrationModal({
             eventId: event.id,
             path: activePath,
             spaceOption: isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined,
+            promoCode: isTentOrTreat && activePath === "sponsor" ? promoCode : undefined,
             ...form,
           }),
         });
@@ -444,6 +447,25 @@ export default function EventRegistrationModal({
                           );
                         })}
                       </div>
+                      <label className="block space-y-1 pt-1">
+                        <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                          Promotion code
+                        </span>
+                        <input
+                          type="text"
+                          value={promoCode}
+                          autoComplete="off"
+                          spellCheck={false}
+                          onChange={(e) => setPromoCode(e.target.value)}
+                          placeholder="Optional"
+                          className={inputClass}
+                        />
+                        {promoCode.trim() && !tentPromoCodeMatches(promoCode) ? (
+                          <p className="text-[11px] text-slate-400">
+                            That code is not recognized. Checkout uses the flyer price.
+                          </p>
+                        ) : null}
+                      </label>
                       <p className="text-[11px] text-slate-400">
                         Questions? Contact Cindy Karman at{" "}
                         <a href="mailto:cindy@barefootnaturals.com" className="text-red-400 underline">

@@ -26,6 +26,8 @@ import {
   TENT_SPACE_OPTIONS,
   getSiteEvent,
   guestTicketPriceLabel,
+  tentPromoCodeMatches,
+  tentSpaceChargeLabel,
   partySizeOptions,
   resizeAdditionalGuests,
   type EventPartyGuest,
@@ -364,6 +366,7 @@ function TentOrTreatForms({ event }: { event: SiteEvent }) {
 
 function TentSpaceForm({ event }: { event: SiteEvent }) {
   const [spaceOption, setSpaceOption] = useState<TentSpaceOptionId>(DEFAULT_TENT_SPACE_OPTION);
+  const [promoCode, setPromoCode] = useState("");
   const [form, setForm] = useState<EventFormFields>({
     name: "",
     email: "",
@@ -377,7 +380,8 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const selectedTier = TENT_SPACE_OPTIONS[spaceOption];
+  const promoApplied = tentPromoCodeMatches(promoCode);
+  const chargeLabel = tentSpaceChargeLabel(spaceOption, promoCode);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -391,6 +395,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
           eventId: event.id,
           path: "sponsor",
           spaceOption,
+          promoCode,
           ...form,
         }),
       });
@@ -454,6 +459,21 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
         </div>
       </div>
 
+      <label className="block space-y-1">
+        <span className="block text-xs font-bold text-slate-700 uppercase">Promotion code</span>
+        <input
+          className={inputClass}
+          value={promoCode}
+          autoComplete="off"
+          spellCheck={false}
+          onChange={(e) => setPromoCode(e.target.value)}
+          placeholder="Optional"
+        />
+        {promoCode.trim() && !promoApplied ? (
+          <p className="text-xs text-slate-500">That code is not recognized. Checkout uses the flyer price.</p>
+        ) : null}
+      </label>
+
       <SharedFields
         form={form}
         setForm={setForm}
@@ -473,7 +493,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
         className="btn-red px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center gap-2 shadow-md hover:scale-[1.01] transition"
       >
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-        Pay {selectedTier.priceLabel} and reserve tent space
+        Pay {chargeLabel} and reserve tent space
       </button>
 
       <p className="text-xs text-slate-500 pt-1">
