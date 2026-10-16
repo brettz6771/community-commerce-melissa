@@ -37,6 +37,34 @@ export const TENT_SPACE_OPTIONS: Record<TentSpaceOptionId, TentSpaceOption> = {
 
 export const DEFAULT_TENT_SPACE_OPTION: TentSpaceOptionId = "standard";
 
+/** Entered on tent checkout. Not a Stripe coupon — one coupon cannot price both tiers. */
+export const TENT_OR_TREAT_PROMO_CODE = "CCMTOT26";
+
+/**
+ * Amount charged only when CCMTOT26 matches.
+ * Flyer list prices stay on TENT_SPACE_OPTIONS and must not be replaced with these.
+ */
+const TENT_PROMO_CHARGE_CENTS: Record<TentSpaceOptionId, number> = {
+  standard: 5000,
+  larger: 7500,
+  "food-vendor": 7500,
+};
+
+export function tentPromoCodeMatches(raw: unknown): boolean {
+  return String(raw ?? "").trim().toLowerCase() === TENT_OR_TREAT_PROMO_CODE.toLowerCase();
+}
+
+/** Flyer price unless the code is exactly CCMTOT26. Any other value is rejected. */
+export function tentSpaceChargeCents(spaceOption: unknown, promoCode: unknown): number {
+  const option = getTentSpaceOption(spaceOption);
+  if (tentPromoCodeMatches(promoCode)) return TENT_PROMO_CHARGE_CENTS[option.id];
+  return option.priceCents;
+}
+
+export function tentSpaceChargeLabel(spaceOption: unknown, promoCode: unknown): string {
+  return `$${tentSpaceChargeCents(spaceOption, promoCode) / 100}`;
+}
+
 export function getTentSpaceOption(raw: unknown): TentSpaceOption {
   const key = String(raw ?? "").trim().toLowerCase();
   if (key === "larger" || key === "large") return TENT_SPACE_OPTIONS.larger;
@@ -253,10 +281,11 @@ export function eventCheckoutAmountCents(
   path: EventRegistrationPath,
   partySize = 1,
   spaceOption?: TentSpaceOptionId,
+  promoCode?: unknown,
 ): number {
   if (!isPaidEventPath(eventId, path)) return 0;
   if (eventId === "tent-or-treat" && path === "sponsor") {
-    return getTentSpaceOption(spaceOption).priceCents;
+    return tentSpaceChargeCents(spaceOption, promoCode);
   }
   const count = Math.min(4, Math.max(1, Math.round(Number(partySize) || 1)));
   return OKTOBERFEST_PRICE_CENTS * count;
