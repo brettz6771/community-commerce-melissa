@@ -78,7 +78,7 @@ export function tentSpacePriceLabel(spaceOption?: TentSpaceOptionId): string {
   return getTentSpaceOption(spaceOption).priceLabel;
 }
 
-export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn";
+export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn" | "pack-with-purpose";
 export type EventRegistrationPath = "member" | "guest" | "attendee" | "sponsor";
 export type EventSignupKind = "attendance" | "business_interest";
 export type EventMembershipStatus = "member" | "non_member";
@@ -119,6 +119,10 @@ export function resolveTentOrTreatBusinessImage(): string {
 
 export function resolveLunchAndLearnImage(): string {
   return "/events/lunch-and-learn-10-12-26.png";
+}
+
+export function resolvePackWithPurposeImage(): string {
+  return "/events/ccm-luncheon-nov-16.jpg";
 }
 
 export const SITE_EVENTS: SiteEvent[] = [
@@ -179,6 +183,25 @@ export const SITE_EVENTS: SiteEvent[] = [
     isFeatured: true,
     href: "/events/tent-or-treat",
   },
+  {
+    id: "pack-with-purpose",
+    slug: "pack-with-purpose",
+    title: "Pack with Purpose: A Give-Back Lunch & Learn",
+    kicker: "Give-Back Lunch & Learn",
+    date: "2026-11-16",
+    dateLabel: "Monday, November 16, 2026",
+    month: "NOV",
+    day: "16",
+    time: "11:00 AM - 1:00 PM",
+    location: "First United Bank",
+    address: "1700 Redbud Blvd Ste 130, McKinney, TX 75069",
+    category: "Lunch and Learn",
+    description:
+      "Join Community Commerce Melissa and National University as we come together to assemble care packages for our deployed military members with Soldiers' Angels. Free to attend — free lunch included, gifted by Portillo's!",
+    image: resolvePackWithPurposeImage(),
+    isFeatured: true,
+    href: "/events/pack-with-purpose",
+  },
 ];
 
 const CHICAGO_DATE = new Intl.DateTimeFormat("en-CA", {
@@ -202,7 +225,11 @@ export function isPastEvent(event: { date: string; endDate?: string; isPast?: bo
 }
 
 export function getSiteEvent(slug: string | undefined | null): SiteEvent | null {
-  return SITE_EVENTS.find((event) => event.slug === slug) || null;
+  const normalized = String(slug || "").trim().toLowerCase();
+  if (normalized === "ccm-luncheon-nov-16" || normalized === "luncheon-nov-16") {
+    return SITE_EVENTS.find((event) => event.slug === "pack-with-purpose") || null;
+  }
+  return SITE_EVENTS.find((event) => event.slug === normalized) || null;
 }
 
 export function getUpcomingEvents<T extends { date: string; endDate?: string; isPast?: boolean }>(
@@ -509,6 +536,9 @@ export function eventRegistrationFormType(eventId: SiteEventId, path: EventRegis
   if (eventId === "lunch-and-learn") {
     return "Lunch & Learn Registration";
   }
+  if (eventId === "pack-with-purpose") {
+    return "Pack with Purpose Lunch & Learn Registration";
+  }
   return path === "sponsor"
     ? "Tent or Treat Business Tent Registration"
     : "Tent or Treat Attendance";
@@ -522,6 +552,9 @@ export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrat
   }
   if (eventId === "lunch-and-learn") {
     return "You're registered. See you at Lunch & Learn — lunch is complimentary.";
+  }
+  if (eventId === "pack-with-purpose") {
+    return "You're registered for Pack with Purpose: A Give-Back Lunch & Learn on Monday, November 16, 2026 (11:00 AM - 1:00 PM) at First United Bank in McKinney. Free lunch is included, gifted by Portillo's!";
   }
   if (path === "sponsor") {
     return "Your tent space registration has been received. Setup is Saturday, October 31, 2026 from 12:30 PM to 2:00 PM at Melissa Lake Park.";
@@ -727,4 +760,3 @@ export function eventCheckinRosterCsvRows(rows: EventRegistrationRecord[]): Arra
   }
   return roster;
 }
-

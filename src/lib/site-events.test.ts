@@ -31,7 +31,11 @@ import {
 describe("site events catalog", () => {
   it("lists Lunch & Learn, Oktoberfest, and Tent or Treat with in-house registration links", () => {
     const items = siteEventsAsItems();
-    assert.equal(items.length, 3);
+    assert.equal(items.length, 4);
+    assert.equal(getSiteEvent("pack-with-purpose")?.title, "Pack with Purpose: A Give-Back Lunch & Learn");
+    assert.equal(getSiteEvent("ccm-luncheon-nov-16")?.id, "pack-with-purpose");
+    assert.equal(getSiteEvent("pack-with-purpose")?.image, "/events/ccm-luncheon-nov-16.jpg");
+    assert.equal(getSiteEvent("pack-with-purpose")?.href, "/events/pack-with-purpose");
     assert.equal(getSiteEvent("lunch-and-learn")?.title, "Lunch & Learn: Building a Stronger Community");
     assert.equal(getSiteEvent("oktoberfest")?.title, "Oktoberfest Networking Night");
     assert.equal(getSiteEvent("tent-or-treat")?.title, "Community Tent-or-Treat");
@@ -309,27 +313,35 @@ describe("site events catalog", () => {
 
   it("filters out past events and returns at most the next 3 upcoming events chronologically", () => {
     const items = siteEventsAsItems();
-    // On Oct 20, 2026, Oct 12 Lunch & Learn is past; Oct 26 Oktoberfest and Oct 31 Tent-or-Treat remain
+    // On Oct 20, 2026, Oct 12 Lunch & Learn is past; Oct 26 Oktoberfest, Oct 31 Tent-or-Treat, and Nov 16 Pack with Purpose remain
     const oct20 = new Date("2026-10-20T12:00:00-05:00");
     const nextOnOct20 = getNextUpcomingEvents(items, 3, oct20);
     assert.deepEqual(
       nextOnOct20.map((e) => e.id),
-      ["evt-oktoberfest", "evt-tent-or-treat"],
+      ["evt-oktoberfest", "evt-tent-or-treat", "evt-pack-with-purpose"],
     );
 
-    // When a 3rd and 4th upcoming event exist, only the next 3 in chronological order are returned
+    // After Oct 26 passes (e.g. Oct 28), only 2 upcoming events remain, leaving the 3rd slot empty
+    const oct28 = new Date("2026-10-28T12:00:00-05:00");
+    assert.deepEqual(
+      getNextUpcomingEvents(items, 3, oct28).map((e) => e.id),
+      ["evt-tent-or-treat", "evt-pack-with-purpose"],
+    );
+
+    // When a 4th and 5th upcoming event exist, only the next 3 in chronological order are returned
     const withMore = [
       ...items,
       { ...items[0], id: "evt-dec", date: "2026-12-10", title: "December Mixer" },
-      { ...items[0], id: "evt-nov", date: "2026-11-15", title: "November Mixer" },
+      { ...items[0], id: "evt-nov-early", date: "2026-11-05", title: "Early November Mixer" },
     ];
     const nextThree = getNextUpcomingEvents(withMore, 3, oct20);
     assert.deepEqual(
       nextThree.map((e) => e.id),
-      ["evt-oktoberfest", "evt-tent-or-treat", "evt-nov"],
+      ["evt-oktoberfest", "evt-tent-or-treat", "evt-nov-early"],
     );
-    assert.equal(getUpcomingEvents(withMore, oct20).length, 4);
+    assert.equal(getUpcomingEvents(withMore, oct20).length, 5);
     assert.equal(resolveSiteEventForItem(nextOnOct20[0])?.id, "oktoberfest");
+    assert.equal(resolveSiteEventForItem(nextOnOct20[2])?.id, "pack-with-purpose");
     assert.equal(formatEventDateLabel("2026-10-26"), "Monday, October 26, 2026");
   });
 });

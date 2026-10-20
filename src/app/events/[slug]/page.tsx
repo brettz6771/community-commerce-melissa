@@ -156,6 +156,23 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
                     <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
                     <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
                   </div>
+                ) : event.id === "pack-with-purpose" ? (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
+                    <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free to Attend · Give-Back Lunch &amp; Learn</p>
+                    <p className="text-sm text-slate-700">
+                      Presented by <strong>Community Commerce Melissa</strong> &amp; <strong>National University</strong> in support of <strong>Soldiers&apos; Angels</strong>.
+                    </p>
+                    <p className="text-sm text-slate-700">
+                      Join us as we come together to assemble care packages for our deployed military members. Let&apos;s show our appreciation and send a little piece of home to those who serve so far from it.
+                    </p>
+                    <div className="pt-2 border-t border-slate-100 space-y-1.5 text-sm text-slate-700">
+                      <p><strong>Donate Items:</strong> Personal care items, snacks, comfort items, and more.</p>
+                      <p><strong>Get Involved:</strong> Contact us for a full list of requested items and donation drop-off details.</p>
+                    </div>
+                    <p className="text-xs text-slate-500 pt-1">
+                      Free lunch included — gifted by <strong>Portillo&apos;s</strong> and hosted at <strong>First United Bank</strong> in McKinney.
+                    </p>
+                  </div>
                 ) : (
                   <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2">
                     <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free for attendees</p>
@@ -176,8 +193,16 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
                     path="attendee"
                     title="Register free"
                     icon={<Users className="w-4 h-4" />}
-                    intro="Free for everyone. Lunch is included."
-                    submitLabel="Register for Lunch & Learn"
+                    intro={
+                      event.id === "pack-with-purpose"
+                        ? "Free to attend. Complimentary lunch gifted by Portillo's is included."
+                        : "Free for everyone. Lunch is included."
+                    }
+                    submitLabel={
+                      event.id === "pack-with-purpose"
+                        ? "Register for Pack with Purpose"
+                        : "Register for Lunch & Learn"
+                    }
                   />
                 )}
               </div>
@@ -617,7 +642,7 @@ function TentForm({
         eventId={event.id}
         path={path}
         requireCompany={requireCompany}
-        showNotes={path === "sponsor"}
+        showNotes={path === "sponsor" || event.id === "pack-with-purpose"}
       />
       <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" id={`agree-${path}`} />
       {error && <p className="text-sm text-red-700">{error}</p>}

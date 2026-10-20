@@ -71,7 +71,9 @@ export default function HomeUpcomingEvents({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
           {events.map((evt, index) => {
             const siteEvent = resolveSiteEventForItem(evt);
-            const isLunch = siteEvent?.id === "lunch-and-learn";
+            const isLunch =
+              siteEvent?.id === "lunch-and-learn" || siteEvent?.id === "pack-with-purpose";
+            const isPackWithPurpose = siteEvent?.id === "pack-with-purpose";
             const isOktober = siteEvent?.id === "oktoberfest";
             const isTent = siteEvent?.id === "tent-or-treat";
             const kicker = siteEvent?.kicker || evt.category;
@@ -165,7 +167,9 @@ export default function HomeUpcomingEvents({
                       </button>
                       <div className="flex items-center justify-between text-xs pt-1 px-1">
                         <span className="text-emerald-400 font-bold text-[11px] uppercase">
-                          Free for all attendees
+                          {isPackWithPurpose
+                            ? "Free to attend · Lunch by Portillo's"
+                            : "Free for all attendees"}
                         </span>
                         <Link
                           href={detailsHref}

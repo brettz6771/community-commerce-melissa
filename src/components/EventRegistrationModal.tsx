@@ -138,6 +138,12 @@ export default function EventRegistrationModal({
   const isTentOrTreat = event.id === "tent-or-treat";
   const isOktoberfest = event.id === "oktoberfest";
   const isLunchAndLearn = event.id === "lunch-and-learn";
+  const isPackWithPurpose = event.id === "pack-with-purpose";
+  const calendarDates = isPackWithPurpose
+    ? "20261116T170000Z/20261116T190000Z"
+    : isTentOrTreat
+      ? "20261031T190000Z/20261031T220000Z"
+      : "20261026T230000Z/20261027T010000Z";
 
   const handlePathChange = (newPath: EventRegistrationPath) => {
     setActivePath(newPath);
@@ -312,7 +318,7 @@ export default function EventRegistrationModal({
                 <a
                   href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
                     event.title
-                  )}&dates=20261026T230000Z/20261027T010000Z&details=${encodeURIComponent(
+                  )}&dates=${calendarDates}&details=${encodeURIComponent(
                     event.description
                   )}&location=${encodeURIComponent(event.location + (event.address ? `, ${event.address}` : ""))}`}
                   target="_blank"
@@ -519,6 +525,15 @@ export default function EventRegistrationModal({
                 </div>
               )}
 
+              {isPackWithPurpose && (
+                <div className="bg-red-700/15 border border-red-500/30 rounded-xl p-3 text-xs text-red-200 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>
+                    Free to attend! Join us to assemble care packages for deployed military members. Free lunch included, gifted by Portillo&apos;s &amp; hosted at First United Bank.
+                  </span>
+                </div>
+              )}
+
               {isLunchAndLearn && (
                 <div className="bg-red-700/15 border border-red-500/30 rounded-xl p-3 text-xs text-red-200 flex items-center gap-2">
                   <Users className="w-4 h-4 text-red-400 shrink-0" />
@@ -671,7 +686,7 @@ export default function EventRegistrationModal({
                   ))}
 
                 {/* Notes Field */}
-                {(activePath === "sponsor" || isTentOrTreat) && (
+                {(activePath === "sponsor" || isTentOrTreat || isPackWithPurpose) && (
                   <label className="block space-y-1 sm:col-span-2">
                     <span className="block text-xs font-bold text-slate-300 uppercase">
                       {activePath === "sponsor"
