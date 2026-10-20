@@ -3,6 +3,12 @@ import assert from "node:assert/strict";
 import {
   EVENT_REGISTRATION_CSV_HEADERS,
   OKTOBERFEST_PRICE_CENTS,
+  OKTOBERFEST_PROMO_CODE,
+  eventPaymentStatus,
+  eventPricing,
+  eventRegistrationFormType,
+  guestTicketPriceLabel,
+  oktoberfestPromoCodeMatches,
   TENT_OR_TREAT_PROMO_CODE,
   TENT_SPACE_OPTIONS,
   allowedPathsForEvent,
@@ -55,6 +61,25 @@ describe("site events catalog", () => {
     assert.deepEqual(partySizeOptions("oktoberfest", "member"), [1, 2]);
     assert.deepEqual(partySizeOptions("oktoberfest", "guest"), [1, 2, 3, 4]);
     assert.equal(maxPartySize("lunch-and-learn", "attendee"), 4);
+
+    // CCMOKT26 coupon allows non-member guests to sign up at no cost ($0)
+    assert.equal(OKTOBERFEST_PROMO_CODE, "CCMOKT26");
+    assert.equal(oktoberfestPromoCodeMatches("CCMOKT26"), true);
+    assert.equal(oktoberfestPromoCodeMatches("  ccmokt26 "), true);
+    assert.equal(oktoberfestPromoCodeMatches(""), false);
+    assert.equal(oktoberfestPromoCodeMatches("CCMTOT26"), false);
+
+    assert.equal(isPaidEventPath("oktoberfest", "guest", ""), true);
+    assert.equal(isPaidEventPath("oktoberfest", "guest", "WRONG"), true);
+    assert.equal(isPaidEventPath("oktoberfest", "guest", "CCMOKT26"), false);
+    assert.equal(isPaidEventPath("oktoberfest", "guest", " ccmokt26 "), false);
+
+    assert.equal(eventCheckoutAmountCents("oktoberfest", "guest", 2, undefined, ""), OKTOBERFEST_PRICE_CENTS * 2);
+    assert.equal(eventCheckoutAmountCents("oktoberfest", "guest", 2, undefined, "CCMOKT26"), 0);
+    assert.equal(guestTicketPriceLabel(2, "CCMOKT26"), "$0");
+    assert.equal(eventPricing("oktoberfest", "guest", "CCMOKT26"), "free");
+    assert.equal(eventPaymentStatus("oktoberfest", "guest", "CCMOKT26"), "complimentary");
+    assert.match(eventRegistrationFormType("oktoberfest", "guest", "CCMOKT26"), /CCMOKT26/);
   });
 
   it("makes Tent or Treat business tent spaces purchaseable per flyer pricing", () => {

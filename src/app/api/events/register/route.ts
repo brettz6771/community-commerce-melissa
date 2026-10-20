@@ -9,7 +9,9 @@ import { sendEmail } from "@/lib/email";
 import { escapeHtml } from "@/lib/html";
 import { resolvePortalAuth } from "@/lib/member-portal-session";
 import {
+  OKTOBERFEST_PROMO_CODE,
   eventCheckoutAmountCents,
+  oktoberfestPromoCodeMatches,
   eventConfirmationCopy,
   eventMembershipStatus,
   eventPaymentStatus,
@@ -108,7 +110,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Event not found." }, { status: 404 });
     }
 
-    if (isPaidEventPath(eventId, path)) {
+    const rawPromo = body.promoCode ?? body.couponCode;
+    if (isPaidEventPath(eventId, path, rawPromo)) {
       const checkoutMsg =
         eventId === "tent-or-treat"
           ? "Tent spaces are paid registrations ($150 - $250). Please continue through checkout."
@@ -134,13 +137,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const formType = eventRegistrationFormType(eventId, path);
+    const formType = eventRegistrationFormType(eventId, path, rawPromo);
     const confirmation = eventConfirmationCopy(eventId, path);
     const pathLabel =
       path === "member"
         ? "Member (complimentary)"
         : path === "guest"
-          ? "Guest ($20)"
+          ? oktoberfestPromoCodeMatches(rawPromo)
+            ? `Guest (Complimentary — Coupon ${OKTOBERFEST_PROMO_CODE})`
+            : "Guest ($20)"
           : path === "sponsor"
             ? "Business tent / sponsorship interest"
             : "General attendance";
@@ -168,10 +173,21 @@ export async function POST(request: Request) {
       guests,
       notes,
       membershipStatus: eventMembershipStatus(path, emailIsMember),
-      pricing: eventPricing(eventId, path),
-      amountCents: eventCheckoutAmountCents(eventId, path, Number(guests)),
-      paymentStatus: eventPaymentStatus(eventId, path),
-      details: { phone, company, guests, additionalGuests, notes, pathLabel },
+      pricing: eventPricing(eventId, path, rawPromo),
+      amountCents: eventCheckoutAmountCents(eventId, path, Number(guests), undefined, rawPromo),
+      paymentStatus: eventPaymentStatus(eventId, path, rawPromo),
+      details: {
+        phone,
+        company,
+        guests,
+        additionalGuests,
+        notes,
+        pathLabel,
+        ...(oktoberfestPromoCodeMatches(rawPromo) ? { promoCode: OKTOBERFEST_PROMO_CODE } : {}),
+      },
+
+
+
     });
 
     await notifyStaffAndGuest({

@@ -26,6 +26,7 @@ import {
   TENT_SPACE_OPTIONS,
   getSiteEvent,
   guestTicketPriceLabel,
+  oktoberfestPromoCodeMatches,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
   partySizeOptions,
@@ -233,6 +234,9 @@ type EventFormFields = {
 function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalState }) {
   const signedIn = portal.status === "ok";
   const [path, setPath] = useState<EventRegistrationPath>(signedIn ? "member" : "guest");
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState("");
+  const [promoNotice, setPromoNotice] = useState("");
   const [form, setForm] = useState<EventFormFields>({
     name: portal.member?.ownerName || "",
     email: portal.member?.email || "",
@@ -247,13 +251,40 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
   const [error, setError] = useState("");
   const [done, setDone] = useState("");
 
+  const promoApplied =
+    path === "guest" &&
+    oktoberfestPromoCodeMatches(appliedPromoCode) &&
+    oktoberfestPromoCodeMatches(promoCode);
+
+  const applyPromoCode = () => {
+    if (oktoberfestPromoCodeMatches(promoCode)) {
+      setAppliedPromoCode(promoCode.trim());
+      setPromoNotice("Coupon applied — guest admission is now free ($0).");
+      return;
+    }
+    setAppliedPromoCode("");
+    setPromoNotice(
+      promoCode.trim()
+        ? "That coupon code is not recognized. Standard $20 guest ticket price applies."
+        : ""
+    );
+  };
+
+  const changePromoCode = (value: string) => {
+    setPromoCode(value);
+    if (appliedPromoCode && !oktoberfestPromoCodeMatches(value)) {
+      setAppliedPromoCode("");
+      setPromoNotice("");
+    }
+  };
+
   const submit = async (eventSubmit: React.FormEvent) => {
     eventSubmit.preventDefault();
     setBusy(true);
     setError("");
     setDone("");
     try {
-      if (path === "guest") {
+      if (path === "guest" && !promoApplied) {
         const res = await fetch("/api/events/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -271,7 +302,12 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
       const res = await fetch("/api/events/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId: event.id, path, ...form }),
+        body: JSON.stringify({
+          eventId: event.id,
+          path,
+          promoCode: promoApplied ? appliedPromoCode : undefined,
+          ...form,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -309,19 +345,56 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
         <PathButton
           active={path === "guest"}
           onClick={() => setPath("guest")}
-          label={`Guest — ${OKTOBERFEST_PRICE_LABEL} each`}
+          label={promoApplied ? "Guest — Free ($0 with coupon)" : `Guest — ${OKTOBERFEST_PRICE_LABEL} each`}
         />
       </div>
       {signedIn && path === "member" && (
         <p className="text-xs text-emerald-700 font-semibold">Signed in as {portal.member?.email}. Member admission is complimentary.</p>
       )}
+      {path === "guest" && (
+        <div className="space-y-1">
+          <span className="block text-xs font-bold text-slate-700 uppercase">Coupon code</span>
+          <div className="flex gap-2">
+            <input
+              className={inputClass}
+              value={promoCode}
+              autoComplete="off"
+              spellCheck={false}
+              onChange={(e) => changePromoCode(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  applyPromoCode();
+                }
+              }}
+              placeholder="Have a coupon code? Enter and click Apply"
+            />
+            <button
+              type="button"
+              onClick={applyPromoCode}
+              className="shrink-0 px-4 rounded-xl border border-slate-300 text-xs font-bold uppercase tracking-wider text-slate-800 hover:border-red-600"
+            >
+              Apply
+            </button>
+          </div>
+          {promoNotice ? (
+            <p className={`text-xs ${promoApplied ? "text-emerald-700 font-semibold" : "text-slate-500"}`}>
+              {promoNotice}
+            </p>
+          ) : null}
+        </div>
+      )}
       <SharedFields form={form} setForm={setForm} eventId={event.id} path={path} />
-      <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" includeRefund={path === "guest"} />
+      <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" includeRefund={path === "guest" && !promoApplied} />
       {error && <p className="text-sm text-red-700">{error}</p>}
       {done && <p className="text-sm text-emerald-700 font-semibold">{done}</p>}
       <button type="submit" disabled={busy || !agreed} className="btn-red px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center gap-2">
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-        {path === "guest" ? `Pay ${guestTicketPriceLabel(Number(form.guests) || 1)} and register` : "Register as member"}
+        {path === "guest"
+          ? promoApplied
+            ? "Register free with coupon ($0)"
+            : `Pay ${guestTicketPriceLabel(Number(form.guests) || 1)} and register`
+          : "Register as member"}
       </button>
       {!signedIn && path === "member" && (
         <p className="text-[11px] text-slate-500">

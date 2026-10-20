@@ -40,6 +40,13 @@ export const DEFAULT_TENT_SPACE_OPTION: TentSpaceOptionId = "standard";
 /** Entered on tent checkout. Not a Stripe coupon — one coupon cannot price both tiers. */
 export const TENT_OR_TREAT_PROMO_CODE = "CCMTOT26";
 
+/** Entered on Oktoberfest guest registration to waive the $20 guest ticket cost. */
+export const OKTOBERFEST_PROMO_CODE = "CCMOKT26";
+
+export function oktoberfestPromoCodeMatches(raw: unknown): boolean {
+  return String(raw ?? "").trim().toLowerCase() === OKTOBERFEST_PROMO_CODE.toLowerCase();
+}
+
 /**
  * Amount charged only when CCMTOT26 matches.
  * Flyer list prices stay on TENT_SPACE_OPTIONS and must not be replaced with these.
@@ -326,18 +333,32 @@ export function eventMembershipStatus(path: EventRegistrationPath, emailIsMember
   return "non_member";
 }
 
-export function eventPaymentStatus(eventId: SiteEventId, path: EventRegistrationPath): EventPaymentStatus {
-  if (isPaidEventPath(eventId, path)) return "paid";
+export function eventPaymentStatus(
+  eventId: SiteEventId,
+  path: EventRegistrationPath,
+  promoCode?: unknown,
+): EventPaymentStatus {
+  if (isPaidEventPath(eventId, path, promoCode)) return "paid";
   if (path === "sponsor") return "interest";
   return "complimentary";
 }
 
-export function eventPricing(eventId: SiteEventId, path: EventRegistrationPath): EventPricing {
-  return isPaidEventPath(eventId, path) ? "paid" : "free";
+export function eventPricing(
+  eventId: SiteEventId,
+  path: EventRegistrationPath,
+  promoCode?: unknown,
+): EventPricing {
+  return isPaidEventPath(eventId, path, promoCode) ? "paid" : "free";
 }
 
-export function isPaidEventPath(eventId: SiteEventId, path: EventRegistrationPath): boolean {
-  if (eventId === "oktoberfest" && path === "guest") return true;
+export function isPaidEventPath(
+  eventId: SiteEventId,
+  path: EventRegistrationPath,
+  promoCode?: unknown,
+): boolean {
+  if (eventId === "oktoberfest" && path === "guest") {
+    return !oktoberfestPromoCodeMatches(promoCode);
+  }
   if (eventId === "tent-or-treat" && path === "sponsor") return true;
   return false;
 }
@@ -371,7 +392,7 @@ export function eventCheckoutAmountCents(
   spaceOption?: TentSpaceOptionId,
   promoCode?: unknown,
 ): number {
-  if (!isPaidEventPath(eventId, path)) return 0;
+  if (!isPaidEventPath(eventId, path, promoCode)) return 0;
   if (eventId === "tent-or-treat" && path === "sponsor") {
     return tentSpaceChargeCents(spaceOption, promoCode);
   }
@@ -379,8 +400,8 @@ export function eventCheckoutAmountCents(
   return OKTOBERFEST_PRICE_CENTS * count;
 }
 
-export function guestTicketPriceLabel(partySize = 1): string {
-  return `$${eventCheckoutAmountCents("oktoberfest", "guest", partySize) / 100}`;
+export function guestTicketPriceLabel(partySize = 1, promoCode?: unknown): string {
+  return `$${eventCheckoutAmountCents("oktoberfest", "guest", partySize, undefined, promoCode) / 100}`;
 }
 
 export function emptyPartyGuest(): EventPartyGuest {
@@ -529,9 +550,17 @@ export function validateEventRegistrationInput(input: unknown): {
   };
 }
 
-export function eventRegistrationFormType(eventId: SiteEventId, path: EventRegistrationPath): string {
+export function eventRegistrationFormType(
+  eventId: SiteEventId,
+  path: EventRegistrationPath,
+  promoCode?: unknown,
+): string {
   if (eventId === "oktoberfest") {
-    return path === "member" ? "Oktoberfest Registration (Member)" : "Oktoberfest Registration (Guest)";
+    if (path === "member") return "Oktoberfest Registration (Member)";
+    if (oktoberfestPromoCodeMatches(promoCode)) {
+      return `Oktoberfest Registration (Guest — Coupon ${OKTOBERFEST_PROMO_CODE})`;
+    }
+    return "Oktoberfest Registration (Guest)";
   }
   if (eventId === "lunch-and-learn") {
     return "Lunch & Learn Registration";

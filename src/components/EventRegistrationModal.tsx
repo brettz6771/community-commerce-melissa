@@ -22,6 +22,7 @@ import {
   TENT_SPACE_OPTIONS,
   guestTicketPriceLabel,
   isPaidEventPath,
+  oktoberfestPromoCodeMatches,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
   partySizeOptions,
@@ -116,6 +117,9 @@ export default function EventRegistrationModal({
 
     setActivePath(path);
     setSpaceOption(DEFAULT_TENT_SPACE_OPTION);
+    setPromoCode("");
+    setAppliedPromoCode("");
+    setPromoNotice("");
     setError("");
     setSuccess(null);
     setAgreed(false);
@@ -170,11 +174,33 @@ export default function EventRegistrationModal({
     setForm({ ...form, additionalGuests: updated });
   };
 
-  const promoApplied = tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const tentPromoApplied =
+    isTentOrTreat && tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const oktoberfestPromoApplied =
+    isOktoberfest &&
+    activePath === "guest" &&
+    oktoberfestPromoCodeMatches(appliedPromoCode) &&
+    oktoberfestPromoCodeMatches(promoCode);
+  const promoApplied = tentPromoApplied || oktoberfestPromoApplied;
   const tentPriceLabel = (optionId: TentSpaceOptionId) =>
-    promoApplied ? tentSpaceChargeLabel(optionId, appliedPromoCode) : TENT_SPACE_OPTIONS[optionId].priceLabel;
+    tentPromoApplied ? tentSpaceChargeLabel(optionId, appliedPromoCode) : TENT_SPACE_OPTIONS[optionId].priceLabel;
 
   const applyPromoCode = () => {
+    if (isOktoberfest) {
+      if (oktoberfestPromoCodeMatches(promoCode)) {
+        setAppliedPromoCode(promoCode.trim());
+        setPromoNotice("Coupon applied — guest admission is now free ($0).");
+        return;
+      }
+      setAppliedPromoCode("");
+      setPromoNotice(
+        promoCode.trim()
+          ? "That coupon code is not recognized. Standard $20 guest ticket price applies."
+          : ""
+      );
+      return;
+    }
+
     if (tentPromoCodeMatches(promoCode)) {
       setAppliedPromoCode(promoCode.trim());
       setPromoNotice("Code applied.");
@@ -186,7 +212,10 @@ export default function EventRegistrationModal({
 
   const changePromoCode = (value: string) => {
     setPromoCode(value);
-    if (appliedPromoCode && !tentPromoCodeMatches(value)) {
+    const stillMatches = isOktoberfest
+      ? oktoberfestPromoCodeMatches(value)
+      : tentPromoCodeMatches(value);
+    if (appliedPromoCode && !stillMatches) {
       setAppliedPromoCode("");
       setPromoNotice("");
     }
@@ -197,8 +226,15 @@ export default function EventRegistrationModal({
     setBusy(true);
     setError("");
 
+    const activePromoForSubmit =
+      isOktoberfest && activePath === "guest" && oktoberfestPromoApplied
+        ? appliedPromoCode
+        : isTentOrTreat && activePath === "sponsor" && tentPromoApplied
+          ? appliedPromoCode
+          : undefined;
+
     try {
-      if (isPaidEventPath(event.id, activePath)) {
+      if (isPaidEventPath(event.id, activePath, activePromoForSubmit)) {
         const res = await fetch("/api/events/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -206,7 +242,7 @@ export default function EventRegistrationModal({
             eventId: event.id,
             path: activePath,
             spaceOption: isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined,
-            promoCode: isTentOrTreat && activePath === "sponsor" && promoApplied ? promoCode : undefined,
+            promoCode: activePromoForSubmit,
             ...form,
           }),
         });
@@ -223,7 +259,12 @@ export default function EventRegistrationModal({
       const res = await fetch("/api/events/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId: event.id, path: activePath, ...form }),
+        body: JSON.stringify({
+          eventId: event.id,
+          path: activePath,
+          promoCode: activePromoForSubmit,
+          ...form,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -342,7 +383,7 @@ export default function EventRegistrationModal({
               
               {/* Event Specific Path Selectors */}
               {isOktoberfest && (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Select Admission Option
                   </span>
@@ -376,10 +417,18 @@ export default function EventRegistrationModal({
                     >
                       <div className="flex items-center justify-between font-bold">
                         <span>Guest / Non-Member</span>
-                        <span className="text-amber-300 font-black">{OKTOBERFEST_PRICE_LABEL}</span>
+                        <span
+                          className={`font-black ${
+                            oktoberfestPromoApplied ? "text-emerald-400 uppercase text-[10px]" : "text-amber-300"
+                          }`}
+                        >
+                          {oktoberfestPromoApplied ? "Free ($0)" : OKTOBERFEST_PRICE_LABEL}
+                        </span>
                       </div>
                       <span className="text-[11px] text-slate-400">
-                        Up to 4 guests ($20 each at checkout)
+                        {oktoberfestPromoApplied
+                          ? "Up to 4 guests (free with coupon)"
+                          : "Up to 4 guests ($20 each at checkout)"}
                       </span>
                     </button>
                   </div>
@@ -387,6 +436,47 @@ export default function EventRegistrationModal({
                     <p className="text-xs text-emerald-400 font-semibold pt-0.5">
                       ✓ Signed in as {portal.member?.email}. Member ticket is complimentary.
                     </p>
+                  )}
+
+                  {activePath === "guest" && (
+                    <label className="block space-y-1 pt-1">
+                      <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                        Coupon code
+                      </span>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          autoComplete="off"
+                          spellCheck={false}
+                          onChange={(e) => changePromoCode(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              applyPromoCode();
+                            }
+                          }}
+                          placeholder="Have a coupon code? Enter and click Apply"
+                          className={inputClass}
+                        />
+                        <button
+                          type="button"
+                          onClick={applyPromoCode}
+                          className="shrink-0 px-3 rounded-xl border border-slate-600 text-[11px] font-bold uppercase tracking-wider text-white hover:border-red-500"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                      {promoNotice ? (
+                        <p
+                          className={`text-[11px] ${
+                            oktoberfestPromoApplied ? "text-emerald-400 font-semibold" : "text-slate-400"
+                          }`}
+                        >
+                          {promoNotice}
+                        </p>
+                      ) : null}
+                    </label>
                   )}
                 </div>
               )}
@@ -429,7 +519,7 @@ export default function EventRegistrationModal({
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
                         <span>Business Tent Sign Up</span>
                         <span className="ml-auto text-amber-300 text-[10px] font-black uppercase">
-                          {promoApplied ? `From ${tentPriceLabel("standard")}` : "From $150"}
+                          {tentPromoApplied ? `From ${tentPriceLabel("standard")}` : "From $150"}
                         </span>
                       </div>
                       <span className="text-[11px] text-slate-400">
@@ -715,7 +805,10 @@ export default function EventRegistrationModal({
                   onChange={setAgreed}
                   variant="dark"
                   id={`modal-agree-${event.id}-${activePath}`}
-                  includeRefund={activePath === "guest" || (isTentOrTreat && activePath === "sponsor")}
+                  includeRefund={
+                    (activePath === "guest" && !oktoberfestPromoApplied) ||
+                    (isTentOrTreat && activePath === "sponsor")
+                  }
                 />
               </div>
 
@@ -734,7 +827,9 @@ export default function EventRegistrationModal({
                 {busy && <Loader2 className="w-4 h-4 animate-spin" />}
                 <span>
                   {activePath === "guest"
-                    ? `Proceed to Checkout (${guestTicketPriceLabel(Number(form.guests) || 1)})`
+                    ? oktoberfestPromoApplied
+                      ? "Confirm Free Guest Registration ($0)"
+                      : `Proceed to Checkout (${guestTicketPriceLabel(Number(form.guests) || 1)})`
                     : isTentOrTreat && activePath === "sponsor"
                     ? `Proceed to Checkout (${tentPriceLabel(spaceOption)})`
                     : isOktoberfest && activePath === "member"
