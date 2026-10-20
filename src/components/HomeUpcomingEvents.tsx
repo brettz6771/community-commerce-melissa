@@ -11,28 +11,29 @@ import {
   Building2,
   Ticket,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
+import { MOCK_EVENTS } from "@/data/mockData";
 import {
-  SITE_EVENTS,
+  formatEventDateLabel,
+  getNextUpcomingEvents,
+  resolveSiteEventForItem,
   type EventRegistrationPath,
   type SiteEvent,
 } from "@/lib/site-events";
 
 interface HomeUpcomingEventsProps {
   onOpenRegistration: (event: SiteEvent, path?: EventRegistrationPath) => void;
+  onOpenRSVP?: (eventTitle: string) => void;
 }
 
 export default function HomeUpcomingEvents({
   onOpenRegistration,
+  onOpenRSVP,
 }: HomeUpcomingEventsProps) {
-  // Explicitly ensure the three events are presented in requested order:
-  // 1. Lunch & Learn
-  // 2. Oktoberfest
-  // 3. Tent or Treat
-  const orderedIds = ["lunch-and-learn", "oktoberfest", "tent-or-treat"];
-  const events = orderedIds
-    .map((id) => SITE_EVENTS.find((e) => e.id === id))
-    .filter((e): e is SiteEvent => Boolean(e));
+  // Automatically pull the next 3 upcoming (non-past) events in chronological order
+  // from the same events source used on the /events page.
+  const events = getNextUpcomingEvents(MOCK_EVENTS, 3);
 
   return (
     <section className="bg-[#0D1117] text-white py-14 sm:py-20 border-b border-white/10 relative overflow-hidden">
@@ -66,12 +67,16 @@ export default function HomeUpcomingEvents({
           </Link>
         </div>
 
-        {/* 3 Events Grid */}
+        {/* Next 3 Upcoming Events Grid (leaves remaining column(s) empty if fewer than 3) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
           {events.map((evt, index) => {
-            const isLunch = evt.id === "lunch-and-learn";
-            const isOktober = evt.id === "oktoberfest";
-            const isTent = evt.id === "tent-or-treat";
+            const siteEvent = resolveSiteEventForItem(evt);
+            const isLunch = siteEvent?.id === "lunch-and-learn";
+            const isOktober = siteEvent?.id === "oktoberfest";
+            const isTent = siteEvent?.id === "tent-or-treat";
+            const kicker = siteEvent?.kicker || evt.category;
+            const dateLabel = formatEventDateLabel(evt.date, siteEvent?.dateLabel);
+            const detailsHref = siteEvent?.href || evt.registerHref || "/events";
 
             return (
               <div
@@ -114,7 +119,7 @@ export default function HomeUpcomingEvents({
                     <div>
                       <p className="text-[11px] font-bold text-red-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3" />
-                        {evt.kicker}
+                        {kicker}
                       </p>
                       <h3 className="text-xl font-extrabold font-outfit text-white leading-snug group-hover:text-red-400 transition-colors">
                         {evt.title}
@@ -129,7 +134,7 @@ export default function HomeUpcomingEvents({
                     <div className="pt-2 space-y-2 text-xs text-slate-300 border-t border-white/10">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                        <span>{evt.dateLabel}</span>
+                        <span>{dateLabel}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-red-400 shrink-0" />
@@ -149,10 +154,10 @@ export default function HomeUpcomingEvents({
                 {/* Card Actions Footer */}
                 <div className="p-6 pt-2 border-t border-white/10 bg-[#12161f] space-y-2.5">
                   {/* Lunch & Learn CTA */}
-                  {isLunch && (
+                  {isLunch && siteEvent ? (
                     <div className="space-y-2">
                       <button
-                        onClick={() => onOpenRegistration(evt, "attendee")}
+                        onClick={() => onOpenRegistration(siteEvent, "attendee")}
                         className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
                       >
                         <Users className="w-4 h-4" />
@@ -163,20 +168,18 @@ export default function HomeUpcomingEvents({
                           Free for all attendees
                         </span>
                         <Link
-                          href={evt.href}
+                          href={detailsHref}
                           className="text-slate-400 hover:text-white underline underline-offset-2 transition"
                         >
                           Event Details →
                         </Link>
                       </div>
                     </div>
-                  )}
-
-                  {/* Oktoberfest CTA */}
-                  {isOktober && (
+                  ) : isOktober && siteEvent ? (
+                    /* Oktoberfest CTA */
                     <div className="space-y-2">
                       <button
-                        onClick={() => onOpenRegistration(evt)}
+                        onClick={() => onOpenRegistration(siteEvent)}
                         className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
                       >
                         <Ticket className="w-4 h-4" />
@@ -187,21 +190,19 @@ export default function HomeUpcomingEvents({
                           <strong className="text-emerald-400">Members Free</strong> · Guests $20
                         </span>
                         <Link
-                          href={evt.href}
+                          href={detailsHref}
                           className="text-slate-400 hover:text-white underline underline-offset-2 transition"
                         >
                           Event Details →
                         </Link>
                       </div>
                     </div>
-                  )}
-
-                  {/* Tent or Treat CTAs in exact requested order */}
-                  {isTent && (
+                  ) : isTent && siteEvent ? (
+                    /* Tent or Treat CTAs in exact requested order */
                     <div className="space-y-2">
                       {/* 1st: Registration for attendees */}
                       <button
-                        onClick={() => onOpenRegistration(evt, "attendee")}
+                        onClick={() => onOpenRegistration(siteEvent, "attendee")}
                         className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
                       >
                         <Users className="w-4 h-4" />
@@ -210,7 +211,7 @@ export default function HomeUpcomingEvents({
 
                       {/* 2nd: For businesses wanting tent spaces */}
                       <button
-                        onClick={() => onOpenRegistration(evt, "sponsor")}
+                        onClick={() => onOpenRegistration(siteEvent, "sponsor")}
                         className="w-full bg-[#1b2230] hover:bg-[#222a3b] text-amber-300 border border-amber-500/30 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-xs hover:scale-[1.02] transition flex items-center justify-center gap-2"
                       >
                         <Building2 className="w-4 h-4 text-amber-400" />
@@ -222,7 +223,92 @@ export default function HomeUpcomingEvents({
                           Free event · Tents $150 - $250
                         </span>
                         <Link
-                          href={evt.href}
+                          href={detailsHref}
+                          className="text-slate-400 hover:text-white underline underline-offset-2 transition"
+                        >
+                          Event Details →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : siteEvent ? (
+                    /* Any other in-house SiteEvent */
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => onOpenRegistration(siteEvent)}
+                        className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
+                      >
+                        <Ticket className="w-4 h-4" />
+                        <span>Register / RSVP Now</span>
+                      </button>
+                      <div className="flex items-center justify-end text-xs pt-1 px-1">
+                        <Link
+                          href={detailsHref}
+                          className="text-slate-400 hover:text-white underline underline-offset-2 transition"
+                        >
+                          Event Details →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : evt.registerHref ? (
+                    <div className="space-y-2">
+                      <Link
+                        href={evt.registerHref}
+                        className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
+                      >
+                        <Ticket className="w-4 h-4" />
+                        <span>Register / RSVP Now</span>
+                      </Link>
+                      <div className="flex items-center justify-end text-xs pt-1 px-1">
+                        <Link
+                          href={evt.registerHref}
+                          className="text-slate-400 hover:text-white underline underline-offset-2 transition"
+                        >
+                          Event Details →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : evt.registerUrl ? (
+                    <div className="space-y-2">
+                      <a
+                        href={evt.registerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
+                      >
+                        <span>Register / RSVP Now</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                      <div className="flex items-center justify-end text-xs pt-1 px-1">
+                        <Link
+                          href="/events"
+                          className="text-slate-400 hover:text-white underline underline-offset-2 transition"
+                        >
+                          Event Details →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {onOpenRSVP ? (
+                        <button
+                          onClick={() => onOpenRSVP(evt.title)}
+                          className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
+                        >
+                          <Ticket className="w-4 h-4" />
+                          <span>Register / RSVP Now</span>
+                        </button>
+                      ) : (
+                        <Link
+                          href="/events"
+                          className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
+                        >
+                          <Ticket className="w-4 h-4" />
+                          <span>Register / RSVP Now</span>
+                        </Link>
+                      )}
+                      <div className="flex items-center justify-end text-xs pt-1 px-1">
+                        <Link
+                          href="/events"
                           className="text-slate-400 hover:text-white underline underline-offset-2 transition"
                         >
                           Event Details →

@@ -7,7 +7,7 @@ import MemberModal from "@/components/MemberModal";
 import RSVPModal from "@/components/RSVPModal";
 import LaunchBanner from "@/components/LaunchBanner";
 import { MOCK_EVENTS } from "@/data/mockData";
-import { isPastEvent } from "@/lib/site-events";
+import { getUpcomingEvents, isPastEvent } from "@/lib/site-events";
 import ImageLightboxModal from "@/components/ImageLightboxModal";
 import { 
   Calendar, 
@@ -51,7 +51,7 @@ export default function EventsPage() {
     return matchesCat && matchesQuery;
   };
 
-  const upcomingEvents = MOCK_EVENTS.filter((evt) => !isPastEvent(evt));
+  const upcomingEvents = getUpcomingEvents(MOCK_EVENTS);
   const pastEvents = MOCK_EVENTS.filter((evt) => isPastEvent(evt));
 
   const filteredUpcomingEvents = upcomingEvents.filter(filterFn);

@@ -64,7 +64,7 @@ export default function HomePage() {
       />
 
       {/* Upcoming Events Under Hero in exact chronological order */}
-      <HomeUpcomingEvents onOpenRegistration={handleOpenRegistration} />
+      <HomeUpcomingEvents onOpenRegistration={handleOpenRegistration} onOpenRSVP={handleOpenRSVP} />
 
       {/* Quote & Value Proposition Section */}
       <QuoteSection onOpenJoinModal={() => handleOpenJoinWithTier("Community Partner ($390 1st Yr • Renews $490/yr)")} />

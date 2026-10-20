@@ -1,3 +1,5 @@
+import { siteEventsAsItems } from "../lib/site-events";
+
 export interface EventItem {
   id: string;
   title: string;
@@ -109,7 +111,7 @@ export const BUSINESS_CATEGORIES: string[] = [
 // Mock Data for Community Commerce Melissa
 // ----------------------------------------------------
 
-export const MOCK_EVENTS: EventItem[] = [
+const BASE_MOCK_EVENTS: EventItem[] = [
   {
     id: "evt-1",
     title: "Meet & Greet Networking Mixer",
@@ -201,6 +203,18 @@ export const MOCK_EVENTS: EventItem[] = [
     isFeatured: true,
     registerHref: "/events/tent-or-treat"
   }
+];
+
+export const MOCK_EVENTS: EventItem[] = [
+  ...BASE_MOCK_EVENTS,
+  ...siteEventsAsItems().filter(
+    (siteItem) =>
+      !BASE_MOCK_EVENTS.some(
+        (existing) =>
+          existing.id === siteItem.id ||
+          (siteItem.registerHref && existing.registerHref === siteItem.registerHref),
+      ),
+  ),
 ];
 
 export const MOCK_BUSINESSES: BusinessItem[] = [

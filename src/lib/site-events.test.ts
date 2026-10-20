@@ -13,7 +13,11 @@ import {
   eventConfirmationCopy,
   eventRegistrationCsvRows,
   eventSignupKind,
+  formatEventDateLabel,
+  getNextUpcomingEvents,
   getSiteEvent,
+  getUpcomingEvents,
+  resolveSiteEventForItem,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
   isPaidEventPath,
@@ -301,6 +305,32 @@ describe("site events catalog", () => {
     assert.equal(roster[3][2], "Dave Guest");
     assert.equal(roster[4][2], "Eve Guest");
     assert.equal(roster[5][2], "Fiona Vendor");
+  });
+
+  it("filters out past events and returns at most the next 3 upcoming events chronologically", () => {
+    const items = siteEventsAsItems();
+    // On Oct 20, 2026, Oct 12 Lunch & Learn is past; Oct 26 Oktoberfest and Oct 31 Tent-or-Treat remain
+    const oct20 = new Date("2026-10-20T12:00:00-05:00");
+    const nextOnOct20 = getNextUpcomingEvents(items, 3, oct20);
+    assert.deepEqual(
+      nextOnOct20.map((e) => e.id),
+      ["evt-oktoberfest", "evt-tent-or-treat"],
+    );
+
+    // When a 3rd and 4th upcoming event exist, only the next 3 in chronological order are returned
+    const withMore = [
+      ...items,
+      { ...items[0], id: "evt-dec", date: "2026-12-10", title: "December Mixer" },
+      { ...items[0], id: "evt-nov", date: "2026-11-15", title: "November Mixer" },
+    ];
+    const nextThree = getNextUpcomingEvents(withMore, 3, oct20);
+    assert.deepEqual(
+      nextThree.map((e) => e.id),
+      ["evt-oktoberfest", "evt-tent-or-treat", "evt-nov"],
+    );
+    assert.equal(getUpcomingEvents(withMore, oct20).length, 4);
+    assert.equal(resolveSiteEventForItem(nextOnOct20[0])?.id, "oktoberfest");
+    assert.equal(formatEventDateLabel("2026-10-26"), "Monday, October 26, 2026");
   });
 });
 

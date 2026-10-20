@@ -205,6 +205,67 @@ export function getSiteEvent(slug: string | undefined | null): SiteEvent | null 
   return SITE_EVENTS.find((event) => event.slug === slug) || null;
 }
 
+export function getUpcomingEvents<T extends { date: string; endDate?: string; isPast?: boolean }>(
+  events: readonly T[],
+  now = new Date(),
+): T[] {
+  return events
+    .filter((event) => !isPastEvent(event, now))
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function getNextUpcomingEvents<T extends { date: string; endDate?: string; isPast?: boolean }>(
+  events: readonly T[],
+  limit = 3,
+  now = new Date(),
+): T[] {
+  return getUpcomingEvents(events, now).slice(0, Math.max(0, limit));
+}
+
+export function resolveSiteEventForItem(item: {
+  id?: string;
+  slug?: string;
+  registerHref?: string;
+  href?: string;
+}): SiteEvent | null {
+  if (item.slug) {
+    const bySlug = getSiteEvent(item.slug);
+    if (bySlug) return bySlug;
+  }
+  const href = item.registerHref || item.href || "";
+  if (href.startsWith("/events/")) {
+    const slug = href.slice("/events/".length).split(/[?#]/)[0];
+    const byHref = getSiteEvent(slug);
+    if (byHref) return byHref;
+  }
+  if (item.id) {
+    const rawId = item.id.startsWith("evt-") ? item.id.slice(4) : item.id;
+    const byId = getSiteEvent(rawId);
+    if (byId) return byId;
+  }
+  return null;
+}
+
+const EVENT_DATE_LABEL_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: "UTC",
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+
+export function formatEventDateLabel(dateStr: string, explicitLabel?: string): string {
+  if (explicitLabel && explicitLabel.trim()) return explicitLabel.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const parsed = new Date(`${dateStr}T12:00:00Z`);
+    if (!Number.isNaN(parsed.getTime())) {
+      return EVENT_DATE_LABEL_FORMATTER.format(parsed);
+    }
+  }
+  return dateStr;
+}
+
 export function siteEventsAsItems() {
   return SITE_EVENTS.map((event) => ({
     id: `evt-${event.id}`,
