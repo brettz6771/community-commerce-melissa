@@ -8,6 +8,8 @@ export type TentSpaceOption = {
   name: string;
   priceCents: number;
   priceLabel: string;
+  originalPriceCents: number;
+  originalPriceLabel: string;
   description: string;
 };
 
@@ -15,30 +17,36 @@ export const TENT_SPACE_OPTIONS: Record<TentSpaceOptionId, TentSpaceOption> = {
   standard: {
     id: "standard",
     name: "Standard Space (10' x 10')",
-    priceCents: 15000,
-    priceLabel: "$150",
+    priceCents: 5000,
+    priceLabel: "$50",
+    originalPriceCents: 15000,
+    originalPriceLabel: "$150",
     description: "10' x 10' canopy or tent space to promote your business and hand out treats.",
   },
   larger: {
     id: "larger",
     name: "Larger Space",
-    priceCents: 25000,
-    priceLabel: "$250",
+    priceCents: 7500,
+    priceLabel: "$75",
+    originalPriceCents: 25000,
+    originalPriceLabel: "$250",
     description: "Expanded footprint for larger displays, multi-canopy setups, or interactive activities.",
   },
   "food-vendor": {
     id: "food-vendor",
     name: "Food Vendor / Truck",
-    priceCents: 25000,
-    priceLabel: "$250",
+    priceCents: 7500,
+    priceLabel: "$75",
+    originalPriceCents: 25000,
+    originalPriceLabel: "$250",
     description: "Dedicated parking/space for food trucks, trailers, or prepared food vendors.",
   },
 };
 
 export const DEFAULT_TENT_SPACE_OPTION: TentSpaceOptionId = "standard";
 
-/** Entered on tent checkout. Not a Stripe coupon — one coupon cannot price both tiers. */
-export const TENT_OR_TREAT_PROMO_CODE = "CCMTOT26";
+/** Entered on tent registration for complimentary ($0) Standard Space booth registration. */
+export const TENT_OR_TREAT_PROMO_CODE = "CCMTENT26";
 
 /** Entered on Oktoberfest guest registration to waive the $20 guest ticket cost. */
 export const OKTOBERFEST_PROMO_CODE = "CCMOKT26";
@@ -47,28 +55,21 @@ export function oktoberfestPromoCodeMatches(raw: unknown): boolean {
   return String(raw ?? "").trim().toLowerCase() === OKTOBERFEST_PROMO_CODE.toLowerCase();
 }
 
-/**
- * Amount charged only when CCMTOT26 matches.
- * Flyer list prices stay on TENT_SPACE_OPTIONS and must not be replaced with these.
- */
-const TENT_PROMO_CHARGE_CENTS: Record<TentSpaceOptionId, number> = {
-  standard: 5000,
-  larger: 7500,
-  "food-vendor": 7500,
-};
-
 export function tentPromoCodeMatches(raw: unknown): boolean {
   return String(raw ?? "").trim().toLowerCase() === TENT_OR_TREAT_PROMO_CODE.toLowerCase();
 }
 
-/** Flyer price unless the code is exactly CCMTOT26. Any other value is rejected. */
-export function tentSpaceChargeCents(spaceOption: unknown, promoCode: unknown): number {
+/**
+ * Deal price ($50 Standard, $75 Larger / Food Vendor), except when CCMTENT26 matches
+ * on Standard Space, which makes Standard Space complimentary ($0).
+ */
+export function tentSpaceChargeCents(spaceOption: unknown, promoCode?: unknown): number {
   const option = getTentSpaceOption(spaceOption);
-  if (tentPromoCodeMatches(promoCode)) return TENT_PROMO_CHARGE_CENTS[option.id];
+  if (option.id === "standard" && tentPromoCodeMatches(promoCode)) return 0;
   return option.priceCents;
 }
 
-export function tentSpaceChargeLabel(spaceOption: unknown, promoCode: unknown): string {
+export function tentSpaceChargeLabel(spaceOption: unknown, promoCode?: unknown): string {
   return `$${tentSpaceChargeCents(spaceOption, promoCode) / 100}`;
 }
 
@@ -83,6 +84,10 @@ export function getTentSpaceOption(raw: unknown): TentSpaceOption {
 
 export function tentSpacePriceLabel(spaceOption?: TentSpaceOptionId): string {
   return getTentSpaceOption(spaceOption).priceLabel;
+}
+
+export function tentSpaceOriginalPriceLabel(spaceOption?: TentSpaceOptionId): string {
+  return getTentSpaceOption(spaceOption).originalPriceLabel;
 }
 
 export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn" | "pack-with-purpose";
@@ -337,8 +342,17 @@ export function eventPaymentStatus(
   eventId: SiteEventId,
   path: EventRegistrationPath,
   promoCode?: unknown,
+  spaceOption?: unknown,
 ): EventPaymentStatus {
-  if (isPaidEventPath(eventId, path, promoCode)) return "paid";
+  if (isPaidEventPath(eventId, path, promoCode, spaceOption)) return "paid";
+  if (
+    eventId === "tent-or-treat" &&
+    path === "sponsor" &&
+    getTentSpaceOption(spaceOption).id === "standard" &&
+    tentPromoCodeMatches(promoCode)
+  ) {
+    return "complimentary";
+  }
   if (path === "sponsor") return "interest";
   return "complimentary";
 }
@@ -347,19 +361,23 @@ export function eventPricing(
   eventId: SiteEventId,
   path: EventRegistrationPath,
   promoCode?: unknown,
+  spaceOption?: unknown,
 ): EventPricing {
-  return isPaidEventPath(eventId, path, promoCode) ? "paid" : "free";
+  return isPaidEventPath(eventId, path, promoCode, spaceOption) ? "paid" : "free";
 }
 
 export function isPaidEventPath(
   eventId: SiteEventId,
   path: EventRegistrationPath,
   promoCode?: unknown,
+  spaceOption?: unknown,
 ): boolean {
   if (eventId === "oktoberfest" && path === "guest") {
     return !oktoberfestPromoCodeMatches(promoCode);
   }
-  if (eventId === "tent-or-treat" && path === "sponsor") return true;
+  if (eventId === "tent-or-treat" && path === "sponsor") {
+    return tentSpaceChargeCents(spaceOption, promoCode) > 0;
+  }
   return false;
 }
 
@@ -392,7 +410,7 @@ export function eventCheckoutAmountCents(
   spaceOption?: TentSpaceOptionId,
   promoCode?: unknown,
 ): number {
-  if (!isPaidEventPath(eventId, path, promoCode)) return 0;
+  if (!isPaidEventPath(eventId, path, promoCode, spaceOption)) return 0;
   if (eventId === "tent-or-treat" && path === "sponsor") {
     return tentSpaceChargeCents(spaceOption, promoCode);
   }
@@ -554,6 +572,7 @@ export function eventRegistrationFormType(
   eventId: SiteEventId,
   path: EventRegistrationPath,
   promoCode?: unknown,
+  spaceOption?: unknown,
 ): string {
   if (eventId === "oktoberfest") {
     if (path === "member") return "Oktoberfest Registration (Member)";
@@ -568,9 +587,13 @@ export function eventRegistrationFormType(
   if (eventId === "pack-with-purpose") {
     return "Pack with Purpose Lunch & Learn Registration";
   }
-  return path === "sponsor"
-    ? "Tent or Treat Business Tent Registration"
-    : "Tent or Treat Attendance";
+  if (path === "sponsor") {
+    if (getTentSpaceOption(spaceOption).id === "standard" && tentPromoCodeMatches(promoCode)) {
+      return `Tent or Treat Business Tent Registration (Complimentary — Code ${TENT_OR_TREAT_PROMO_CODE})`;
+    }
+    return "Tent or Treat Business Tent Registration";
+  }
+  return "Tent or Treat Attendance";
 }
 
 export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrationPath): string {

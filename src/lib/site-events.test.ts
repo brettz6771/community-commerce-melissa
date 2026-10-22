@@ -26,6 +26,7 @@ import {
   resolveSiteEventForItem,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
+  tentSpaceOriginalPriceLabel,
   isPaidEventPath,
   isPastEvent,
   maxPartySize,
@@ -67,7 +68,7 @@ describe("site events catalog", () => {
     assert.equal(oktoberfestPromoCodeMatches("CCMOKT26"), true);
     assert.equal(oktoberfestPromoCodeMatches("  ccmokt26 "), true);
     assert.equal(oktoberfestPromoCodeMatches(""), false);
-    assert.equal(oktoberfestPromoCodeMatches("CCMTOT26"), false);
+    assert.equal(oktoberfestPromoCodeMatches("CCMTENT26"), false);
 
     assert.equal(isPaidEventPath("oktoberfest", "guest", ""), true);
     assert.equal(isPaidEventPath("oktoberfest", "guest", "WRONG"), true);
@@ -82,56 +83,75 @@ describe("site events catalog", () => {
     assert.match(eventRegistrationFormType("oktoberfest", "guest", "CCMOKT26"), /CCMOKT26/);
   });
 
-  it("makes Tent or Treat business tent spaces purchaseable per flyer pricing", () => {
+  it("makes Tent or Treat business tent spaces purchaseable at deal pricing ($50 / $75) with original prices ($150 / $250)", () => {
     assert.deepEqual(allowedPathsForEvent("tent-or-treat"), ["attendee", "sponsor"]);
     assert.equal(isPaidEventPath("tent-or-treat", "attendee"), false);
     assert.equal(isPaidEventPath("tent-or-treat", "sponsor"), true);
-    // Standard space: $150
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor"), 15000);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard"), 15000);
-    assert.equal(TENT_SPACE_OPTIONS.standard.priceCents, 15000);
-    assert.equal(TENT_SPACE_OPTIONS.standard.priceLabel, "$150");
-    // Larger space: $250
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger"), 25000);
-    assert.equal(TENT_SPACE_OPTIONS.larger.priceCents, 25000);
-    assert.equal(TENT_SPACE_OPTIONS.larger.priceLabel, "$250");
-    // Food vendor / truck: $250
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor"), 25000);
-    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceCents, 25000);
-    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceLabel, "$250");
+    // Standard space: $50 deal price, $150 original price
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor"), 5000);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard"), 5000);
+    assert.equal(TENT_SPACE_OPTIONS.standard.priceCents, 5000);
+    assert.equal(TENT_SPACE_OPTIONS.standard.priceLabel, "$50");
+    assert.equal(TENT_SPACE_OPTIONS.standard.originalPriceCents, 15000);
+    assert.equal(TENT_SPACE_OPTIONS.standard.originalPriceLabel, "$150");
+    assert.equal(tentSpaceOriginalPriceLabel("standard"), "$150");
+    // Larger space: $75 deal price, $250 original price
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger"), 7500);
+    assert.equal(TENT_SPACE_OPTIONS.larger.priceCents, 7500);
+    assert.equal(TENT_SPACE_OPTIONS.larger.priceLabel, "$75");
+    assert.equal(TENT_SPACE_OPTIONS.larger.originalPriceCents, 25000);
+    assert.equal(TENT_SPACE_OPTIONS.larger.originalPriceLabel, "$250");
+    assert.equal(tentSpaceOriginalPriceLabel("larger"), "$250");
+    // Food vendor / truck: $75 deal price, $250 original price
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor"), 7500);
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceCents, 7500);
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceLabel, "$75");
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].originalPriceCents, 25000);
+    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].originalPriceLabel, "$250");
+    assert.equal(tentSpaceOriginalPriceLabel("food-vendor"), "$250");
     // Confirmation copy mentions setup time and location
     assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /tent space registration/i);
     assert.match(eventConfirmationCopy("tent-or-treat", "sponsor"), /12:30 PM to 2:00 PM/i);
   });
 
-  it("charges $50 and $75 only when CCMTOT26 matches, and keeps flyer prices otherwise", () => {
-    assert.equal(TENT_OR_TREAT_PROMO_CODE, "CCMTOT26");
-    assert.equal(tentPromoCodeMatches("CCMTOT26"), true);
-    assert.equal(tentPromoCodeMatches("  ccmtot26 "), true);
+  it("grants complimentary ($0) Standard Space with CCMTENT26 and removes old CCMTOT26 code", () => {
+    assert.equal(TENT_OR_TREAT_PROMO_CODE, "CCMTENT26");
+    assert.equal(tentPromoCodeMatches("CCMTENT26"), true);
+    assert.equal(tentPromoCodeMatches("  ccmtent26 "), true);
     assert.equal(tentPromoCodeMatches(""), false);
-    assert.equal(tentPromoCodeMatches("CCMTOT27"), false);
-    assert.equal(tentPromoCodeMatches("CCMTOT26extra"), false);
+    assert.equal(tentPromoCodeMatches("CCMTOT26"), false);
+    assert.equal(tentPromoCodeMatches("CCMTENT27"), false);
+    assert.equal(tentPromoCodeMatches("CCMTENT26extra"), false);
 
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", ""), 15000);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", "NOPE"), 15000);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger", "CCMTOT27"), 25000);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor"), 25000);
-
+    // Without code or with invalid/old code, deal prices ($50 / $75) apply
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", ""), 5000);
     assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", "CCMTOT26"), 5000);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger", "ccmtot26"), 7500);
-    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor", " CCMTOT26 "), 7500);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger", "CCMTOT26"), 7500);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor"), 7500);
 
-    assert.equal(tentSpaceChargeLabel("standard", ""), "$150");
-    assert.equal(tentSpaceChargeLabel("larger", "wrong"), "$250");
-    assert.equal(tentSpaceChargeLabel("food-vendor", "wrong"), "$250");
-    assert.equal(tentSpaceChargeLabel("standard", "CCMTOT26"), "$50");
-    assert.equal(tentSpaceChargeLabel("larger", "CCMTOT26"), "$75");
-    assert.equal(tentSpaceChargeLabel("food-vendor", "CCMTOT26"), "$75");
-    assert.equal(eventCheckoutAmountCents("oktoberfest", "guest", 1, undefined, "CCMTOT26"), OKTOBERFEST_PRICE_CENTS);
+    // With CCMTENT26, Standard Space is complimentary ($0), while Larger / Food Vendor remain $75
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", "CCMTENT26"), 0);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "standard", " ccmtent26 "), 0);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "larger", "CCMTENT26"), 7500);
+    assert.equal(eventCheckoutAmountCents("tent-or-treat", "sponsor", 1, "food-vendor", "CCMTENT26"), 7500);
 
-    assert.equal(TENT_SPACE_OPTIONS.standard.priceLabel, "$150");
-    assert.equal(TENT_SPACE_OPTIONS.larger.priceLabel, "$250");
-    assert.equal(TENT_SPACE_OPTIONS["food-vendor"].priceLabel, "$250");
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor", "", "standard"), true);
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor", "CCMTOT26", "standard"), true);
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor", "CCMTENT26", "standard"), false);
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor", "CCMTENT26", "larger"), true);
+    assert.equal(isPaidEventPath("tent-or-treat", "sponsor", "CCMTENT26", "food-vendor"), true);
+
+    assert.equal(eventPricing("tent-or-treat", "sponsor", "CCMTENT26", "standard"), "free");
+    assert.equal(eventPaymentStatus("tent-or-treat", "sponsor", "CCMTENT26", "standard"), "complimentary");
+    assert.match(eventRegistrationFormType("tent-or-treat", "sponsor", "CCMTENT26", "standard"), /CCMTENT26/);
+
+    assert.equal(tentSpaceChargeLabel("standard", ""), "$50");
+    assert.equal(tentSpaceChargeLabel("larger", "wrong"), "$75");
+    assert.equal(tentSpaceChargeLabel("food-vendor", "wrong"), "$75");
+    assert.equal(tentSpaceChargeLabel("standard", "CCMTENT26"), "$0");
+    assert.equal(tentSpaceChargeLabel("larger", "CCMTENT26"), "$75");
+    assert.equal(tentSpaceChargeLabel("food-vendor", "CCMTENT26"), "$75");
+    assert.equal(eventCheckoutAmountCents("oktoberfest", "guest", 1, undefined, "CCMTENT26"), OKTOBERFEST_PRICE_CENTS);
   });
 
   it("moves events to Past the Chicago calendar day after they end", () => {
@@ -370,4 +390,3 @@ describe("site events catalog", () => {
     assert.equal(formatEventDateLabel("2026-10-26"), "Monday, October 26, 2026");
   });
 });
-

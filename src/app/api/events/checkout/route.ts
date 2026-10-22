@@ -26,7 +26,8 @@ export async function POST(request: Request) {
 
     const { eventId, path, name, email, phone, company, guests, additionalGuests, notes, spaceOption } = parsed.value;
     const partySize = Number(guests) || 1;
-    if (!isPaidEventPath(eventId, path)) {
+    const rawPromo = body.promoCode ?? body.couponCode;
+    if (!isPaidEventPath(eventId, path, rawPromo, spaceOption)) {
       return NextResponse.json({ error: "This registration path does not use checkout." }, { status: 400 });
     }
 
@@ -48,7 +49,6 @@ export async function POST(request: Request) {
     const origin = getCheckoutOrigin(request);
     const isTentSpace = eventId === "tent-or-treat" && path === "sponsor";
     const selectedTentSpace = isTentSpace ? getTentSpaceOption(spaceOption) : undefined;
-    const rawPromo = isTentSpace ? (body.promoCode ?? body.couponCode) : undefined;
     const promoApplied = isTentSpace && tentPromoCodeMatches(rawPromo);
     const tentChargeCents = selectedTentSpace
       ? tentSpaceChargeCents(selectedTentSpace.id, rawPromo)
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
     if (isTentSpace && selectedTentSpace) {
       sessionMetadata.spaceOption = selectedTentSpace.id;
       sessionMetadata.spaceName = truncateMeta(selectedTentSpace.name, 100);
-      sessionMetadata.listPrice = selectedTentSpace.priceLabel;
+      sessionMetadata.listPrice = selectedTentSpace.originalPriceLabel;
       sessionMetadata.spacePrice = tentSpaceChargeLabel(selectedTentSpace.id, rawPromo);
       if (promoApplied) sessionMetadata.promoCode = TENT_OR_TREAT_PROMO_CODE;
     } else {

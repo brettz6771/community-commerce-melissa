@@ -10,15 +10,18 @@ import { escapeHtml } from "@/lib/html";
 import { resolvePortalAuth } from "@/lib/member-portal-session";
 import {
   OKTOBERFEST_PROMO_CODE,
+  TENT_OR_TREAT_PROMO_CODE,
   eventCheckoutAmountCents,
-  oktoberfestPromoCodeMatches,
   eventConfirmationCopy,
   eventMembershipStatus,
   eventPaymentStatus,
   eventPricing,
   eventRegistrationFormType,
   getSiteEvent,
+  getTentSpaceOption,
   isPaidEventPath,
+  oktoberfestPromoCodeMatches,
+  tentPromoCodeMatches,
   validateEventRegistrationInput,
 } from "@/lib/site-events";
 
@@ -104,17 +107,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const { eventId, path, name, email, phone, company, guests, additionalGuests, notes } = parsed.value;
+    const { eventId, path, name, email, phone, company, guests, additionalGuests, notes, spaceOption } = parsed.value;
     const event = getSiteEvent(eventId);
     if (!event) {
       return NextResponse.json({ error: "Event not found." }, { status: 404 });
     }
 
     const rawPromo = body.promoCode ?? body.couponCode;
-    if (isPaidEventPath(eventId, path, rawPromo)) {
+    if (isPaidEventPath(eventId, path, rawPromo, spaceOption)) {
       const checkoutMsg =
         eventId === "tent-or-treat"
-          ? "Tent spaces are paid registrations ($150 - $250). Please continue through checkout."
+          ? "Tent spaces are paid registrations ($50 - $75). Please continue through checkout."
           : "Guest Oktoberfest tickets are $20. Continue through checkout.";
       return NextResponse.json(
         { error: checkoutMsg },
@@ -137,8 +140,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const formType = eventRegistrationFormType(eventId, path, rawPromo);
+    const formType = eventRegistrationFormType(eventId, path, rawPromo, spaceOption);
     const confirmation = eventConfirmationCopy(eventId, path);
+    const isComplimentaryTentStandard =
+      eventId === "tent-or-treat" &&
+      path === "sponsor" &&
+      getTentSpaceOption(spaceOption).id === "standard" &&
+      tentPromoCodeMatches(rawPromo);
     const pathLabel =
       path === "member"
         ? "Member (complimentary)"
@@ -147,7 +155,9 @@ export async function POST(request: Request) {
             ? `Guest (Complimentary — Coupon ${OKTOBERFEST_PROMO_CODE})`
             : "Guest ($20)"
           : path === "sponsor"
-            ? "Business tent / sponsorship interest"
+            ? isComplimentaryTentStandard
+              ? `${getTentSpaceOption(spaceOption).name} (Complimentary — Code ${TENT_OR_TREAT_PROMO_CODE})`
+              : "Business tent / sponsorship interest"
             : "General attendance";
 
     // Prevent duplicate registrations for free/complimentary events
@@ -162,7 +172,6 @@ export async function POST(request: Request) {
       );
     }
 
-
     await saveEventRegistration({
       eventId,
       path,
@@ -173,9 +182,9 @@ export async function POST(request: Request) {
       guests,
       notes,
       membershipStatus: eventMembershipStatus(path, emailIsMember),
-      pricing: eventPricing(eventId, path, rawPromo),
-      amountCents: eventCheckoutAmountCents(eventId, path, Number(guests), undefined, rawPromo),
-      paymentStatus: eventPaymentStatus(eventId, path, rawPromo),
+      pricing: eventPricing(eventId, path, rawPromo, spaceOption),
+      amountCents: eventCheckoutAmountCents(eventId, path, Number(guests), spaceOption, rawPromo),
+      paymentStatus: eventPaymentStatus(eventId, path, rawPromo, spaceOption),
       details: {
         phone,
         company,
@@ -183,11 +192,10 @@ export async function POST(request: Request) {
         additionalGuests,
         notes,
         pathLabel,
+        ...(spaceOption ? { spaceOption, spaceName: getTentSpaceOption(spaceOption).name } : {}),
         ...(oktoberfestPromoCodeMatches(rawPromo) ? { promoCode: OKTOBERFEST_PROMO_CODE } : {}),
+        ...(isComplimentaryTentStandard ? { promoCode: TENT_OR_TREAT_PROMO_CODE } : {}),
       },
-
-
-
     });
 
     await notifyStaffAndGuest({

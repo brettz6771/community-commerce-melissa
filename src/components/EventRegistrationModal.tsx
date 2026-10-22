@@ -176,6 +176,7 @@ export default function EventRegistrationModal({
 
   const tentPromoApplied =
     isTentOrTreat && tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const tentStandardCompApplied = tentPromoApplied && spaceOption === "standard";
   const oktoberfestPromoApplied =
     isOktoberfest &&
     activePath === "guest" &&
@@ -203,11 +204,13 @@ export default function EventRegistrationModal({
 
     if (tentPromoCodeMatches(promoCode)) {
       setAppliedPromoCode(promoCode.trim());
-      setPromoNotice("Code applied.");
+      setPromoNotice("Code applied — Standard Space (10' x 10') is now complimentary ($0).");
       return;
     }
     setAppliedPromoCode("");
-    setPromoNotice(promoCode.trim() ? "That code is not recognized. Flyer prices still apply." : "");
+    setPromoNotice(
+      promoCode.trim() ? "That code is not recognized. Deal prices ($50 / $75) still apply." : ""
+    );
   };
 
   const changePromoCode = (value: string) => {
@@ -232,16 +235,18 @@ export default function EventRegistrationModal({
         : isTentOrTreat && activePath === "sponsor" && tentPromoApplied
           ? appliedPromoCode
           : undefined;
+    const activeSpaceForSubmit =
+      isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined;
 
     try {
-      if (isPaidEventPath(event.id, activePath, activePromoForSubmit)) {
+      if (isPaidEventPath(event.id, activePath, activePromoForSubmit, activeSpaceForSubmit)) {
         const res = await fetch("/api/events/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             eventId: event.id,
             path: activePath,
-            spaceOption: isTentOrTreat && activePath === "sponsor" ? spaceOption : undefined,
+            spaceOption: activeSpaceForSubmit,
             promoCode: activePromoForSubmit,
             ...form,
           }),
@@ -262,6 +267,7 @@ export default function EventRegistrationModal({
         body: JSON.stringify({
           eventId: event.id,
           path: activePath,
+          spaceOption: activeSpaceForSubmit,
           promoCode: activePromoForSubmit,
           ...form,
         }),
@@ -337,7 +343,7 @@ export default function EventRegistrationModal({
 
               <div className="space-y-2">
                 <h3 className="text-2xl font-extrabold font-outfit text-white">
-                  {activePath === "sponsor" ? "Interest Received!" : "You're Registered!"}
+                  {activePath === "sponsor" ? "Booth Space Reserved!" : "You're Registered!"}
                 </h3>
                 <p className="text-slate-300 text-sm max-w-md mx-auto leading-relaxed">
                   {success}
@@ -519,7 +525,13 @@ export default function EventRegistrationModal({
                         <Building2 className="w-3.5 h-3.5 text-amber-400" />
                         <span>Business Tent Sign Up</span>
                         <span className="ml-auto text-amber-300 text-[10px] font-black uppercase">
-                          {tentPromoApplied ? `From ${tentPriceLabel("standard")}` : "From $150"}
+                          {tentPromoApplied ? (
+                            <span className="text-emerald-400">From Free ($0)</span>
+                          ) : (
+                            <>
+                              From <span className="line-through opacity-60">$150</span> $50
+                            </>
+                          )}
                         </span>
                       </div>
                       <span className="text-[11px] text-slate-400">
@@ -539,6 +551,7 @@ export default function EventRegistrationModal({
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {Object.values(TENT_SPACE_OPTIONS).map((opt) => {
                           const isSelected = spaceOption === opt.id;
+                          const isCompStandard = tentPromoApplied && opt.id === "standard";
                           return (
                             <button
                               key={opt.id}
@@ -559,7 +572,25 @@ export default function EventRegistrationModal({
                                 </p>
                               </div>
                               <div className="pt-2 flex items-center justify-between border-t border-white/5">
-                                <span className="text-amber-400 font-extrabold text-sm">{tentPriceLabel(opt.id)}</span>
+                                <div className="flex items-baseline gap-1.5">
+                                  <span className="text-slate-500 line-through text-xs font-semibold">
+                                    {opt.originalPriceLabel}
+                                  </span>
+                                  {isCompStandard ? (
+                                    <>
+                                      <span className="text-slate-500 line-through text-xs font-semibold">
+                                        {opt.priceLabel}
+                                      </span>
+                                      <span className="text-emerald-400 font-extrabold text-sm">
+                                        Free ($0)
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <span className="text-amber-400 font-extrabold text-sm">
+                                      {tentPriceLabel(opt.id)}
+                                    </span>
+                                  )}
+                                </div>
                                 {isSelected ? (
                                   <span className="text-[10px] uppercase font-bold text-red-400">Selected</span>
                                 ) : (
@@ -587,7 +618,7 @@ export default function EventRegistrationModal({
                                 applyPromoCode();
                               }
                             }}
-                            placeholder="Optional"
+                            placeholder="Have a code? Enter and click Apply"
                             className={inputClass}
                           />
                           <button
@@ -599,7 +630,7 @@ export default function EventRegistrationModal({
                           </button>
                         </div>
                         {promoNotice ? (
-                          <p className={`text-[11px] ${promoApplied ? "text-emerald-400" : "text-slate-400"}`}>
+                          <p className={`text-[11px] ${promoApplied ? "text-emerald-400 font-semibold" : "text-slate-400"}`}>
                             {promoNotice}
                           </p>
                         ) : null}
@@ -807,7 +838,7 @@ export default function EventRegistrationModal({
                   id={`modal-agree-${event.id}-${activePath}`}
                   includeRefund={
                     (activePath === "guest" && !oktoberfestPromoApplied) ||
-                    (isTentOrTreat && activePath === "sponsor")
+                    (isTentOrTreat && activePath === "sponsor" && !tentStandardCompApplied)
                   }
                 />
               </div>
@@ -831,7 +862,9 @@ export default function EventRegistrationModal({
                       ? "Confirm Free Guest Registration ($0)"
                       : `Proceed to Checkout (${guestTicketPriceLabel(Number(form.guests) || 1)})`
                     : isTentOrTreat && activePath === "sponsor"
-                    ? `Proceed to Checkout (${tentPriceLabel(spaceOption)})`
+                    ? tentStandardCompApplied
+                      ? "Confirm Complimentary Booth Space ($0)"
+                      : `Proceed to Checkout (${tentPriceLabel(spaceOption)})`
                     : isOktoberfest && activePath === "member"
                     ? "Confirm Free Member Registration"
                     : "Confirm Registration & RSVP"}

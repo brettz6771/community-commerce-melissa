@@ -219,12 +219,17 @@ export default function HomeUpcomingEvents({
                         className="w-full bg-[#1b2230] hover:bg-[#222a3b] text-amber-300 border border-amber-500/30 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-xs hover:scale-[1.02] transition flex items-center justify-center gap-2"
                       >
                         <Building2 className="w-4 h-4 text-amber-400" />
-                        <span>2. Business Tent Sign Up (From $150)</span>
+                        <span>
+                          2. Business Tent Sign Up (From{" "}
+                          <span className="line-through opacity-60">$150</span> $50)
+                        </span>
                       </button>
 
                       <div className="flex items-center justify-between text-xs pt-1 px-1">
                         <span className="text-slate-400 text-[11px]">
-                          Free event · Tents $150 - $250
+                          Free event · Tents{" "}
+                          <span className="line-through opacity-60">$150 - $250</span>{" "}
+                          <strong className="text-amber-300">$50 - $75</strong>
                         </span>
                         <Link
                           href={detailsHref}

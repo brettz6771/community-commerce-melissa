@@ -479,8 +479,10 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [done, setDone] = useState("");
 
   const promoApplied = tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
+  const standardCompApplied = promoApplied && spaceOption === "standard";
   const chargeLabel = promoApplied
     ? tentSpaceChargeLabel(spaceOption, appliedPromoCode)
     : TENT_SPACE_OPTIONS[spaceOption].priceLabel;
@@ -488,11 +490,13 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
   const applyPromoCode = () => {
     if (tentPromoCodeMatches(promoCode)) {
       setAppliedPromoCode(promoCode.trim());
-      setPromoNotice("Code applied.");
+      setPromoNotice("Code applied — Standard Space (10' x 10') is now complimentary ($0).");
       return;
     }
     setAppliedPromoCode("");
-    setPromoNotice(promoCode.trim() ? "That code is not recognized. Flyer prices still apply." : "");
+    setPromoNotice(
+      promoCode.trim() ? "That code is not recognized. Deal prices ($50 / $75) still apply." : ""
+    );
   };
 
   const changePromoCode = (value: string) => {
@@ -507,7 +511,29 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    setDone("");
     try {
+      if (standardCompApplied) {
+        const res = await fetch("/api/events/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            eventId: event.id,
+            path: "sponsor",
+            spaceOption,
+            promoCode: appliedPromoCode,
+            ...form,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          setError(data.error || "Could not reserve complimentary booth space.");
+          return;
+        }
+        setDone(data.message || "Complimentary Standard Space reserved!");
+        return;
+      }
+
       const res = await fetch("/api/events/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -515,7 +541,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
           eventId: event.id,
           path: "sponsor",
           spaceOption,
-          promoCode: promoApplied ? promoCode : "",
+          promoCode: promoApplied ? appliedPromoCode : "",
           ...form,
         }),
       });
@@ -545,11 +571,12 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
       {/* Tier Selector */}
       <div className="space-y-2">
         <label className="block text-xs font-bold text-slate-700 uppercase">
-          Select Space Tier (Flyer Pricing) *
+          Select Space Tier (Special Deal Pricing) *
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           {Object.values(TENT_SPACE_OPTIONS).map((opt) => {
             const isSelected = spaceOption === opt.id;
+            const isCompStandard = promoApplied && opt.id === "standard";
             return (
               <button
                 key={opt.id}
@@ -566,9 +593,25 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
                   <p className="text-[11px] text-slate-500 mt-1 leading-snug">{opt.description}</p>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-red-700 font-extrabold text-sm">
-                    {promoApplied ? tentSpaceChargeLabel(opt.id, appliedPromoCode) : opt.priceLabel}
-                  </span>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-slate-400 line-through text-xs font-semibold">
+                      {opt.originalPriceLabel}
+                    </span>
+                    {isCompStandard ? (
+                      <>
+                        <span className="text-slate-400 line-through text-xs font-semibold">
+                          {opt.priceLabel}
+                        </span>
+                        <span className="text-emerald-700 font-extrabold text-sm">
+                          Free ($0)
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-red-700 font-extrabold text-sm">
+                        {promoApplied ? tentSpaceChargeLabel(opt.id, appliedPromoCode) : opt.priceLabel}
+                      </span>
+                    )}
+                  </div>
                   {isSelected ? (
                     <span className="text-[10px] font-bold text-red-700 uppercase">Selected</span>
                   ) : (
@@ -596,7 +639,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
                 applyPromoCode();
               }
             }}
-            placeholder="Optional"
+            placeholder="Have a code? Enter and click Apply"
           />
           <button
             type="button"
@@ -607,7 +650,7 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
           </button>
         </div>
         {promoNotice ? (
-          <p className={`text-xs ${promoApplied ? "text-emerald-700" : "text-slate-500"}`}>{promoNotice}</p>
+          <p className={`text-xs ${promoApplied ? "text-emerald-700 font-semibold" : "text-slate-500"}`}>{promoNotice}</p>
         ) : null}
       </div>
 
@@ -620,9 +663,16 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
         showNotes={true}
       />
 
-      <TermsAgreement checked={agreed} onChange={setAgreed} variant="light" id="agree-sponsor" includeRefund={true} />
+      <TermsAgreement
+        checked={agreed}
+        onChange={setAgreed}
+        variant="light"
+        id="agree-sponsor"
+        includeRefund={!standardCompApplied}
+      />
 
       {error && <p className="text-sm text-red-700">{error}</p>}
+      {done && <p className="text-sm text-emerald-700 font-semibold">{done}</p>}
 
       <button
         type="submit"
@@ -630,7 +680,9 @@ function TentSpaceForm({ event }: { event: SiteEvent }) {
         className="btn-red px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-50 inline-flex items-center gap-2 shadow-md hover:scale-[1.01] transition"
       >
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-        Pay {chargeLabel} and reserve tent space
+        {standardCompApplied
+          ? "Reserve complimentary booth space ($0)"
+          : `Pay ${chargeLabel} and reserve tent space`}
       </button>
 
       <p className="text-xs text-slate-500 pt-1">
