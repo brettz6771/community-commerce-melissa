@@ -82,6 +82,8 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterKind, setFilterKind] = useState<string>("all");
   const [activeModalRecord, setActiveModalRecord] = useState<EventRegistrationRecord | null>(null);
+  const [emailListModalEventId, setEmailListModalEventId] = useState<string | null>(null);
+  const [copiedNotice, setCopiedNotice] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteRegistration = async (record: EventRegistrationRecord) => {
@@ -876,7 +878,17 @@ export default function AdminPage() {
                             {isSelected ? "Currently Viewing Guests" : `View Guests (${stats.totalGuests})`}
                           </button>
 
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-3 gap-2">
+                            <button
+                              onClick={() => {
+                                setCopiedNotice("");
+                                setEmailListModalEventId(event.id);
+                              }}
+                              className="py-1.5 px-2 rounded-lg bg-[#0B0E14] hover:bg-white/5 border border-white/10 text-[11px] font-semibold text-amber-300 hover:text-amber-200 flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                              title="View and copy all attendee & tent inquiry emails"
+                            >
+                              <Mail className="w-3 h-3" /> Email List
+                            </button>
                             <button
                               onClick={() => handleDownloadPartyCsv(event.id, event.title)}
                               className="py-1.5 px-2 rounded-lg bg-[#0B0E14] hover:bg-white/5 border border-white/10 text-[11px] font-semibold text-slate-300 hover:text-white flex items-center justify-center gap-1 cursor-pointer transition-colors"
@@ -937,6 +949,17 @@ export default function AdminPage() {
                     <X className="w-3.5 h-3.5" /> Show all events
                   </button>
                 )}
+
+                <button
+                  onClick={() => {
+                    setCopiedNotice("");
+                    setEmailListModalEventId(selectedEventId !== "all" ? selectedEventId : "__filtered__");
+                  }}
+                  className="px-3 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  View / Copy Emails
+                </button>
 
                 <button
                   onClick={() =>
@@ -1402,6 +1425,187 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      {/* ========================================================= */}
+      {/* EMAIL LIST & ONE-CLICK COPY MODAL */}
+      {/* ========================================================= */}
+      {emailListModalEventId && (() => {
+        const targetRegs =
+          emailListModalEventId === "__filtered__"
+            ? filteredRegistrations
+            : registrations.filter((r) => r.eventId === emailListModalEventId);
+        const modalEventTitle =
+          emailListModalEventId === "__filtered__"
+            ? "Current Filtered View"
+            : events.find((e) => e.id === emailListModalEventId)?.title || emailListModalEventId;
+
+        const guestEmailsSet = new Set<string>();
+        const tentEmailsSet = new Set<string>();
+        const allEmailsSet = new Set<string>();
+        const detailedContacts: Array<{
+          name: string;
+          email: string;
+          role: string;
+          company: string;
+          phone: string;
+        }> = [];
+
+        for (const r of targetRegs) {
+          const primaryEmail = (r.email || "").trim().toLowerCase();
+          const isTent = r.kind === "business_interest" || r.path === "sponsor";
+          if (primaryEmail) {
+            allEmailsSet.add(primaryEmail);
+            if (isTent) tentEmailsSet.add(primaryEmail);
+            else guestEmailsSet.add(primaryEmail);
+            detailedContacts.push({
+              name: r.name || "—",
+              email: primaryEmail,
+              role: isTent ? "Tent / Booth Inquiry" : "Guest / Attendee",
+              company: r.company || "",
+              phone: r.phone || "",
+            });
+          }
+          if (Array.isArray(r.additionalGuests)) {
+            for (const g of r.additionalGuests) {
+              const gEmail = (g.email || "").trim().toLowerCase();
+              if (gEmail) {
+                allEmailsSet.add(gEmail);
+                guestEmailsSet.add(gEmail);
+                detailedContacts.push({
+                  name: g.name || "Companion Guest",
+                  email: gEmail,
+                  role: `Companion Guest (with ${r.name || r.email})`,
+                  company: r.company || "",
+                  phone: g.phone || "",
+                });
+              }
+            }
+          }
+        }
+
+        const allEmails = Array.from(allEmailsSet);
+        const guestEmails = Array.from(guestEmailsSet);
+        const tentEmails = Array.from(tentEmailsSet);
+
+        const copyList = async (list: string[], label: string) => {
+          if (!list.length) return;
+          try {
+            await navigator.clipboard.writeText(list.join(", "));
+            setCopiedNotice(`Copied ${list.length} ${label} to clipboard!`);
+          } catch {
+            setCopiedNotice("Could not copy automatically — select the text box below and press Ctrl+C.");
+          }
+        };
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="w-full max-w-2xl bg-[#151922] border border-white/10 rounded-2xl p-6 shadow-2xl relative space-y-5 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    Email Broadcast List
+                  </span>
+                  <h3 className="text-xl font-extrabold font-outfit uppercase tracking-tight text-white mt-2">
+                    {modalEventTitle}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {allEmails.length} unique email{allEmails.length === 1 ? "" : "s"} ({guestEmails.length} guest/attendee · {tentEmails.length} tent inquiry)
+                  </p>
+                </div>
+                <button
+                  onClick={() => setEmailListModalEventId(null)}
+                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {copiedNotice && (
+                <div className="p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{copiedNotice}</span>
+                </div>
+              )}
+
+              {/* Quick Copy Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => void copyList(allEmails, "total emails")}
+                  disabled={allEmails.length === 0}
+                  className="btn-red px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer disabled:opacity-40"
+                >
+                  Copy All Emails ({allEmails.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void copyList(guestEmails, "guest emails")}
+                  disabled={guestEmails.length === 0}
+                  className="px-3.5 py-2 rounded-xl bg-[#0B0E14] hover:bg-white/10 border border-white/15 text-xs font-bold uppercase tracking-wider text-slate-200 cursor-pointer disabled:opacity-40"
+                >
+                  Copy Guest Emails ({guestEmails.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void copyList(tentEmails, "tent inquiry emails")}
+                  disabled={tentEmails.length === 0}
+                  className="px-3.5 py-2 rounded-xl bg-[#0B0E14] hover:bg-white/10 border border-purple-500/30 text-xs font-bold uppercase tracking-wider text-purple-300 cursor-pointer disabled:opacity-40"
+                >
+                  Copy Tent Inquiry Emails ({tentEmails.length})
+                </button>
+              </div>
+
+              {/* Copyable Textarea */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  All Unique Emails (comma-separated — paste directly into To / BCC)
+                </label>
+                <textarea
+                  readOnly
+                  rows={3}
+                  value={allEmails.join(", ")}
+                  onFocus={(e) => e.currentTarget.select()}
+                  placeholder="No emails found for this event."
+                  className="w-full bg-[#0B0E14] border border-white/10 rounded-xl p-3 text-xs text-slate-200 font-mono outline-none"
+                />
+              </div>
+
+              {/* Breakdown Table */}
+              {detailedContacts.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Individual Recipients ({detailedContacts.length})
+                  </h4>
+                  <div className="max-h-60 overflow-y-auto border border-white/10 rounded-xl bg-[#0B0E14] divide-y divide-white/5 text-xs">
+                    {detailedContacts.map((item, idx) => (
+                      <div key={`${item.email}-${idx}`} className="px-3.5 py-2.5 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="font-semibold text-white truncate">
+                            {item.name} {item.company ? <span className="text-slate-400 font-normal">· {item.company}</span> : null}
+                          </div>
+                          <div className="text-slate-300 font-mono text-[11px] truncate">{item.email}</div>
+                        </div>
+                        <span className="px-2 py-0.5 rounded bg-white/5 text-slate-300 text-[10px] font-semibold shrink-0">
+                          {item.role}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end pt-2 border-t border-white/5">
+                <button
+                  onClick={() => setEmailListModalEventId(null)}
+                  className="btn-gold-outline px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

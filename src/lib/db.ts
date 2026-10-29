@@ -718,7 +718,9 @@ function mapEventRegistrationRow(row: {
   return {
     id: row.id,
     eventId: row.event_id,
-    eventTitle: getSiteEvent(row.event_id)?.title || row.event_id,
+    eventTitle:
+      getSiteEvent(row.event_id)?.title ||
+      (row.event_id === "tent-or-treat" ? "Community Tent-or-Treat (Cancelled)" : row.event_id),
     path,
     kind: (row.kind || eventSignupKind(path)) as EventSignupKind,
     name: row.name || String(details.name || ""),
@@ -863,7 +865,69 @@ export async function listEventRegistrations(eventId?: string): Promise<EventReg
           ORDER BY created_at DESC, id DESC;
           `
         );
-    return res.rows.map(mapEventRegistrationRow);
+    const mapped = res.rows.map(mapEventRegistrationRow);
+
+    if (!eventId || eventId === "tent-or-treat") {
+      try {
+        await ensureWebsiteContactsTable(dbPool);
+        const contactRes = await dbPool.query(`
+          SELECT id, email, form_type, details, created_at
+          FROM website_contacts
+          WHERE form_type ILIKE '%tent%treat%'
+             OR COALESCE(details->>'Event', '') ILIKE '%tent%treat%'
+             OR COALESCE(details->>'Event Title', '') ILIKE '%tent%treat%'
+          ORDER BY created_at DESC, id DESC;
+        `);
+        const existingTentEmails = new Set(
+          mapped
+            .filter((r) => r.eventId === "tent-or-treat")
+            .map((r) => r.email.trim().toLowerCase())
+        );
+
+        for (const cRow of contactRes.rows) {
+          const email = String(cRow.email || "").trim().toLowerCase();
+          if (!email || existingTentEmails.has(email)) continue;
+          existingTentEmails.add(email);
+
+          const d = cRow.details && typeof cRow.details === "object" ? (cRow.details as Record<string, unknown>) : {};
+          const formTypeStr = String(cRow.form_type || "");
+          const pathStr = String(d.Path || "");
+          const isTentInquiry =
+            /business|tent\s+registration|tent\s+space|sponsor|booth/i.test(formTypeStr) ||
+            /business|tent\s+space|sponsor|booth/i.test(pathStr);
+          const rawName = String(d.Name || d["Attendee Name"] || "").trim();
+          const rawPhone = String(d.Phone || d["Phone Number"] || "").trim();
+          const rawCompany = String(d["Business / Company"] || d.Company || d["Company / Organization"] || "").trim();
+          const rawGuests = String(d.Guests || d["Total Guests"] || "1").trim();
+          const rawNotes = String(d.Notes || d["Notes / Requests"] || "").trim();
+
+          mapped.push({
+            id: -Number(cRow.id || mapped.length + 1),
+            eventId: "tent-or-treat",
+            eventTitle: "Community Tent-or-Treat (Cancelled)",
+            path: isTentInquiry ? "sponsor" : "attendee",
+            kind: isTentInquiry ? "business_interest" : "attendance",
+            name: rawName,
+            email,
+            phone: rawPhone === "N/A" ? "" : rawPhone,
+            company: rawCompany === "N/A" ? "" : rawCompany,
+            guests: rawGuests,
+            additionalGuests: [],
+            notes: rawNotes === "None" ? "" : rawNotes,
+            membershipStatus: "non_member",
+            pricing: "free",
+            amountCents: 0,
+            paymentStatus: isTentInquiry ? "interest" : "complimentary",
+            stripeSessionId: String(d["Stripe Session ID"] || ""),
+            createdAt: cRow.created_at ? new Date(cRow.created_at).toISOString() : "",
+          });
+        }
+      } catch (contactErr) {
+        console.warn("Could not backfill tent-or-treat contacts:", contactErr);
+      }
+    }
+
+    return mapped;
   } catch (error) {
     console.error("Error listing event registrations:", error);
     return [];

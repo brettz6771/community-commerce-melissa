@@ -24,8 +24,8 @@ export async function GET(request: Request) {
   const eventId = url.searchParams.get("eventId") || "";
   const registrations = await listEventRegistrations(eventId || undefined);
 
-  // If a specific eventId was requested but no site event matches AND no registrations exist for it
-  if (eventId && !getSiteEvent(eventId) && registrations.length === 0) {
+  // If a specific eventId was requested, allow archived/cancelled events like tent-or-treat
+  if (eventId && eventId !== "tent-or-treat" && !getSiteEvent(eventId) && registrations.length === 0) {
     return NextResponse.json({ error: "Unknown event." }, { status: 404 });
   }
 
@@ -75,6 +75,25 @@ export async function GET(request: Request) {
 
   const knownIds = new Set(siteEventList.map((e) => e.id));
   const extraEvents: typeof siteEventList = [];
+
+  // Always include cancelled Community Tent-or-Treat in admin so staff can view/export its guest & tent inquiry emails
+  if (!knownIds.has("tent-or-treat" as any)) {
+    knownIds.add("tent-or-treat" as any);
+    extraEvents.push({
+      id: "tent-or-treat" as any,
+      slug: "tent-or-treat" as any,
+      title: "Community Tent-or-Treat (Cancelled)",
+      kicker: "Cancelled event",
+      date: "2026-10-31",
+      dateLabel: "Saturday, October 31, 2026 (Cancelled)",
+      time: "2:00 PM - 5:00 PM",
+      location: "Melissa Lake Park",
+      address: "4101 Liberty Way, Melissa, TX 75454",
+      category: "Community Events",
+      isPast: false,
+      href: "",
+    });
+  }
 
   for (const reg of registrations) {
     if (reg.eventId && !knownIds.has(reg.eventId as any)) {
