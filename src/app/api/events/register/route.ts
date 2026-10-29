@@ -118,7 +118,7 @@ export async function POST(request: Request) {
       const checkoutMsg =
         eventId === "tent-or-treat"
           ? "Tent spaces are paid registrations ($50 - $75). Please continue through checkout."
-          : "Guest Oktoberfest tickets are $20. Continue through checkout.";
+          : `Non-member tickets for ${event.title} are $20. Continue through checkout.`;
       return NextResponse.json(
         { error: checkoutMsg },
         { status: 402 }
@@ -129,11 +129,11 @@ export async function POST(request: Request) {
     const signedInMatch = auth.status === "ok" && auth.member.email === email;
     const emailIsMember = signedInMatch || (await isActiveDirectoryMemberEmail(email));
 
-    if (eventId === "oktoberfest" && path === "member" && !emailIsMember) {
+    if ((eventId === "oktoberfest" || eventId === "christmas-networking") && path === "member" && !emailIsMember) {
       return NextResponse.json(
         {
           error:
-            "We could not match that email to an active membership. Use the guest $20 checkout, or sign in to the member portal.",
+            "We could not match that email to an active membership. Use the non-member $20 checkout, or sign in to the member portal.",
           needsPayment: true,
         },
         { status: 403 }

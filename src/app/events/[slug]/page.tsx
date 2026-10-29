@@ -157,6 +157,15 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
                     <p className="text-sm text-slate-700"><strong>Guests:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
                     <p className="text-sm text-slate-700">Complimentary appetizers, beer, and wine. Partner: Three Nations Brewing Co.</p>
                   </div>
+                ) : event.id === "christmas-networking" ? (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-2.5">
+                    <p className="text-xs font-bold uppercase tracking-widest text-red-700">Admission &amp; Highlights</p>
+                    <p className="text-sm text-slate-700"><strong>Members:</strong> Free, plus one guest</p>
+                    <p className="text-sm text-slate-700"><strong>Non-Members:</strong> {OKTOBERFEST_PRICE_LABEL} each, up to 4 including yourself</p>
+                    <p className="text-sm text-slate-700"><strong>Included:</strong> Food, beer &amp; wine included!</p>
+                    <p className="text-sm text-slate-700"><strong>Featuring:</strong> Games, prizes, networking fun &amp; music by DJ Smiley.</p>
+                    <p className="text-xs text-slate-500 pt-1">The last networking event for this year — hosted at 3 Nations Brewery in Anna, TX.</p>
+                  </div>
                 ) : event.id === "pack-with-purpose" ? (
                   <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
                     <p className="text-xs font-bold uppercase tracking-widest text-red-700">Free to Attend · Give-Back Lunch &amp; Learn</p>
@@ -186,7 +195,7 @@ function EventDetailClient({ event }: { event: SiteEvent }) {
               </div>
 
               <div className="lg:col-span-7 space-y-6">
-                {event.id === "oktoberfest" ? (
+                {event.id === "oktoberfest" || event.id === "christmas-networking" ? (
                   <OktoberfestForm key={portal.member?.email || "guest"} event={event} portal={portal} />
                 ) : (
                   <TentForm
@@ -345,13 +354,13 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
         <PathButton
           active={path === "guest"}
           onClick={() => setPath("guest")}
-          label={promoApplied ? "Guest — Free ($0 with coupon)" : `Guest — ${OKTOBERFEST_PRICE_LABEL} each`}
+          label={promoApplied ? "Guest — Free ($0 with coupon)" : `Non-Member / Guest — ${OKTOBERFEST_PRICE_LABEL} each`}
         />
       </div>
       {signedIn && path === "member" && (
         <p className="text-xs text-emerald-700 font-semibold">Signed in as {portal.member?.email}. Member admission is complimentary.</p>
       )}
-      {path === "guest" && (
+      {event.id === "oktoberfest" && path === "guest" && (
         <div className="space-y-1">
           <span className="block text-xs font-bold text-slate-700 uppercase">Coupon code</span>
           <div className="flex gap-2">

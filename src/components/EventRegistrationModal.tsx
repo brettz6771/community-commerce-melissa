@@ -109,7 +109,7 @@ export default function EventRegistrationModal({
     if (!event) return;
 
     let path: EventRegistrationPath = "attendee";
-    if (event.id === "oktoberfest") {
+    if (event.id === "oktoberfest" || event.id === "christmas-networking") {
       path = initialPath || (portal.status === "ok" ? "member" : "guest");
     } else if (event.id === "tent-or-treat") {
       path = initialPath === "sponsor" ? "sponsor" : "attendee";
@@ -141,13 +141,17 @@ export default function EventRegistrationModal({
 
   const isTentOrTreat = event.id === "tent-or-treat";
   const isOktoberfest = event.id === "oktoberfest";
+  const isChristmasNetworking = event.id === "christmas-networking";
+  const isMemberGuestMixer = isOktoberfest || isChristmasNetworking;
   const isLunchAndLearn = event.id === "lunch-and-learn";
   const isPackWithPurpose = event.id === "pack-with-purpose";
-  const calendarDates = isPackWithPurpose
-    ? "20261116T170000Z/20261116T190000Z"
-    : isTentOrTreat
-      ? "20261031T190000Z/20261031T220000Z"
-      : "20261026T230000Z/20261027T010000Z";
+  const calendarDates = isChristmasNetworking
+    ? "20261201T000000Z/20261201T020000Z"
+    : isPackWithPurpose
+      ? "20261116T170000Z/20261116T190000Z"
+      : isTentOrTreat
+        ? "20261031T190000Z/20261031T220000Z"
+        : "20261026T230000Z/20261027T010000Z";
 
   const handlePathChange = (newPath: EventRegistrationPath) => {
     setActivePath(newPath);
@@ -388,7 +392,7 @@ export default function EventRegistrationModal({
             <form onSubmit={handleSubmit} className="space-y-4">
               
               {/* Event Specific Path Selectors */}
-              {isOktoberfest && (
+              {isMemberGuestMixer && (
                 <div className="space-y-2.5">
                   <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">
                     Select Admission Option
@@ -422,7 +426,7 @@ export default function EventRegistrationModal({
                       }`}
                     >
                       <div className="flex items-center justify-between font-bold">
-                        <span>Guest / Non-Member</span>
+                        <span>Non-Member / Guest</span>
                         <span
                           className={`font-black ${
                             oktoberfestPromoApplied ? "text-emerald-400 uppercase text-[10px]" : "text-amber-300"
@@ -444,7 +448,16 @@ export default function EventRegistrationModal({
                     </p>
                   )}
 
-                  {activePath === "guest" && (
+                  {isChristmasNetworking && (
+                    <div className="bg-red-700/15 border border-red-500/30 rounded-xl p-3 text-xs text-red-200 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-red-400 shrink-0" />
+                      <span>
+                        Food, beer &amp; wine included! Games, prizes, networking fun &amp; music by DJ Smiley at 3 Nations Brewery.
+                      </span>
+                    </div>
+                  )}
+
+                  {isOktoberfest && activePath === "guest" && (
                     <label className="block space-y-1 pt-1">
                       <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
                         Coupon code
@@ -865,7 +878,7 @@ export default function EventRegistrationModal({
                     ? tentStandardCompApplied
                       ? "Confirm Complimentary Booth Space ($0)"
                       : `Proceed to Checkout (${tentPriceLabel(spaceOption)})`
-                    : isOktoberfest && activePath === "member"
+                    : isMemberGuestMixer && activePath === "member"
                     ? "Confirm Free Member Registration"
                     : "Confirm Registration & RSVP"}
                 </span>

@@ -36,19 +36,37 @@ import {
 } from "./site-events.ts";
 
 describe("site events catalog", () => {
-  it("lists Lunch & Learn, Oktoberfest, and Tent or Treat with in-house registration links", () => {
+  it("lists Lunch & Learn, Oktoberfest, Pack with Purpose, and Christmas Networking Night, and excludes cancelled Tent or Treat", () => {
     const items = siteEventsAsItems();
     assert.equal(items.length, 4);
+    assert.equal(getSiteEvent("tent-or-treat"), null);
+    assert.equal(items.find((item) => item.id === "evt-tent-or-treat"), undefined);
     assert.equal(getSiteEvent("pack-with-purpose")?.title, "Pack with Purpose: A Give-Back Lunch & Learn");
     assert.equal(getSiteEvent("ccm-luncheon-nov-16")?.id, "pack-with-purpose");
     assert.equal(getSiteEvent("pack-with-purpose")?.image, "/events/ccm-luncheon-nov-16.jpg");
     assert.equal(getSiteEvent("pack-with-purpose")?.href, "/events/pack-with-purpose");
+    assert.equal(getSiteEvent("christmas-networking")?.title, "Christmas Networking Night");
+    assert.equal(getSiteEvent("christmas-networking-night")?.id, "christmas-networking");
+    assert.equal(getSiteEvent("christmas-networking")?.image, "/events/christmas-networking-event.jpg");
+    assert.equal(getSiteEvent("christmas-networking")?.href, "/events/christmas-networking");
     assert.equal(getSiteEvent("lunch-and-learn")?.title, "Lunch & Learn: Building a Stronger Community");
     assert.equal(getSiteEvent("oktoberfest")?.title, "Oktoberfest Networking Night");
-    assert.equal(getSiteEvent("tent-or-treat")?.title, "Community Tent-or-Treat");
     assert.equal(getSiteEvent("lunch-and-learn")?.href, "/events/lunch-and-learn");
     assert.equal(items.find((item) => item.id === "evt-oktoberfest")?.registerHref, "/events/oktoberfest");
-    assert.equal(items.find((item) => item.id === "evt-tent-or-treat")?.registerHref, "/events/tent-or-treat");
+    assert.equal(items.find((item) => item.id === "evt-christmas-networking")?.registerHref, "/events/christmas-networking");
+  });
+
+  it("makes Christmas Networking Night free for members and $20 for non-members", () => {
+    assert.deepEqual(allowedPathsForEvent("christmas-networking"), ["member", "guest"]);
+    assert.equal(isPaidEventPath("christmas-networking", "member"), false);
+    assert.equal(isPaidEventPath("christmas-networking", "guest"), true);
+    assert.equal(eventCheckoutAmountCents("christmas-networking", "member"), 0);
+    assert.equal(eventCheckoutAmountCents("christmas-networking", "guest"), OKTOBERFEST_PRICE_CENTS);
+    assert.equal(eventCheckoutAmountCents("christmas-networking", "guest", 3), OKTOBERFEST_PRICE_CENTS * 3);
+    assert.deepEqual(partySizeOptions("christmas-networking", "member"), [1, 2]);
+    assert.deepEqual(partySizeOptions("christmas-networking", "guest"), [1, 2, 3, 4]);
+    assert.match(eventConfirmationCopy("christmas-networking", "member"), /Christmas Networking Night/);
+    assert.match(eventConfirmationCopy("christmas-networking", "member"), /complimentary/);
   });
 
   it("makes Oktoberfest free for members and $20 for guests", () => {
@@ -212,23 +230,24 @@ describe("site events catalog", () => {
       assert.equal(paidParty.value.additionalGuests[0].email, "sam@example.com");
     }
 
-    const sponsorMissing = validateEventRegistrationInput({
-      eventId: "tent-or-treat",
-      path: "sponsor",
-      name: "Jordan Hale",
-      email: "jordan@example.com",
-    });
-    assert.equal(sponsorMissing.ok, false);
-
-    const sponsor = validateEventRegistrationInput({
+    const cancelledTent = validateEventRegistrationInput({
       eventId: "tent-or-treat",
       path: "sponsor",
       name: "Jordan Hale",
       email: "jordan@example.com",
       company: "Melissa Demo Partners",
     });
-    assert.equal(sponsor.ok, true);
-    if (sponsor.ok) assert.equal(sponsor.value.path, "sponsor");
+    assert.equal(cancelledTent.ok, false);
+
+    const christmasMember = validateEventRegistrationInput({
+      eventId: "christmas-networking",
+      path: "member",
+      name: "Jordan Hale",
+      email: "jordan@example.com",
+      company: "Melissa Demo Partners",
+    });
+    assert.equal(christmasMember.ok, true);
+    if (christmasMember.ok) assert.equal(christmasMember.value.path, "member");
   });
 
   it("keeps Lunch & Learn free and marks tent business forms as interest", () => {
@@ -358,19 +377,19 @@ describe("site events catalog", () => {
 
   it("filters out past events and returns at most the next 3 upcoming events chronologically", () => {
     const items = siteEventsAsItems();
-    // On Oct 20, 2026, Oct 12 Lunch & Learn is past; Oct 26 Oktoberfest, Oct 31 Tent-or-Treat, and Nov 16 Pack with Purpose remain
+    // On Oct 20, 2026, Oct 12 Lunch & Learn is past; Oct 26 Oktoberfest, Nov 16 Pack with Purpose, and Nov 30 Christmas Networking Night remain
     const oct20 = new Date("2026-10-20T12:00:00-05:00");
     const nextOnOct20 = getNextUpcomingEvents(items, 3, oct20);
     assert.deepEqual(
       nextOnOct20.map((e) => e.id),
-      ["evt-oktoberfest", "evt-tent-or-treat", "evt-pack-with-purpose"],
+      ["evt-oktoberfest", "evt-pack-with-purpose", "evt-christmas-networking"],
     );
 
     // After Oct 26 passes (e.g. Oct 28), only 2 upcoming events remain, leaving the 3rd slot empty
     const oct28 = new Date("2026-10-28T12:00:00-05:00");
     assert.deepEqual(
       getNextUpcomingEvents(items, 3, oct28).map((e) => e.id),
-      ["evt-tent-or-treat", "evt-pack-with-purpose"],
+      ["evt-pack-with-purpose", "evt-christmas-networking"],
     );
 
     // When a 4th and 5th upcoming event exist, only the next 3 in chronological order are returned
@@ -382,11 +401,12 @@ describe("site events catalog", () => {
     const nextThree = getNextUpcomingEvents(withMore, 3, oct20);
     assert.deepEqual(
       nextThree.map((e) => e.id),
-      ["evt-oktoberfest", "evt-tent-or-treat", "evt-nov-early"],
+      ["evt-oktoberfest", "evt-nov-early", "evt-pack-with-purpose"],
     );
     assert.equal(getUpcomingEvents(withMore, oct20).length, 5);
     assert.equal(resolveSiteEventForItem(nextOnOct20[0])?.id, "oktoberfest");
-    assert.equal(resolveSiteEventForItem(nextOnOct20[2])?.id, "pack-with-purpose");
+    assert.equal(resolveSiteEventForItem(nextOnOct20[1])?.id, "pack-with-purpose");
+    assert.equal(resolveSiteEventForItem(nextOnOct20[2])?.id, "christmas-networking");
     assert.equal(formatEventDateLabel("2026-10-26"), "Monday, October 26, 2026");
   });
 });

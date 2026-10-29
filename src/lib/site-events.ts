@@ -1,5 +1,7 @@
 export const OKTOBERFEST_PRICE_CENTS = 2000;
 export const OKTOBERFEST_PRICE_LABEL = "$20";
+export const CHRISTMAS_NETWORKING_PRICE_CENTS = 2000;
+export const CHRISTMAS_NETWORKING_PRICE_LABEL = "$20";
 
 export type TentSpaceOptionId = "standard" | "larger" | "food-vendor";
 
@@ -90,7 +92,12 @@ export function tentSpaceOriginalPriceLabel(spaceOption?: TentSpaceOptionId): st
   return getTentSpaceOption(spaceOption).originalPriceLabel;
 }
 
-export type SiteEventId = "oktoberfest" | "tent-or-treat" | "lunch-and-learn" | "pack-with-purpose";
+export type SiteEventId =
+  | "oktoberfest"
+  | "tent-or-treat"
+  | "lunch-and-learn"
+  | "pack-with-purpose"
+  | "christmas-networking";
 export type EventRegistrationPath = "member" | "guest" | "attendee" | "sponsor";
 export type EventSignupKind = "attendance" | "business_interest";
 export type EventMembershipStatus = "member" | "non_member";
@@ -137,6 +144,10 @@ export function resolvePackWithPurposeImage(): string {
   return "/events/ccm-luncheon-nov-16.jpg";
 }
 
+export function resolveChristmasNetworkingImage(): string {
+  return "/events/christmas-networking-event.jpg";
+}
+
 export const SITE_EVENTS: SiteEvent[] = [
   {
     id: "lunch-and-learn",
@@ -176,26 +187,6 @@ export const SITE_EVENTS: SiteEvent[] = [
     href: "/events/oktoberfest",
   },
   {
-    id: "tent-or-treat",
-    slug: "tent-or-treat",
-    title: "Community Tent-or-Treat",
-    kicker: "Community event",
-    date: "2026-10-31",
-    dateLabel: "Saturday, October 31, 2026",
-    month: "OCT",
-    day: "31",
-    time: "2:00 PM - 5:00 PM",
-    location: "Melissa Lake Park",
-    address: "4101 Liberty Way, Melissa, TX 75454",
-    category: "Community Events",
-    description:
-      "A free family evening at Melissa Lake Park. Register to attend, or tell us you want a business tent.",
-    image: resolveTentOrTreatImage(),
-    businessImage: resolveTentOrTreatBusinessImage(),
-    isFeatured: true,
-    href: "/events/tent-or-treat",
-  },
-  {
     id: "pack-with-purpose",
     slug: "pack-with-purpose",
     title: "Pack with Purpose: A Give-Back Lunch & Learn",
@@ -213,6 +204,25 @@ export const SITE_EVENTS: SiteEvent[] = [
     image: resolvePackWithPurposeImage(),
     isFeatured: true,
     href: "/events/pack-with-purpose",
+  },
+  {
+    id: "christmas-networking",
+    slug: "christmas-networking",
+    title: "Christmas Networking Night",
+    kicker: "Christmas Networking Mixer",
+    date: "2026-11-30",
+    dateLabel: "Monday, November 30, 2026",
+    month: "NOV",
+    day: "30",
+    time: "6:00 PM - 8:00 PM",
+    location: "3 Nations Brewery",
+    address: "W. 4th St., Anna, TX 75409",
+    category: "Monthly Networking Mixers",
+    description:
+      "The last networking event for this year — you don't want to miss it! Join us at 3 Nations Brewery for games, prizes, networking fun, and music by DJ Smiley. Food, beer, and wine included! Free for members; $20 for non-members.",
+    image: resolveChristmasNetworkingImage(),
+    isFeatured: true,
+    href: "/events/christmas-networking",
   },
 ];
 
@@ -240,6 +250,13 @@ export function getSiteEvent(slug: string | undefined | null): SiteEvent | null 
   const normalized = String(slug || "").trim().toLowerCase();
   if (normalized === "ccm-luncheon-nov-16" || normalized === "luncheon-nov-16") {
     return SITE_EVENTS.find((event) => event.slug === "pack-with-purpose") || null;
+  }
+  if (
+    normalized === "christmas-networking-night" ||
+    normalized === "christmas-networking-event" ||
+    normalized === "christmas"
+  ) {
+    return SITE_EVENTS.find((event) => event.slug === "christmas-networking") || null;
   }
   return SITE_EVENTS.find((event) => event.slug === normalized) || null;
 }
@@ -324,7 +341,7 @@ export function siteEventsAsItems() {
 }
 
 export function allowedPathsForEvent(eventId: SiteEventId): EventRegistrationPath[] {
-  if (eventId === "oktoberfest") return ["member", "guest"];
+  if (eventId === "oktoberfest" || eventId === "christmas-networking") return ["member", "guest"];
   if (eventId === "tent-or-treat") return ["attendee", "sponsor"];
   return ["attendee"];
 }
@@ -375,6 +392,9 @@ export function isPaidEventPath(
   if (eventId === "oktoberfest" && path === "guest") {
     return !oktoberfestPromoCodeMatches(promoCode);
   }
+  if (eventId === "christmas-networking" && path === "guest") {
+    return true;
+  }
   if (eventId === "tent-or-treat" && path === "sponsor") {
     return tentSpaceChargeCents(spaceOption, promoCode) > 0;
   }
@@ -389,7 +409,7 @@ export type EventPartyGuest = {
 
 export function maxPartySize(eventId: SiteEventId, path: EventRegistrationPath): number {
   if (path === "sponsor") return 1;
-  if (eventId === "oktoberfest" && path === "member") return 2;
+  if ((eventId === "oktoberfest" || eventId === "christmas-networking") && path === "member") return 2;
   return 4;
 }
 
@@ -581,6 +601,10 @@ export function eventRegistrationFormType(
     }
     return "Oktoberfest Registration (Guest)";
   }
+  if (eventId === "christmas-networking") {
+    if (path === "member") return "Christmas Networking Night Registration (Member)";
+    return "Christmas Networking Night Registration (Non-Member / Guest)";
+  }
   if (eventId === "lunch-and-learn") {
     return "Lunch & Learn Registration";
   }
@@ -601,6 +625,11 @@ export function eventConfirmationCopy(eventId: SiteEventId, path: EventRegistrat
     return path === "member"
       ? "You're registered — member admission is complimentary."
       : "You're registered. Thank you for supporting Community Commerce Melissa.";
+  }
+  if (eventId === "christmas-networking") {
+    return path === "member"
+      ? "You're registered for Christmas Networking Night on Monday, November 30, 2026 (6:00 PM - 8:00 PM) at 3 Nations Brewery — member admission is complimentary!"
+      : "You're registered for Christmas Networking Night on Monday, November 30, 2026 (6:00 PM - 8:00 PM) at 3 Nations Brewery. Thank you for supporting Community Commerce Melissa!";
   }
   if (eventId === "lunch-and-learn") {
     return "You're registered. See you at Lunch & Learn — lunch is complimentary.";

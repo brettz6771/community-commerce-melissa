@@ -187,21 +187,6 @@ const BASE_MOCK_EVENTS: EventItem[] = [
     image: "/events/oktoberfest-networking-night.jpg",
     isFeatured: true,
     registerHref: "/events/oktoberfest"
-  },
-  {
-    id: "evt-tent-or-treat",
-    title: "Community Tent-or-Treat",
-    date: "2026-10-31",
-    month: "OCT",
-    day: "31",
-    time: "2:00 PM - 5:00 PM",
-    location: "Melissa Lake Park",
-    address: "4101 Liberty Way, Melissa, TX 75454",
-    category: "Community Events",
-    description: "A free family evening at Melissa Lake Park. Register to attend, or tell us you want a business tent.",
-    image: "/events/community-tent-or-treat-attendees.png",
-    isFeatured: true,
-    registerHref: "/events/tent-or-treat"
   }
 ];
 

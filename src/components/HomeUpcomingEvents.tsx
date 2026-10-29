@@ -74,8 +74,9 @@ export default function HomeUpcomingEvents({
             const isLunch =
               siteEvent?.id === "lunch-and-learn" || siteEvent?.id === "pack-with-purpose";
             const isPackWithPurpose = siteEvent?.id === "pack-with-purpose";
-            const isOktober = siteEvent?.id === "oktoberfest";
-            const isTent = siteEvent?.id === "tent-or-treat";
+            const isMemberGuestMixer =
+              siteEvent?.id === "oktoberfest" || siteEvent?.id === "christmas-networking";
+            const isChristmasNetworking = siteEvent?.id === "christmas-networking";
             const kicker = siteEvent?.kicker || evt.category;
             const dateLabel = formatEventDateLabel(evt.date, siteEvent?.dateLabel);
             const detailsHref = siteEvent?.href || evt.registerHref || "/events";
@@ -179,8 +180,8 @@ export default function HomeUpcomingEvents({
                         </Link>
                       </div>
                     </div>
-                  ) : isOktober && siteEvent ? (
-                    /* Oktoberfest CTA */
+                  ) : isMemberGuestMixer && siteEvent ? (
+                    /* Networking Mixer CTA (Free for Members / $20 for Non-Members) */
                     <div className="space-y-2">
                       <button
                         onClick={() => onOpenRegistration(siteEvent)}
@@ -191,45 +192,7 @@ export default function HomeUpcomingEvents({
                       </button>
                       <div className="flex items-center justify-between text-xs pt-1 px-1">
                         <span className="text-slate-300 text-[11px]">
-                          <strong className="text-emerald-400">Members Free</strong> · Guests $20
-                        </span>
-                        <Link
-                          href={detailsHref}
-                          className="text-slate-400 hover:text-white underline underline-offset-2 transition"
-                        >
-                          Event Details →
-                        </Link>
-                      </div>
-                    </div>
-                  ) : isTent && siteEvent ? (
-                    /* Tent or Treat CTAs in exact requested order */
-                    <div className="space-y-2">
-                      {/* 1st: Registration for attendees */}
-                      <button
-                        onClick={() => onOpenRegistration(siteEvent, "attendee")}
-                        className="w-full btn-red py-3 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md hover:scale-[1.02] transition flex items-center justify-center gap-2"
-                      >
-                        <Users className="w-4 h-4" />
-                        <span>1. Register to Attend (Free)</span>
-                      </button>
-
-                      {/* 2nd: For businesses wanting tent spaces */}
-                      <button
-                        onClick={() => onOpenRegistration(siteEvent, "sponsor")}
-                        className="w-full bg-[#1b2230] hover:bg-[#222a3b] text-amber-300 border border-amber-500/30 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-xs hover:scale-[1.02] transition flex items-center justify-center gap-2"
-                      >
-                        <Building2 className="w-4 h-4 text-amber-400" />
-                        <span>
-                          2. Business Tent Sign Up (From{" "}
-                          <span className="line-through opacity-60">$150</span> $50)
-                        </span>
-                      </button>
-
-                      <div className="flex items-center justify-between text-xs pt-1 px-1">
-                        <span className="text-slate-400 text-[11px]">
-                          Free event · Tents{" "}
-                          <span className="line-through opacity-60">$150 - $250</span>{" "}
-                          <strong className="text-amber-300">$50 - $75</strong>
+                          <strong className="text-emerald-400">Members Free</strong> · {isChristmasNetworking ? "Non-Members $20" : "Guests $20"}
                         </span>
                         <Link
                           href={detailsHref}

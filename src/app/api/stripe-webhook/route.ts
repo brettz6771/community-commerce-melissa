@@ -158,7 +158,7 @@ export async function POST(request: Request) {
 
             const staffSubject = isTentSpace
               ? `Tent Space Purchase (${spaceName}): ${metadata.company || name}`
-              : `Oktoberfest guest ticket: ${name}`;
+              : `${siteEvent?.title || "Event"} guest ticket: ${name}`;
 
             const staffHtml = isTentSpace
               ? `<p><strong>${escapeHtml(metadata.company || name)}</strong> purchased tent space for Tent or Treat.</p>
@@ -166,7 +166,7 @@ export async function POST(request: Request) {
                  <p><strong>Space:</strong> ${escapeHtml(spaceName)} (${escapeHtml(spacePrice)})</p>
                  <p><strong>Amount:</strong> ${escapeHtml(amountFormatted)}</p>
                  <p><strong>Notes:</strong> ${escapeHtml(metadata.notes || "None")}</p>`
-              : `<p>${escapeHtml(name)} paid for Oktoberfest guest admission.</p>`;
+              : `<p>${escapeHtml(name)} paid for ${escapeHtml(siteEvent?.title || "event")} guest admission.</p>`;
 
             await Promise.allSettled([
               sendEmail({
