@@ -469,7 +469,7 @@ function ReceiptBadgeContent() {
                     <span className="font-bold text-slate-900">
                       {receiptData?.complimentary
                         ? "Complimentary — no automatic billing"
-                        : receiptData?.nonprofit
+                        : receiptData?.nonprofit || receiptData?.networkPartner
                           ? "Annual Auto-Renewing — $312 year 1, then $392/yr"
                           : receiptData?.isSubscription
                             ? "Annual Auto-Renewing"

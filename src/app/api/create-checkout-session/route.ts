@@ -6,17 +6,23 @@ import { isValidEmail } from "@/lib/html";
 import {
   STAFF_COMP_PROMO_CODE,
   NONPROFIT_PROMO_CODE,
+  NETWORK_PARTNER_PROMO_CODE,
   PARTNER_ANNUAL_CENTS,
   NONPROFIT_RENEWAL_CENTS,
+  NETWORK_PARTNER_RENEWAL_CENTS,
   classifyMembershipPromo,
   createFreshStaffCompCoupon,
   createFreshNonprofitYear1ExtraCoupon,
+  createFreshNetworkPartnerYear1ExtraCoupon,
   INVALID_MEMBERSHIP_CODE_MESSAGE,
   resolveStaffCompCoupon,
   resolveNonprofitCoupon,
   resolveNonprofitYear1ExtraCoupon,
+  resolveNetworkPartnerCoupon,
+  resolveNetworkPartnerYear1ExtraCoupon,
   STAFF_COMP_COUPON_MISSING_MESSAGE,
   NONPROFIT_COUPON_MISSING_MESSAGE,
+  NETWORK_PARTNER_COUPON_MISSING_MESSAGE,
 } from "@/lib/membership-coupons";
 
 const PARTNER_INTRO_OFF_CENTS = 10000; // First invoice only: $100 off → $390 due today
@@ -189,23 +195,29 @@ export async function POST(request: Request) {
     // Case 2: Membership Subscriptions (mode: "subscription")
     // Sole Membership Tier: Community Partner ($390 1st Yr, renews $490/yr)
     // Optional staff code CCMCommunityBuilder: indefinite $0 membership
-    // Optional unpublished non-profit code: 20% off $390 year 1, 20% off $490 renewals
+    // Optional unpublished non-profit code (CCMNonprofits): 20% off $390 year 1, 20% off $490 renewals
+    // Optional unpublished networking partner code (CCMnetworkpartner): 20% off $390 year 1, 20% off $490 renewals
     // ----------------------------------------------------
     const isTest = Boolean(body.isTest) || tier.toLowerCase().includes("test");
     const promoKind = classifyMembershipPromo(body.couponCode ?? body.promoCode);
     const isComplimentary = promoKind === "staff_comp";
     const isNonprofit = promoKind === "nonprofit";
+    const isNetworkPartner = promoKind === "network_partner";
 
     const productName = isComplimentary
       ? "Community Partner — Complimentary Membership"
       : isNonprofit
         ? "Community Partner — Non-Profit Membership"
-        : "Community Partner — Annual Membership";
+        : isNetworkPartner
+          ? "Community Partner — Networking Partner Membership"
+          : "Community Partner — Annual Membership";
     const productDesc = isComplimentary
       ? "Community Commerce Melissa — Complimentary Community Partner (CCMCommunityBuilder). $0 due, no automatic billing until cancelled."
       : isNonprofit
         ? "Community Commerce Melissa — Community Partner Non-Profit Rate. 20% off the $390 first-year price ($312 due today) • renews at 20% off $490 ($392/yr)."
-        : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
+        : isNetworkPartner
+          ? "Community Commerce Melissa — Community Partner Networking Partner Rate. 20% off the $390 first-year price ($312 due today) • renews at 20% off $490 ($392/yr)."
+          : "Community Commerce Melissa — Community Partner Level ($390 First Year Introductory Special • Renews at $490/yr)";
     const successTierParam = "Community Partner";
 
     let appliedCouponId: string | null = null;
@@ -222,6 +234,14 @@ export async function POST(request: Request) {
       appliedCouponId = await resolveNonprofitYear1ExtraCoupon(stripe);
       if (!appliedCouponId) {
         return NextResponse.json({ error: NONPROFIT_COUPON_MISSING_MESSAGE }, { status: 503 });
+      }
+    } else if (isNetworkPartner) {
+      // Ensure the unpublished Stripe promo exists, then apply the year-1 extra
+      // $80 off against a $392 recurring price (20% off $490).
+      await resolveNetworkPartnerCoupon(stripe);
+      appliedCouponId = await resolveNetworkPartnerYear1ExtraCoupon(stripe);
+      if (!appliedCouponId) {
+        return NextResponse.json({ error: NETWORK_PARTNER_COUPON_MISSING_MESSAGE }, { status: 503 });
       }
     } else {
       appliedCouponId = await resolvePartnerCoupon(stripe);
@@ -242,7 +262,14 @@ export async function POST(request: Request) {
       isTest: isTest ? "true" : "false",
       complimentary: isComplimentary ? "true" : "false",
       nonprofit: isNonprofit ? "true" : "false",
-      promoCode: isComplimentary ? STAFF_COMP_PROMO_CODE : isNonprofit ? NONPROFIT_PROMO_CODE : "",
+      networkPartner: isNetworkPartner ? "true" : "false",
+      promoCode: isComplimentary
+        ? STAFF_COMP_PROMO_CODE
+        : isNonprofit
+          ? NONPROFIT_PROMO_CODE
+          : isNetworkPartner
+            ? NETWORK_PARTNER_PROMO_CODE
+            : "",
       businessName: truncateMeta(businessName || "N/A"),
       contactName: truncateMeta(ownerName || "N/A"),
       email: truncateMeta(email || "N/A"),
@@ -266,11 +293,16 @@ export async function POST(request: Request) {
               description: productDesc,
               images: [`${origin}/ccm-logo-transparent.png`],
             },
-            // Regular and staff keep the $490 list price. Non-profit uses $392
-            // recurring (20% off $490) plus a once $80 coupon so year 1 is $312
-            // (20% off the $390 intro). Checkout allows only one coupon, so do
-            // not stack a forever 20% coupon on top of the $392 price.
-            unit_amount: isNonprofit ? NONPROFIT_RENEWAL_CENTS : PARTNER_ANNUAL_CENTS,
+            // Regular and staff keep the $490 list price. Non-profit and
+            // networking partner use $392 recurring (20% off $490) plus a once
+            // $80 coupon so year 1 is $312 (20% off the $390 intro). Checkout
+            // allows only one coupon, so do not stack a forever 20% coupon on
+            // top of the $392 price.
+            unit_amount: isNonprofit
+              ? NONPROFIT_RENEWAL_CENTS
+              : isNetworkPartner
+                ? NETWORK_PARTNER_RENEWAL_CENTS
+                : PARTNER_ANNUAL_CENTS,
             recurring: {
               interval: "year",
               interval_count: 1,
@@ -319,6 +351,11 @@ export async function POST(request: Request) {
           const freshNonprofitYear1Id = await createFreshNonprofitYear1ExtraCoupon(stripe);
           sessionParams.discounts = [{ coupon: freshNonprofitYear1Id }];
           session = await stripe.checkout.sessions.create(sessionParams);
+        } else if (isNetworkPartner) {
+          console.warn("Retrying networking partner checkout with a fresh year-1 extra $80-off coupon:", createErr);
+          const freshNetworkPartnerYear1Id = await createFreshNetworkPartnerYear1ExtraCoupon(stripe);
+          sessionParams.discounts = [{ coupon: freshNetworkPartnerYear1Id }];
+          session = await stripe.checkout.sessions.create(sessionParams);
         } else {
           // Keep the $490 recurring price. If the coupon ID was stale, mint a fresh
           // once-only $100 coupon and retry — never drop the list price to $390.
@@ -349,4 +386,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

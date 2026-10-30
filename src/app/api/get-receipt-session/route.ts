@@ -74,6 +74,7 @@ export async function GET(request: Request) {
       isTest: metadata.isTest === "true",
       complimentary: metadata.complimentary === "true",
       nonprofit: metadata.nonprofit === "true",
+      networkPartner: metadata.networkPartner === "true",
       promoCode: metadata.promoCode || "",
       category: metadata.category || "General Business",
       website: metadata.website || "",

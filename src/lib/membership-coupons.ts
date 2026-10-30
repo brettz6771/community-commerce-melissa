@@ -1,4 +1,4 @@
-import Stripe from "stripe";
+import type Stripe from "stripe";
 
 /** Staff-facing complimentary membership code. Do not advertise on the homepage. */
 export const STAFF_COMP_PROMO_CODE = "CCMCommunityBuilder";
@@ -13,6 +13,14 @@ export const NONPROFIT_PROMO_CODE = "CCMNonprofits";
 export const NONPROFIT_COUPON_ID = "CCM_NONPROFIT_20_FOREVER";
 
 export const NONPROFIT_PERCENT_OFF = 20;
+
+/** Networking partner membership code: 20% off dues, including renewals. Do not advertise on the public site. */
+export const NETWORK_PARTNER_PROMO_CODE = "CCMnetworkpartner";
+
+/** Stable Stripe Coupon id for the indefinite 20% networking partner discount. */
+export const NETWORK_PARTNER_COUPON_ID = "CCM_NETWORK_PARTNER_20_FOREVER";
+
+export const NETWORK_PARTNER_PERCENT_OFF = 20;
 
 /** Published Community Partner list and intro prices (cents). */
 export const PARTNER_ANNUAL_CENTS = 49000;
@@ -37,7 +45,32 @@ export const NONPROFIT_YEAR1_EXTRA_OFF_CENTS = NONPROFIT_RENEWAL_CENTS - NONPROF
 /** Stable Stripe Coupon id for the once-only year-1 extra $80 off. */
 export const NONPROFIT_YEAR1_COUPON_ID = "CCM_NONPROFIT_YEAR1_80_OFF";
 
-export type MembershipPromoKind = "none" | "staff_comp" | "nonprofit" | "invalid";
+/** 20% off the $390 first-year price for networking partners. */
+export const NETWORK_PARTNER_YEAR1_CENTS = Math.round(
+  PARTNER_INTRO_CENTS * (1 - NETWORK_PARTNER_PERCENT_OFF / 100)
+);
+
+/** 20% off the $490 renewal price for networking partners. */
+export const NETWORK_PARTNER_RENEWAL_CENTS = Math.round(
+  PARTNER_ANNUAL_CENTS * (1 - NETWORK_PARTNER_PERCENT_OFF / 100)
+);
+
+/**
+ * Extra first-invoice amount-off so year 1 is 20% of $390 ($312)
+ * when the recurring price is already 20% of $490 ($392).
+ */
+export const NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS =
+  NETWORK_PARTNER_RENEWAL_CENTS - NETWORK_PARTNER_YEAR1_CENTS;
+
+/** Stable Stripe Coupon id for the once-only networking partner year-1 extra $80 off. */
+export const NETWORK_PARTNER_YEAR1_COUPON_ID = "CCM_NETWORK_PARTNER_YEAR1_80_OFF";
+
+export type MembershipPromoKind =
+  | "none"
+  | "staff_comp"
+  | "nonprofit"
+  | "network_partner"
+  | "invalid";
 
 export function normalizePromoCode(raw: unknown): string {
   return String(raw ?? "").trim();
@@ -75,10 +108,25 @@ export function isNonprofitPromoCode(raw: unknown): boolean {
   );
 }
 
+export function getConfiguredNetworkPartnerCode(): string {
+  const fromEnv = normalizePromoCode(process.env.NETWORK_PARTNER_MEMBERSHIP_CODE);
+  return fromEnv || NETWORK_PARTNER_PROMO_CODE;
+}
+
+export function isNetworkPartnerPromoCode(raw: unknown): boolean {
+  const code = normalizePromoCode(raw);
+  if (!code) return false;
+  return (
+    promoCodesMatch(code, NETWORK_PARTNER_PROMO_CODE) ||
+    promoCodesMatch(code, getConfiguredNetworkPartnerCode())
+  );
+}
+
 export function classifyMembershipPromo(raw: unknown): MembershipPromoKind {
   if (!normalizePromoCode(raw)) return "none";
   if (isStaffCompPromoCode(raw)) return "staff_comp";
   if (isNonprofitPromoCode(raw)) return "nonprofit";
+  if (isNetworkPartnerPromoCode(raw)) return "network_partner";
   return "invalid";
 }
 
@@ -116,6 +164,20 @@ export function isOnceNonprofitYear1ExtraCoupon(coupon: Stripe.Coupon): boolean 
   );
 }
 
+export function isIndefiniteNetworkPartnerCoupon(coupon: Stripe.Coupon): boolean {
+  return isIndefinitePercentOffCoupon(coupon, NETWORK_PARTNER_PERCENT_OFF);
+}
+
+export function isOnceNetworkPartnerYear1ExtraCoupon(coupon: Stripe.Coupon): boolean {
+  return (
+    !coupon.deleted &&
+    coupon.valid &&
+    coupon.duration === "once" &&
+    coupon.amount_off === NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS &&
+    (coupon.currency || "usd") === "usd"
+  );
+}
+
 export function isStripeCheckoutFulfilled(session: {
   payment_status?: string | null;
 }): boolean {
@@ -133,6 +195,9 @@ export const STAFF_COMP_COUPON_MISSING_MESSAGE =
 
 export const NONPROFIT_COUPON_MISSING_MESSAGE =
   "The non-profit coupon code could not be applied. The site will try to create the year-1 extra $80-off coupon automatically on the next signup if the Stripe key can write coupons.";
+
+export const NETWORK_PARTNER_COUPON_MISSING_MESSAGE =
+  "The networking partner coupon code could not be applied. The site will try to create the year-1 extra $80-off coupon automatically on the next signup if the Stripe key can write coupons.";
 
 function couponFromPromo(promo: Stripe.PromotionCode): Stripe.Coupon | string | null {
   return promo.promotion?.coupon ?? null;
@@ -454,6 +519,182 @@ export async function createFreshNonprofitYear1ExtraCoupon(stripe: Stripe): Prom
   });
   if (!created?.id) {
     throw new Error("Stripe did not return a non-profit year-1 coupon id.");
+  }
+  return created.id;
+}
+
+/**
+ * Resolve a duration=forever 20% coupon and the CCMnetworkpartner promo code.
+ * Renewals stay 20% off — never a once-only first-year coupon.
+ */
+export async function resolveNetworkPartnerCoupon(stripe: Stripe): Promise<string | null> {
+  try {
+    const promos = await stripe.promotionCodes.list({
+      code: NETWORK_PARTNER_PROMO_CODE,
+      limit: 10,
+    });
+    for (const promo of promos.data) {
+      const coupon = await retrieveCoupon(stripe, couponFromPromo(promo));
+      if (coupon && isIndefiniteNetworkPartnerCoupon(coupon)) {
+        return coupon.id;
+      }
+      if (coupon) {
+        console.error(
+          "Promotion code CCMnetworkpartner is attached to a coupon that is not indefinite 20% off (duration must be forever). Refusing to apply it so renewals are not billed at full dues.",
+          { couponId: coupon.id, duration: coupon.duration, percent_off: coupon.percent_off }
+        );
+      }
+    }
+  } catch {
+    // List permission may be restricted
+  }
+
+  try {
+    const existing = await stripe.coupons.retrieve(NETWORK_PARTNER_COUPON_ID);
+    if (isIndefiniteNetworkPartnerCoupon(existing)) {
+      await ensurePromotionCode(stripe, existing.id, NETWORK_PARTNER_PROMO_CODE);
+      return existing.id;
+    }
+  } catch {
+    // Not found
+  }
+
+  try {
+    const list = await stripe.coupons.list({ limit: 100 });
+    const match = list.data.find(
+      (coupon) =>
+        isIndefiniteNetworkPartnerCoupon(coupon) &&
+        coupon.metadata?.purpose === "network_partner_membership"
+    );
+    if (match) {
+      await ensurePromotionCode(stripe, match.id, NETWORK_PARTNER_PROMO_CODE);
+      return match.id;
+    }
+  } catch {
+    // List permission may be restricted
+  }
+
+  try {
+    const created = await stripe.coupons.create({
+      id: NETWORK_PARTNER_COUPON_ID,
+      percent_off: NETWORK_PARTNER_PERCENT_OFF,
+      duration: "forever",
+      metadata: {
+        purpose: "network_partner_membership",
+        promo_code: NETWORK_PARTNER_PROMO_CODE,
+      },
+    });
+    if (created?.id) {
+      await ensurePromotionCode(stripe, created.id, NETWORK_PARTNER_PROMO_CODE);
+      return created.id;
+    }
+  } catch {
+    // ID might already exist in a deleted/invalid state
+  }
+
+  try {
+    const created = await stripe.coupons.create({
+      percent_off: NETWORK_PARTNER_PERCENT_OFF,
+      duration: "forever",
+      metadata: {
+        purpose: "network_partner_membership",
+        promo_code: NETWORK_PARTNER_PROMO_CODE,
+      },
+    });
+    if (created?.id) {
+      await ensurePromotionCode(stripe, created.id, NETWORK_PARTNER_PROMO_CODE);
+      return created.id;
+    }
+  } catch (err) {
+    console.error("Unable to create indefinite CCMnetworkpartner 20% coupon:", err);
+  }
+
+  return null;
+}
+
+export async function createFreshNetworkPartnerCoupon(stripe: Stripe): Promise<string> {
+  const created = await stripe.coupons.create({
+    percent_off: NETWORK_PARTNER_PERCENT_OFF,
+    duration: "forever",
+    metadata: {
+      purpose: "network_partner_membership",
+      promo_code: NETWORK_PARTNER_PROMO_CODE,
+    },
+  });
+  if (!created?.id) {
+    throw new Error("Stripe did not return a networking partner coupon id.");
+  }
+  await ensurePromotionCode(stripe, created.id, NETWORK_PARTNER_PROMO_CODE);
+  return created.id;
+}
+
+/**
+ * Once-only extra $80 off so year 1 is $312 when the recurring price is $392.
+ * Stripe Checkout allows only one coupon, so renewals stay 20% off $490 via the
+ * $392 recurring price rather than a second stacked coupon.
+ */
+export async function resolveNetworkPartnerYear1ExtraCoupon(stripe: Stripe): Promise<string | null> {
+  try {
+    const existing = await stripe.coupons.retrieve(NETWORK_PARTNER_YEAR1_COUPON_ID);
+    if (isOnceNetworkPartnerYear1ExtraCoupon(existing)) {
+      return existing.id;
+    }
+  } catch {
+    // Not found
+  }
+
+  try {
+    const list = await stripe.coupons.list({ limit: 100 });
+    const match = list.data.find(
+      (coupon) =>
+        isOnceNetworkPartnerYear1ExtraCoupon(coupon) &&
+        coupon.metadata?.purpose === "network_partner_year1_extra"
+    );
+    if (match) {
+      return match.id;
+    }
+  } catch {
+    // List permission may be restricted
+  }
+
+  try {
+    const created = await stripe.coupons.create({
+      id: NETWORK_PARTNER_YEAR1_COUPON_ID,
+      amount_off: NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS,
+      currency: "usd",
+      duration: "once",
+      metadata: {
+        purpose: "network_partner_year1_extra",
+        promo_code: NETWORK_PARTNER_PROMO_CODE,
+      },
+    });
+    if (created?.id) {
+      return created.id;
+    }
+  } catch {
+    // ID might already exist in a deleted/invalid state
+  }
+
+  try {
+    return await createFreshNetworkPartnerYear1ExtraCoupon(stripe);
+  } catch (err) {
+    console.error("Unable to create networking partner year-1 extra $80-off coupon:", err);
+    return null;
+  }
+}
+
+export async function createFreshNetworkPartnerYear1ExtraCoupon(stripe: Stripe): Promise<string> {
+  const created = await stripe.coupons.create({
+    amount_off: NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS,
+    currency: "usd",
+    duration: "once",
+    metadata: {
+      purpose: "network_partner_year1_extra",
+      promo_code: NETWORK_PARTNER_PROMO_CODE,
+    },
+  });
+  if (!created?.id) {
+    throw new Error("Stripe did not return a networking partner year-1 coupon id.");
   }
   return created.id;
 }

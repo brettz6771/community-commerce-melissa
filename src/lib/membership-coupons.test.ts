@@ -7,13 +7,21 @@ import {
   NONPROFIT_YEAR1_CENTS,
   NONPROFIT_RENEWAL_CENTS,
   NONPROFIT_YEAR1_EXTRA_OFF_CENTS,
+  NETWORK_PARTNER_PROMO_CODE,
+  NETWORK_PARTNER_YEAR1_CENTS,
+  NETWORK_PARTNER_RENEWAL_CENTS,
+  NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS,
   classifyMembershipPromo,
   getConfiguredNonprofitCode,
+  getConfiguredNetworkPartnerCode,
   getConfiguredStaffCompCode,
   isIndefiniteHundredPercentCoupon,
   isIndefiniteNonprofitCoupon,
+  isIndefiniteNetworkPartnerCoupon,
   isOnceNonprofitYear1ExtraCoupon,
+  isOnceNetworkPartnerYear1ExtraCoupon,
   isNonprofitPromoCode,
+  isNetworkPartnerPromoCode,
   isStaffCompPromoCode,
   isStripeCheckoutFulfilled,
   normalizePromoCode,
@@ -22,6 +30,7 @@ import {
 
 const originalEnvCode = process.env.STAFF_COMP_MEMBERSHIP_CODE;
 const originalNonprofitEnvCode = process.env.NONPROFIT_MEMBERSHIP_CODE;
+const originalNetworkPartnerEnvCode = process.env.NETWORK_PARTNER_MEMBERSHIP_CODE;
 
 afterEach(() => {
   if (originalEnvCode === undefined) {
@@ -33,6 +42,11 @@ afterEach(() => {
     delete process.env.NONPROFIT_MEMBERSHIP_CODE;
   } else {
     process.env.NONPROFIT_MEMBERSHIP_CODE = originalNonprofitEnvCode;
+  }
+  if (originalNetworkPartnerEnvCode === undefined) {
+    delete process.env.NETWORK_PARTNER_MEMBERSHIP_CODE;
+  } else {
+    process.env.NETWORK_PARTNER_MEMBERSHIP_CODE = originalNetworkPartnerEnvCode;
   }
 });
 
@@ -62,6 +76,7 @@ describe("CCMCommunityBuilder promo matching", () => {
     assert.equal(classifyMembershipPromo("   "), "none");
     assert.equal(classifyMembershipPromo("CCMCommunityBuilder"), "staff_comp");
     assert.equal(classifyMembershipPromo("CCMNonprofits"), "nonprofit");
+    assert.equal(classifyMembershipPromo("CCMnetworkpartner"), "network_partner");
     assert.equal(classifyMembershipPromo("SAVE100"), "invalid");
   });
 });
@@ -77,6 +92,7 @@ describe("CCMNonprofits promo matching", () => {
     assert.equal(isNonprofitPromoCode("ccmnonprofits"), true);
     assert.equal(isNonprofitPromoCode("CCMNONPROFITS"), true);
     assert.equal(isNonprofitPromoCode("CCMCommunityBuilder"), false);
+    assert.equal(isNonprofitPromoCode("CCMnetworkpartner"), false);
     assert.equal(isNonprofitPromoCode("SAVE20"), false);
     assert.equal(isNonprofitPromoCode(""), false);
   });
@@ -92,6 +108,36 @@ describe("CCMNonprofits promo matching", () => {
     assert.equal(NONPROFIT_YEAR1_CENTS, 31200);
     assert.equal(NONPROFIT_RENEWAL_CENTS, 39200);
     assert.equal(NONPROFIT_YEAR1_EXTRA_OFF_CENTS, 8000);
+  });
+});
+
+describe("CCMnetworkpartner promo matching", () => {
+  it("uses the exact networking partner code string", () => {
+    assert.equal(NETWORK_PARTNER_PROMO_CODE, "CCMnetworkpartner");
+    assert.equal(getConfiguredNetworkPartnerCode(), "CCMnetworkpartner");
+  });
+
+  it("accepts the official code case-insensitively and rejects other codes", () => {
+    assert.equal(isNetworkPartnerPromoCode("CCMnetworkpartner"), true);
+    assert.equal(isNetworkPartnerPromoCode("ccmnetworkpartner"), true);
+    assert.equal(isNetworkPartnerPromoCode("CCMNETWORKPARTNER"), true);
+    assert.equal(isNetworkPartnerPromoCode("CCMNonprofits"), false);
+    assert.equal(isNetworkPartnerPromoCode("CCMCommunityBuilder"), false);
+    assert.equal(isNetworkPartnerPromoCode("SAVE20"), false);
+    assert.equal(isNetworkPartnerPromoCode(""), false);
+  });
+
+  it("honors NETWORK_PARTNER_MEMBERSHIP_CODE when set", () => {
+    process.env.NETWORK_PARTNER_MEMBERSHIP_CODE = "CustomPartner20";
+    assert.equal(isNetworkPartnerPromoCode("CustomPartner20"), true);
+    assert.equal(isNetworkPartnerPromoCode("CCMnetworkpartner"), true);
+    assert.equal(classifyMembershipPromo("CustomPartner20"), "network_partner");
+  });
+
+  it("is 20% off $390 year 1 and 20% off $490 on renewals", () => {
+    assert.equal(NETWORK_PARTNER_YEAR1_CENTS, 31200);
+    assert.equal(NETWORK_PARTNER_RENEWAL_CENTS, 39200);
+    assert.equal(NETWORK_PARTNER_YEAR1_EXTRA_OFF_CENTS, 8000);
   });
 });
 
@@ -133,7 +179,7 @@ describe("isIndefiniteHundredPercentCoupon", () => {
   });
 });
 
-describe("isIndefiniteNonprofitCoupon", () => {
+describe("isIndefiniteNonprofitCoupon and isIndefiniteNetworkPartnerCoupon", () => {
   function coupon(overrides: Partial<Stripe.Coupon>): Stripe.Coupon {
     return {
       id: "np1",
@@ -151,10 +197,15 @@ describe("isIndefiniteNonprofitCoupon", () => {
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ duration: "once" })), false);
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 100 })), false);
     assert.equal(isIndefiniteNonprofitCoupon(coupon({ percent_off: 10 })), false);
+
+    assert.equal(isIndefiniteNetworkPartnerCoupon(coupon({})), true);
+    assert.equal(isIndefiniteNetworkPartnerCoupon(coupon({ duration: "once" })), false);
+    assert.equal(isIndefiniteNetworkPartnerCoupon(coupon({ percent_off: 100 })), false);
+    assert.equal(isIndefiniteNetworkPartnerCoupon(coupon({ percent_off: 10 })), false);
   });
 });
 
-describe("isOnceNonprofitYear1ExtraCoupon", () => {
+describe("isOnceNonprofitYear1ExtraCoupon and isOnceNetworkPartnerYear1ExtraCoupon", () => {
   function coupon(overrides: Partial<Stripe.Coupon>): Stripe.Coupon {
     return {
       id: "np-y1",
@@ -173,6 +224,11 @@ describe("isOnceNonprofitYear1ExtraCoupon", () => {
     assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ duration: "forever" })), false);
     assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ amount_off: 10000 })), false);
     assert.equal(isOnceNonprofitYear1ExtraCoupon(coupon({ valid: false })), false);
+
+    assert.equal(isOnceNetworkPartnerYear1ExtraCoupon(coupon({})), true);
+    assert.equal(isOnceNetworkPartnerYear1ExtraCoupon(coupon({ duration: "forever" })), false);
+    assert.equal(isOnceNetworkPartnerYear1ExtraCoupon(coupon({ amount_off: 10000 })), false);
+    assert.equal(isOnceNetworkPartnerYear1ExtraCoupon(coupon({ valid: false })), false);
   });
 });
 

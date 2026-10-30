@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { BUSINESS_CATEGORIES } from "@/data/mockData";
 import TermsAgreement from "@/components/TermsAgreement";
-import { isNonprofitPromoCode, isStaffCompPromoCode } from "@/lib/membership-coupons";
+import { isNetworkPartnerPromoCode, isNonprofitPromoCode, isStaffCompPromoCode } from "@/lib/membership-coupons";
 
 const buildTimePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 
@@ -82,11 +82,13 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
   const isCorporate = selectedTier.toLowerCase().includes("corporate") || selectedTier.toLowerCase().includes("sponsorship");
   const isComplimentaryPreview = !isCorporate && isStaffCompPromoCode(formData.couponCode);
   const isNonprofitPreview = !isCorporate && isNonprofitPromoCode(formData.couponCode);
+  const isNetworkPartnerPreview = !isCorporate && isNetworkPartnerPromoCode(formData.couponCode);
+  const isTwentyPercentPreview = isNonprofitPreview || isNetworkPartnerPreview;
   const amountDisplay = isCorporate
     ? "Custom"
     : isComplimentaryPreview
       ? "Complimentary"
-      : isNonprofitPreview
+      : isTwentyPercentPreview
         ? "$312"
         : "$390";
 
@@ -279,12 +281,14 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                   <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
                   {isNonprofitPreview ? (
                     <span>Non-profit rate: <strong>$312 due today</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $392/yr</span></span>
+                  ) : isNetworkPartnerPreview ? (
+                    <span>Networking Partner rate: <strong>$312 due today</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $392/yr</span></span>
                   ) : (
                     <span>Community Partner Special: <strong>$390 for Year 1</strong> <span className="text-red-200 bg-black/40 px-1.5 py-0.5 rounded border border-red-500/30 font-bold ml-1">Renews at $490/yr</span></span>
                   )}
                 </div>
                 <span className="bg-white text-red-950 font-black px-2 py-0.5 rounded-full text-[10px] uppercase shadow">
-                  {isNonprofitPreview ? "20% OFF DUES" : "SAVE $100 YR 1"}
+                  {isTwentyPercentPreview ? "20% OFF DUES" : "SAVE $100 YR 1"}
                 </span>
               </div>
             )}
@@ -498,6 +502,10 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                     <p className="text-[10px] text-emerald-400 mt-1">
                       Non-profit rate: 20% off the $390 first year ($312 due today). Later years are 20% off $490 ($392/yr).
                     </p>
+                  ) : isNetworkPartnerPreview ? (
+                    <p className="text-[10px] text-emerald-400 mt-1">
+                      Networking Partner rate: 20% off the $390 first year ($312 due today). Later years are 20% off $490 ($392/yr).
+                    </p>
                   ) : (
                     <p className="text-[10px] text-slate-500 mt-1">
                       Coupon code, if you were given one
@@ -511,7 +519,7 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                 <div className="bg-white/5 p-3 rounded-lg border border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-slate-300" />
-                    <span>Selected Level: <strong className="text-white">{isNonprofitPreview ? "Community Partner ($312 year 1 • $392/yr after)" : selectedTier}</strong></span>
+                    <span>Selected Level: <strong className="text-white">{isTwentyPercentPreview ? "Community Partner ($312 year 1 • $392/yr after)" : selectedTier}</strong></span>
                   </div>
                   <div className="flex items-center gap-1 text-[11px]">
                     <Lock className="w-3 h-3 text-emerald-400" />
@@ -520,7 +528,9 @@ export default function MemberModal({ isOpen, onClose, defaultTier = "Community 
                         ? "Complimentary — no automatic billing"
                         : isNonprofitPreview
                           ? "Annual Auto-Renewing — 20% non-profit rate"
-                          : "Annual Auto-Renewing Subscription"}
+                          : isNetworkPartnerPreview
+                            ? "Annual Auto-Renewing — 20% networking partner rate"
+                            : "Annual Auto-Renewing Subscription"}
                     </span>
                   </div>
                 </div>
