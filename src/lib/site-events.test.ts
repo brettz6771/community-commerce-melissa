@@ -1,12 +1,15 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  CHRISTMAS_NETWORKING_PROMO_CODE,
   EVENT_REGISTRATION_CSV_HEADERS,
   OKTOBERFEST_PRICE_CENTS,
   OKTOBERFEST_PROMO_CODE,
+  christmasNetworkingPromoCodeMatches,
   eventPaymentStatus,
   eventPricing,
   eventRegistrationFormType,
+  guestMixerPromoCodeMatches,
   guestTicketPriceLabel,
   oktoberfestPromoCodeMatches,
   TENT_OR_TREAT_PROMO_CODE,
@@ -56,7 +59,7 @@ describe("site events catalog", () => {
     assert.equal(items.find((item) => item.id === "evt-christmas-networking")?.registerHref, "/events/christmas-networking");
   });
 
-  it("makes Christmas Networking Night free for members and $20 for non-members", () => {
+  it("makes Christmas Networking Night free for members and $20 for non-members, with VIPTIX coupon waiving guest fee", () => {
     assert.deepEqual(allowedPathsForEvent("christmas-networking"), ["member", "guest"]);
     assert.equal(isPaidEventPath("christmas-networking", "member"), false);
     assert.equal(isPaidEventPath("christmas-networking", "guest"), true);
@@ -67,6 +70,30 @@ describe("site events catalog", () => {
     assert.deepEqual(partySizeOptions("christmas-networking", "guest"), [1, 2, 3, 4]);
     assert.match(eventConfirmationCopy("christmas-networking", "member"), /Christmas Networking Night/);
     assert.match(eventConfirmationCopy("christmas-networking", "member"), /complimentary/);
+
+    // VIPTIX coupon allows non-members to sign up for Nov 30th networking event at no cost ($0)
+    assert.equal(CHRISTMAS_NETWORKING_PROMO_CODE, "VIPTIX");
+    assert.equal(christmasNetworkingPromoCodeMatches("VIPTIX"), true);
+    assert.equal(christmasNetworkingPromoCodeMatches("  viptix "), true);
+    assert.equal(christmasNetworkingPromoCodeMatches(""), false);
+    assert.equal(christmasNetworkingPromoCodeMatches("CCMOKT26"), false);
+    assert.equal(guestMixerPromoCodeMatches("christmas-networking", "VIPTIX"), true);
+    assert.equal(guestMixerPromoCodeMatches("christmas-networking", "CCMOKT26"), false);
+    assert.equal(guestMixerPromoCodeMatches("oktoberfest", "CCMOKT26"), true);
+    assert.equal(guestMixerPromoCodeMatches("oktoberfest", "VIPTIX"), false);
+
+    assert.equal(isPaidEventPath("christmas-networking", "guest", ""), true);
+    assert.equal(isPaidEventPath("christmas-networking", "guest", "WRONG"), true);
+    assert.equal(isPaidEventPath("christmas-networking", "guest", "CCMOKT26"), true);
+    assert.equal(isPaidEventPath("christmas-networking", "guest", "VIPTIX"), false);
+    assert.equal(isPaidEventPath("christmas-networking", "guest", " viptix "), false);
+
+    assert.equal(eventCheckoutAmountCents("christmas-networking", "guest", 2, undefined, ""), OKTOBERFEST_PRICE_CENTS * 2);
+    assert.equal(eventCheckoutAmountCents("christmas-networking", "guest", 2, undefined, "VIPTIX"), 0);
+    assert.equal(guestTicketPriceLabel(2, "VIPTIX"), "$0");
+    assert.equal(eventPricing("christmas-networking", "guest", "VIPTIX"), "free");
+    assert.equal(eventPaymentStatus("christmas-networking", "guest", "VIPTIX"), "complimentary");
+    assert.match(eventRegistrationFormType("christmas-networking", "guest", "VIPTIX"), /VIPTIX/);
   });
 
   it("makes Oktoberfest free for members and $20 for guests", () => {

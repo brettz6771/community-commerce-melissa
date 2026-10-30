@@ -53,8 +53,21 @@ export const TENT_OR_TREAT_PROMO_CODE = "CCMTENT26";
 /** Entered on Oktoberfest guest registration to waive the $20 guest ticket cost. */
 export const OKTOBERFEST_PROMO_CODE = "CCMOKT26";
 
+/** Entered on Christmas Networking Night non-member/guest registration to waive the $20 ticket cost. */
+export const CHRISTMAS_NETWORKING_PROMO_CODE = "VIPTIX";
+
 export function oktoberfestPromoCodeMatches(raw: unknown): boolean {
   return String(raw ?? "").trim().toLowerCase() === OKTOBERFEST_PROMO_CODE.toLowerCase();
+}
+
+export function christmasNetworkingPromoCodeMatches(raw: unknown): boolean {
+  return String(raw ?? "").trim().toLowerCase() === CHRISTMAS_NETWORKING_PROMO_CODE.toLowerCase();
+}
+
+export function guestMixerPromoCodeMatches(eventId: SiteEventId, raw: unknown): boolean {
+  if (eventId === "oktoberfest") return oktoberfestPromoCodeMatches(raw);
+  if (eventId === "christmas-networking") return christmasNetworkingPromoCodeMatches(raw);
+  return false;
 }
 
 export function tentPromoCodeMatches(raw: unknown): boolean {
@@ -393,7 +406,7 @@ export function isPaidEventPath(
     return !oktoberfestPromoCodeMatches(promoCode);
   }
   if (eventId === "christmas-networking" && path === "guest") {
-    return true;
+    return !christmasNetworkingPromoCodeMatches(promoCode);
   }
   if (eventId === "tent-or-treat" && path === "sponsor") {
     return tentSpaceChargeCents(spaceOption, promoCode) > 0;
@@ -438,8 +451,16 @@ export function eventCheckoutAmountCents(
   return OKTOBERFEST_PRICE_CENTS * count;
 }
 
-export function guestTicketPriceLabel(partySize = 1, promoCode?: unknown): string {
-  return `$${eventCheckoutAmountCents("oktoberfest", "guest", partySize, undefined, promoCode) / 100}`;
+export function guestTicketPriceLabel(
+  partySize = 1,
+  promoCode?: unknown,
+  eventId: SiteEventId = "oktoberfest",
+): string {
+  const effectiveEventId =
+    eventId === "oktoberfest" && christmasNetworkingPromoCodeMatches(promoCode)
+      ? "christmas-networking"
+      : eventId;
+  return `$${eventCheckoutAmountCents(effectiveEventId, "guest", partySize, undefined, promoCode) / 100}`;
 }
 
 export function emptyPartyGuest(): EventPartyGuest {
@@ -603,6 +624,9 @@ export function eventRegistrationFormType(
   }
   if (eventId === "christmas-networking") {
     if (path === "member") return "Christmas Networking Night Registration (Member)";
+    if (christmasNetworkingPromoCodeMatches(promoCode)) {
+      return `Christmas Networking Night Registration (Guest — Coupon ${CHRISTMAS_NETWORKING_PROMO_CODE})`;
+    }
     return "Christmas Networking Night Registration (Non-Member / Guest)";
   }
   if (eventId === "lunch-and-learn") {

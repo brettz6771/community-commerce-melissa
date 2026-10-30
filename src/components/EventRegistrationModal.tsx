@@ -20,9 +20,9 @@ import {
   DEFAULT_TENT_SPACE_OPTION,
   OKTOBERFEST_PRICE_LABEL,
   TENT_SPACE_OPTIONS,
+  guestMixerPromoCodeMatches,
   guestTicketPriceLabel,
   isPaidEventPath,
-  oktoberfestPromoCodeMatches,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
   partySizeOptions,
@@ -182,17 +182,17 @@ export default function EventRegistrationModal({
     isTentOrTreat && tentPromoCodeMatches(appliedPromoCode) && tentPromoCodeMatches(promoCode);
   const tentStandardCompApplied = tentPromoApplied && spaceOption === "standard";
   const oktoberfestPromoApplied =
-    isOktoberfest &&
+    isMemberGuestMixer &&
     activePath === "guest" &&
-    oktoberfestPromoCodeMatches(appliedPromoCode) &&
-    oktoberfestPromoCodeMatches(promoCode);
+    guestMixerPromoCodeMatches(event.id, appliedPromoCode) &&
+    guestMixerPromoCodeMatches(event.id, promoCode);
   const promoApplied = tentPromoApplied || oktoberfestPromoApplied;
   const tentPriceLabel = (optionId: TentSpaceOptionId) =>
     tentPromoApplied ? tentSpaceChargeLabel(optionId, appliedPromoCode) : TENT_SPACE_OPTIONS[optionId].priceLabel;
 
   const applyPromoCode = () => {
-    if (isOktoberfest) {
-      if (oktoberfestPromoCodeMatches(promoCode)) {
+    if (isMemberGuestMixer) {
+      if (guestMixerPromoCodeMatches(event.id, promoCode)) {
         setAppliedPromoCode(promoCode.trim());
         setPromoNotice("Coupon applied — guest admission is now free ($0).");
         return;
@@ -219,8 +219,8 @@ export default function EventRegistrationModal({
 
   const changePromoCode = (value: string) => {
     setPromoCode(value);
-    const stillMatches = isOktoberfest
-      ? oktoberfestPromoCodeMatches(value)
+    const stillMatches = isMemberGuestMixer
+      ? guestMixerPromoCodeMatches(event.id, value)
       : tentPromoCodeMatches(value);
     if (appliedPromoCode && !stillMatches) {
       setAppliedPromoCode("");
@@ -234,7 +234,7 @@ export default function EventRegistrationModal({
     setError("");
 
     const activePromoForSubmit =
-      isOktoberfest && activePath === "guest" && oktoberfestPromoApplied
+      isMemberGuestMixer && activePath === "guest" && oktoberfestPromoApplied
         ? appliedPromoCode
         : isTentOrTreat && activePath === "sponsor" && tentPromoApplied
           ? appliedPromoCode
@@ -457,7 +457,7 @@ export default function EventRegistrationModal({
                     </div>
                   )}
 
-                  {isOktoberfest && activePath === "guest" && (
+                  {isMemberGuestMixer && activePath === "guest" && (
                     <label className="block space-y-1 pt-1">
                       <span className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
                         Coupon code

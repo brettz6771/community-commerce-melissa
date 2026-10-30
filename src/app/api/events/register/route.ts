@@ -9,8 +9,10 @@ import { sendEmail } from "@/lib/email";
 import { escapeHtml } from "@/lib/html";
 import { resolvePortalAuth } from "@/lib/member-portal-session";
 import {
+  CHRISTMAS_NETWORKING_PROMO_CODE,
   OKTOBERFEST_PROMO_CODE,
   TENT_OR_TREAT_PROMO_CODE,
+  christmasNetworkingPromoCodeMatches,
   eventCheckoutAmountCents,
   eventConfirmationCopy,
   eventMembershipStatus,
@@ -147,13 +149,23 @@ export async function POST(request: Request) {
       path === "sponsor" &&
       getTentSpaceOption(spaceOption).id === "standard" &&
       tentPromoCodeMatches(rawPromo);
+    const isComplimentaryChristmasGuest =
+      eventId === "christmas-networking" &&
+      path === "guest" &&
+      christmasNetworkingPromoCodeMatches(rawPromo);
+    const isComplimentaryOktoberfestGuest =
+      eventId === "oktoberfest" &&
+      path === "guest" &&
+      oktoberfestPromoCodeMatches(rawPromo);
     const pathLabel =
       path === "member"
         ? "Member (complimentary)"
         : path === "guest"
-          ? oktoberfestPromoCodeMatches(rawPromo)
+          ? isComplimentaryOktoberfestGuest
             ? `Guest (Complimentary — Coupon ${OKTOBERFEST_PROMO_CODE})`
-            : "Guest ($20)"
+            : isComplimentaryChristmasGuest
+              ? `Guest (Complimentary — Coupon ${CHRISTMAS_NETWORKING_PROMO_CODE})`
+              : "Guest ($20)"
           : path === "sponsor"
             ? isComplimentaryTentStandard
               ? `${getTentSpaceOption(spaceOption).name} (Complimentary — Code ${TENT_OR_TREAT_PROMO_CODE})`
@@ -193,7 +205,8 @@ export async function POST(request: Request) {
         notes,
         pathLabel,
         ...(spaceOption ? { spaceOption, spaceName: getTentSpaceOption(spaceOption).name } : {}),
-        ...(oktoberfestPromoCodeMatches(rawPromo) ? { promoCode: OKTOBERFEST_PROMO_CODE } : {}),
+        ...(isComplimentaryOktoberfestGuest ? { promoCode: OKTOBERFEST_PROMO_CODE } : {}),
+        ...(isComplimentaryChristmasGuest ? { promoCode: CHRISTMAS_NETWORKING_PROMO_CODE } : {}),
         ...(isComplimentaryTentStandard ? { promoCode: TENT_OR_TREAT_PROMO_CODE } : {}),
       },
     });

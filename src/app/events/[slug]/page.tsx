@@ -25,8 +25,8 @@ import {
   OKTOBERFEST_PRICE_LABEL,
   TENT_SPACE_OPTIONS,
   getSiteEvent,
+  guestMixerPromoCodeMatches,
   guestTicketPriceLabel,
-  oktoberfestPromoCodeMatches,
   tentPromoCodeMatches,
   tentSpaceChargeLabel,
   partySizeOptions,
@@ -262,11 +262,11 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
 
   const promoApplied =
     path === "guest" &&
-    oktoberfestPromoCodeMatches(appliedPromoCode) &&
-    oktoberfestPromoCodeMatches(promoCode);
+    guestMixerPromoCodeMatches(event.id, appliedPromoCode) &&
+    guestMixerPromoCodeMatches(event.id, promoCode);
 
   const applyPromoCode = () => {
-    if (oktoberfestPromoCodeMatches(promoCode)) {
+    if (guestMixerPromoCodeMatches(event.id, promoCode)) {
       setAppliedPromoCode(promoCode.trim());
       setPromoNotice("Coupon applied — guest admission is now free ($0).");
       return;
@@ -281,7 +281,7 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
 
   const changePromoCode = (value: string) => {
     setPromoCode(value);
-    if (appliedPromoCode && !oktoberfestPromoCodeMatches(value)) {
+    if (appliedPromoCode && !guestMixerPromoCodeMatches(event.id, value)) {
       setAppliedPromoCode("");
       setPromoNotice("");
     }
@@ -360,7 +360,7 @@ function OktoberfestForm({ event, portal }: { event: SiteEvent; portal: PortalSt
       {signedIn && path === "member" && (
         <p className="text-xs text-emerald-700 font-semibold">Signed in as {portal.member?.email}. Member admission is complimentary.</p>
       )}
-      {event.id === "oktoberfest" && path === "guest" && (
+      {(event.id === "oktoberfest" || event.id === "christmas-networking") && path === "guest" && (
         <div className="space-y-1">
           <span className="block text-xs font-bold text-slate-700 uppercase">Coupon code</span>
           <div className="flex gap-2">
